@@ -109,9 +109,12 @@ class Loader
      */
     public function execute()
     {
-        foreach ($this->fixtures as $fixture) {
-            $fixture->load($this->em);
-        }
+        $fixtures = $this->getFixtures();
+        $this->em->transactional(function(EntityManager $em) use ($fixtures) {
+            foreach ($fixtures as $fixture) {
+                $fixture->load($em);
+            } 
+        });
     }
 
     /**
