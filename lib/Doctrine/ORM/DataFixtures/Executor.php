@@ -26,7 +26,7 @@ use Doctrine\ORM\EntityManager;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class Executer
+class Executor
 {
     /** Purger instance for purging database before loading data fixtures */
     private $purger;

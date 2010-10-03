@@ -22,15 +22,15 @@ namespace Doctrine\Tests\ORM\DataFixtures;
 require_once __DIR__.'/TestInit.php';
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\DataFixtures\Executer;
+use Doctrine\ORM\DataFixtures\Executor;
 use PHPUnit_Framework_TestCase;
 
 /**
- * Test Fixture executer.
+ * Test Fixture executor.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class ExecuterTest extends BaseTest
+class ExecutorTest extends BaseTest
 {
     public function testExecuteWithNoPurge()
     {
@@ -39,12 +39,12 @@ class ExecuterTest extends BaseTest
         $purger->expects($this->once())
             ->method('setEntityManager')
             ->with($em);
-        $executer = new Executer($em, $purger);
+        $executor = new Executor($em, $purger);
         $fixture = $this->getMockFixture($em);
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
-        $executer->execute(array($fixture), true);
+        $executor->execute(array($fixture), true);
     }
 
     public function testExecuteWithPurge()
@@ -54,20 +54,20 @@ class ExecuterTest extends BaseTest
         $purger->expects($this->once())
             ->method('purge')
             ->will($this->returnValue(null));
-        $executer = new Executer($em, $purger);
+        $executor = new Executor($em, $purger);
         $fixture = $this->getMockFixture($em);
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
-        $executer->execute(array($fixture), false);
+        $executor->execute(array($fixture), false);
     }
 
     public function testExecuteTransaction()
     {
         $em = $this->getMockEntityManager();
-        $executer = new Executer($em);
+        $executor = new Executor($em);
         $fixture = $this->getMockFixture($em);
-        $executer->execute(array($fixture), true);
+        $executor->execute(array($fixture), true);
     }
 
     private function getMockFixture($em)
