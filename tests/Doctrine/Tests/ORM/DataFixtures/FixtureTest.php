@@ -19,24 +19,21 @@
 
 namespace Doctrine\Tests\ORM\DataFixtures;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\DataFixtures\Fixture;
-use PHPUnit_Framework_TestCase;
+require_once __DIR__.'/TestInit.php';
 
-require_once __DIR__ . '/../../../../../lib/Doctrine/ORM/DataFixtures/Fixture.php';
-require_once __DIR__ . '/../../../../../lib/Doctrine/ORM/DataFixtures/Loader.php';
-require_once __DIR__ . '/Mocks/EntityManager.php';
+use Doctrine\ORM\DataFixtures\Fixture;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Test Fixture interface.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class FixtureTest extends PHPUnit_Framework_TestCase
+class FixtureTest extends BaseTest
 {
     public function testFixtureInterface()
     {
-        $em = new \Doctrine\ORM\EntityManager();
+        $em = $this->getMockEntityManager();
         $fixture = new MyFixture2();
         $fixture->load($em);
 

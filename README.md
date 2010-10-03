@@ -27,7 +27,7 @@ Now you can begin adding the fixtures to a loader instance:
     use Doctrine\ORM\DataFixtures\Loader;
     use MyDataFixtures\LoadUserData;
 
-    $loader = new Loader($em);
+    $loader = new Loader();
     $loader->addFixture(new LoadUserData);
 
 You can load a set of fixtures from a directory as well:
@@ -40,4 +40,13 @@ You can get the added fixtures using the getFixtures() method:
 
 Now you can easily execute the fixtures:
 
-    $loader->execute();
+    use Doctrine\ORM\DataFixtures\Executor;
+
+    $purger = new Purger();
+    $executor = new Executor($em, $purger);
+    $executor->execute($loader->getFixtures());
+
+If you want to append the fixtures instead of purging before loading then pass false
+to the 2nd argument of execute:
+
+    $executor->execute($loader->getFixtures(), true);

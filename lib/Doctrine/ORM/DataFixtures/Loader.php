@@ -22,27 +22,14 @@ namespace Doctrine\ORM\DataFixtures;
 use Doctrine\ORM\EntityManager;
 
 /**
- * Class responsible for managing and executing data fixtures classes.
+ * Class responsible for loading data fixture classes.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class Loader
 {
-    /** EntityManager instance used for persistence. */
-    private $em;
-
     /** Array of fixture object instances to execute. */
     private $fixtures = array();
-
-    /**
-     * Construct new fixtures loader instance.
-     *
-     * @param EntityManager $em EntityManager instance used for persistence.
-     */
-    public function __construct(EntityManager $em)
-    {
-        $this->em = $em;
-    }
 
     /**
      * Find fixtures classes in a given directory and load them.
@@ -56,7 +43,7 @@ class Loader
             throw new \InvalidArgumentException(sprintf('"%s" does not exist', $dir));
         }
 
-        $classes = array();
+        $fixtures = array();
         $includedFiles = array();
 
         $iterator = new \RecursiveIteratorIterator(
@@ -70,7 +57,6 @@ class Loader
             $includedFiles[] = $sourceFile;
         }
         $declared = get_declared_classes();
-
         $fixtures = array();
         foreach ($declared as $className) {
             $reflClass = new \ReflectionClass($className);
@@ -102,19 +88,6 @@ class Loader
     public function getFixtures()
     {
         return $this->fixtures;
-    }
-
-    /**
-     * Executes the the array of data fixtures.
-     */
-    public function execute()
-    {
-        $fixtures = $this->getFixtures();
-        $this->em->transactional(function(EntityManager $em) use ($fixtures) {
-            foreach ($fixtures as $fixture) {
-                $fixture->load($em);
-            } 
-        });
     }
 
     /**

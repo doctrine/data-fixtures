@@ -33,5 +33,5 @@ interface Fixture
      *
      * @param EntityManager $em
      */
-    function load(EntityManager $em);
+    public function load(EntityManager $em);
 }

@@ -19,55 +19,28 @@
 
 namespace Doctrine\Tests\ORM\DataFixtures;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\DataFixtures\Loader;
-use Doctrine\ORM\DataFixtures\Fixture;
-use PHPUnit_Framework_TestCase;
+require_once __DIR__.'/TestInit.php';
 
-require_once __DIR__ . '/../../../../../lib/Doctrine/ORM/DataFixtures/Fixture.php';
-require_once __DIR__ . '/../../../../../lib/Doctrine/ORM/DataFixtures/Loader.php';
-require_once __DIR__ . '/Mocks/EntityManager.php';
+use Doctrine\ORM\DataFixtures\Loader;
 
 /**
  * Test fixtures loader.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class LoaderTest extends PHPUnit_Framework_TestCase
+class LoaderTest extends BaseTest
 {
     public function testLoader()
     {
-        $em = new \Doctrine\ORM\EntityManager();
-        $loader = new Loader($em);
-        $fixture = new MyFixture1;
-        $loader->addFixture($fixture);
+        $loader = new Loader();
+        $loader->addFixture($this->getMock('Doctrine\ORM\DataFixtures\Fixture'));
+        $loader->addFixture($this->getMock('Doctrine\ORM\DataFixtures\Fixture'));
 
-        $this->assertEquals(1, count($loader->getFixtures()));
+        $this->assertEquals(2, count($loader->getFixtures()));
 
         $loader->loadFromDirectory(__DIR__.'/TestFixtures');
-
-        $this->assertEquals(3, count($loader->getFixtures()));
-
-        $loader->execute();
-
-        $fixtures = $loader->getFixtures();
-        $this->assertTrue($fixtures[0]->loaded);
-        $this->assertTrue($fixtures[1]->loaded);
-        $this->assertTrue($fixtures[2]->loaded);
-
-        $this->assertFalse($loader->isTransient(__NAMESPACE__ . '\MyFixture1'));
-        $this->assertTrue($loader->isTransient(__NAMESPACE__ . '\NotAFixtureClass'));
+        $this->assertEquals(4, count($loader->getFixtures()));
+        $this->assertTrue($loader->isTransient('TestFixtures\NotAFixture'));
+        $this->assertFalse($loader->isTransient('TestFixtures\MyFixture1'));
     }
 }
-
-class MyFixture1 implements Fixture
-{
-    public $loaded = false;
-
-    public function load(EntityManager $em)
-    {
-        $this->loaded = true;
-    }
-}
-
-class NotAFixtureClass {}
