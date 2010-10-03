@@ -46,7 +46,17 @@ class Executor
     }
 
     /**
-     * Executes the the array of data fixtures.
+     * Sets the Purger instance to use for this exector instance.
+     *
+     * @param Purger $purger
+     */
+    public function setPurger(Purger $purger)
+    {
+        $this->purger = $purger;
+    }
+
+    /**
+     * Executes the given array of data fixtures.
      *
      * @param array $fixtures Array of fixtures to execute.
      * @param boolean $append Whether to append the data fixtures or purge the database before loading.
