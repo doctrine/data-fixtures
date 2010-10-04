@@ -17,9 +17,9 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\DataFixtures;
+namespace Doctrine\Common\DataFixtures\Purger;
 
-use Doctrine\ORM\DocumentManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.

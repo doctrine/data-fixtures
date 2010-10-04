@@ -83,7 +83,7 @@ class ORMPurger implements PurgerInterface
         }
 
         foreach($orderedTables as $tbl) {
-            $em->getConnection()->executeUpdate("DELETE FROM $tbl");
+            $this->em->getConnection()->executeUpdate("DELETE FROM $tbl");
         }
     }
 

@@ -35,14 +35,14 @@ class MongoDBExecutor implements ExecutorInterface
     /**
      * Construct new fixtures loader instance.
      *
-     * @param DocumentManager $em DocumentManager instance used for persistence.
+     * @param DocumentManager $dm DocumentManager instance used for persistence.
      */
-    public function __construct(DocumentManager $em, MongoDBPurger $purger = null)
+    public function __construct(DocumentManager $dm, MongoDBPurger $purger = null)
     {
-        $this->em = $em;
+        $this->dm = $dm;
         if ($purger !== null) {
             $this->purger = $purger;
-            $this->purger->setDocumentManager($em);
+            $this->purger->setDocumentManager($dm);
         }
     }
 
@@ -60,14 +60,14 @@ class MongoDBExecutor implements ExecutorInterface
     public function execute(array $fixtures, $append = false)
     {
         if ($append === false) {
-            if ($purger === null) {
+            if ($this->purger === null) {
                 throw new \Exception('Doctrine\Common\DataFixtures\Purger instance is required if you want to purge the database before loading your data fixtures.');
             }
-            $purger->purge();
+            $this->purger->purge();
         }
 
         foreach ($fixtures as $fixture) {
-            $fixture->load($em);
+            $fixture->load($this->dm);
         }
     }
 }
