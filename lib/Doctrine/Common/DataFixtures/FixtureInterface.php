@@ -17,30 +17,19 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Tests\ORM\DataFixtures;
-
-require_once __DIR__.'/TestInit.php';
-
-use Doctrine\ORM\DataFixtures\Loader;
+namespace Doctrine\Common\DataFixtures;
 
 /**
- * Test fixtures loader.
+ * Interface contract for fixture classes to implement.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class LoaderTest extends BaseTest
+interface FixtureInterface
 {
-    public function testLoader()
-    {
-        $loader = new Loader();
-        $loader->addFixture($this->getMock('Doctrine\ORM\DataFixtures\Fixture'));
-        $loader->addFixture($this->getMock('Doctrine\ORM\DataFixtures\Fixture'));
-
-        $this->assertEquals(2, count($loader->getFixtures()));
-
-        $loader->loadFromDirectory(__DIR__.'/TestFixtures');
-        $this->assertEquals(4, count($loader->getFixtures()));
-        $this->assertTrue($loader->isTransient('TestFixtures\NotAFixture'));
-        $this->assertFalse($loader->isTransient('TestFixtures\MyFixture1'));
-    }
+    /**
+     * Load data fixtures with the passed EntityManager
+     *
+     * @param object $manager
+     */
+    public function load($manager);
 }

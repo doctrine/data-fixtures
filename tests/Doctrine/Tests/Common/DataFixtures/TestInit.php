@@ -4,10 +4,10 @@ require_once __DIR__.'/../../../../../lib/vendor/doctrine-common/lib/Doctrine/Co
 
 use Doctrine\Common\ClassLoader;
 
-$classLoader = new ClassLoader('Doctrine\\ORM\\DataFixtures', __DIR__.'/../../../../../lib');
+$classLoader = new ClassLoader('Doctrine\\Common\\DataFixtures', __DIR__.'/../../../../../lib');
 $classLoader->register();
 
-$classLoader = new ClassLoader('Doctrine\\Tests\\ORM\\DataFixtures', __DIR__.'/../../../../../tests');
+$classLoader = new ClassLoader('Doctrine\\Tests\\Common\\DataFixtures', __DIR__.'/../../../../../tests');
 $classLoader->register();
 
 $classLoader = new ClassLoader('Doctrine\\Common', __DIR__.'/../../../../../lib/vendor/doctrine-common/lib');

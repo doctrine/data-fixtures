@@ -17,20 +17,21 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Tests\ORM\DataFixtures;
+namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
-require_once __DIR__.'/TestInit.php';
+require_once __DIR__.'/../TestInit.php';
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\DataFixtures\Executor;
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use PHPUnit_Framework_TestCase;
+use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
 /**
  * Test Fixture executor.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class ExecutorTest extends BaseTest
+class ORMExecutorTest extends BaseTest
 {
     public function testExecuteWithNoPurge()
     {
@@ -39,7 +40,7 @@ class ExecutorTest extends BaseTest
         $purger->expects($this->once())
             ->method('setEntityManager')
             ->with($em);
-        $executor = new Executor($em, $purger);
+        $executor = new ORMExecutor($em, $purger);
         $fixture = $this->getMockFixture($em);
         $fixture->expects($this->once())
             ->method('load')
@@ -54,7 +55,7 @@ class ExecutorTest extends BaseTest
         $purger->expects($this->once())
             ->method('purge')
             ->will($this->returnValue(null));
-        $executor = new Executor($em, $purger);
+        $executor = new ORMExecutor($em, $purger);
         $fixture = $this->getMockFixture($em);
         $fixture->expects($this->once())
             ->method('load')
@@ -65,18 +66,18 @@ class ExecutorTest extends BaseTest
     public function testExecuteTransaction()
     {
         $em = $this->getMockEntityManager();
-        $executor = new Executor($em);
+        $executor = new ORMExecutor($em);
         $fixture = $this->getMockFixture($em);
         $executor->execute(array($fixture), true);
     }
 
     private function getMockFixture($em)
     {
-        return $this->getMock('Doctrine\ORM\DataFixtures\Fixture');
+        return $this->getMock('Doctrine\Common\DataFixtures\FixtureInterface');
     }
 
     private function getMockPurger()
     {
-        return $this->getMock('Doctrine\ORM\DataFixtures\Purger');
+        return $this->getMock('Doctrine\Common\DataFixtures\Purger\ORMPurger');
     }
 }

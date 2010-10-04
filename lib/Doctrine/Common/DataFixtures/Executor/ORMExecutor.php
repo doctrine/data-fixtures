@@ -17,16 +17,17 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\ORM\DataFixtures;
+namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 
 /**
  * Class responsible for executing data fixtures.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class Executor
+class ORMExecutor implements ExecutorInterface
 {
     /** Purger instance for purging database before loading data fixtures */
     private $purger;
@@ -36,7 +37,7 @@ class Executor
      *
      * @param EntityManager $em EntityManager instance used for persistence.
      */
-    public function __construct(EntityManager $em, Purger $purger = null)
+    public function __construct(EntityManager $em, ORMPurger $purger = null)
     {
         $this->em = $em;
         if ($purger !== null) {
@@ -55,19 +56,14 @@ class Executor
         $this->purger = $purger;
     }
 
-    /**
-     * Executes the given array of data fixtures.
-     *
-     * @param array $fixtures Array of fixtures to execute.
-     * @param boolean $append Whether to append the data fixtures or purge the database before loading.
-     */
+    /** @inheritDoc */
     public function execute(array $fixtures, $append = false)
     {
         $purger = $this->purger;
         $this->em->transactional(function(EntityManager $em) use ($fixtures, $append, $purger) {
             if ($append === false) {
                 if ($purger === null) {
-                    throw new \Exception('Doctrine\ORM\DataFixtures\Purger instance is required if you want to purge the database before loading your data fixtures.');
+                    throw new \Exception('Doctrine\Common\DataFixtures\Purger instance is required if you want to purge the database before loading your data fixtures.');
                 }
                 $purger->purge();
             }

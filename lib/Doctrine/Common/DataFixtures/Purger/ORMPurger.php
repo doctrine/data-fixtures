@@ -17,7 +17,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\ORM\DataFixtures;
+namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Internal\CommitOrderCalculator;
@@ -28,7 +28,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class Purger
+class ORMPurger implements PurgerInterface
 {
     /** EntityManager instance used for persistence. */
     private $em;
@@ -53,18 +53,14 @@ class Purger
       $this->em = $em;
     }
 
-    /**
-     * Purge the data from the database for the given EntityManager.
-     *
-     * @return void
-     */
+    /** @inheritDoc */
     public function purge()
     {
         $classes = array();
         $metadatas = $this->em->getMetadataFactory()->getAllMetadata();
 
         foreach ($metadatas as $metadata) {
-            if (!$metadata->isMappedSuperclass) {
+            if ( ! $metadata->isMappedSuperclass) {
                 $classes[] = $metadata;
             }
         }

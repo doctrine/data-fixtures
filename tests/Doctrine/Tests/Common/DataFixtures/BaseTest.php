@@ -17,7 +17,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Tests\ORM\DataFixtures;
+namespace Doctrine\Tests\Common\DataFixtures;
 
 require_once __DIR__.'/TestInit.php';
 

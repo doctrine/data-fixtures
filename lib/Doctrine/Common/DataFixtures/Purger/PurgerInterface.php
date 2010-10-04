@@ -17,21 +17,19 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\ORM\DataFixtures;
-
-use Doctrine\ORM\EntityManager;
+namespace Doctrine\Common\DataFixtures\Purger;
 
 /**
- * Interface contract for fixture classes to implement.
+ * PurgerInterface
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-interface Fixture
+interface PurgerInterface
 {
     /**
-     * Load data fixtures with the passed EntityManager
+     * Purge the data from the database for the given EntityManager.
      *
-     * @param EntityManager $em
+     * @return void
      */
-    public function load(EntityManager $em);
+    public function purge();
 }

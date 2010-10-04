@@ -17,12 +17,11 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Tests\ORM\DataFixtures;
+namespace Doctrine\Tests\Common\DataFixtures;
 
 require_once __DIR__.'/TestInit.php';
 
-use Doctrine\ORM\DataFixtures\Fixture;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 
 /**
  * Test Fixture interface.
@@ -41,11 +40,11 @@ class FixtureTest extends BaseTest
     }
 }
 
-class MyFixture2 implements Fixture
+class MyFixture2 implements FixtureInterface
 {
     public $loaded = false;
 
-    public function load(EntityManager $em)
+    public function load($manager)
     {
         $this->loaded = true;
     }

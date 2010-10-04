@@ -17,7 +17,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\ORM\DataFixtures;
+namespace Doctrine\Common\DataFixtures;
 
 use Doctrine\ORM\EntityManager;
 
@@ -73,9 +73,9 @@ class Loader
     /**
      * Add a fixture object instance to the loader.
      *
-     * @param Fixture $fixture
+     * @param object $fixture
      */
-    public function addFixture(Fixture $fixture)
+    public function addFixture(FixtureInterface $fixture)
     {
         $this->fixtures[] = $fixture;
     }
@@ -99,6 +99,6 @@ class Loader
     public function isTransient($className)
     {
         $interfaces = class_implements($className);
-        return in_array('Doctrine\ORM\DataFixtures\Fixture', $interfaces) ? false : true;
+        return in_array('Doctrine\Common\DataFixtures\FixtureInterface', $interfaces) ? false : true;
     }
 }
