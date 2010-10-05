@@ -27,11 +27,8 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class ORMExecutor implements ExecutorInterface
+class ORMExecutor extends AbstractExecutor
 {
-    /** Purger instance for purging database before loading data fixtures */
-    private $purger;
-
     /**
      * Construct new fixtures loader instance.
      *
@@ -46,30 +43,16 @@ class ORMExecutor implements ExecutorInterface
         }
     }
 
-    /**
-     * Sets the Purger instance to use for this exector instance.
-     *
-     * @param Purger $purger
-     */
-    public function setPurger(Purger $purger)
-    {
-        $this->purger = $purger;
-    }
-
     /** @inheritDoc */
     public function execute(array $fixtures, $append = false)
     {
-        $purger = $this->purger;
-        $this->em->transactional(function(EntityManager $em) use ($fixtures, $append, $purger) {
+        $executor = $this;
+        $this->em->transactional(function(EntityManager $em) use ($executor, $fixtures, $append) {
             if ($append === false) {
-                if ($purger === null) {
-                    throw new \Exception('Doctrine\Common\DataFixtures\Purger instance is required if you want to purge the database before loading your data fixtures.');
-                }
-                $purger->purge();
+                $executor->purge();
             }
-
             foreach ($fixtures as $fixture) {
-                $fixture->load($em);
+                $executor->load($em, $fixture);
             }
         });
     }

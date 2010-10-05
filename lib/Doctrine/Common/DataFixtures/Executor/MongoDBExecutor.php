@@ -27,11 +27,8 @@ use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class MongoDBExecutor implements ExecutorInterface
+class MongoDBExecutor extends AbstractExecutor
 {
-    /** Purger instance for purging database before loading data fixtures */
-    private $purger;
-
     /**
      * Construct new fixtures loader instance.
      *
@@ -46,28 +43,14 @@ class MongoDBExecutor implements ExecutorInterface
         }
     }
 
-    /**
-     * Sets the Purger instance to use for this exector instance.
-     *
-     * @param Purger $purger
-     */
-    public function setPurger(Purger $purger)
-    {
-        $this->purger = $purger;
-    }
-
     /** @inheritDoc */
     public function execute(array $fixtures, $append = false)
     {
         if ($append === false) {
-            if ($this->purger === null) {
-                throw new \Exception('Doctrine\Common\DataFixtures\Purger instance is required if you want to purge the database before loading your data fixtures.');
-            }
-            $this->purger->purge();
+            $this->purge();
         }
-
         foreach ($fixtures as $fixture) {
-            $fixture->load($this->dm);
+            $this->load($this->dm, $fixture);
         }
     }
 }
