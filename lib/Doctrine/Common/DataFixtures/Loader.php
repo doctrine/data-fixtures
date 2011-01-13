@@ -46,13 +46,17 @@ class Loader
         $fixtures = array();
         $includedFiles = array();
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::LEAVES_ONLY
+        $iterator = new \RegexIterator(
+        	new \RecursiveIteratorIterator(
+            	new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
+            	\RecursiveIteratorIterator::LEAVES_ONLY
+            ),
+            '/^.+\.php$/i',
+            \RecursiveRegexIterator::GET_MATCH
         );
 
         foreach ($iterator as $file) {
-            $sourceFile = realpath($file->getPathName());
+            $sourceFile = realpath($file[0]);
             require_once $sourceFile;
             $includedFiles[] = $sourceFile;
         }
