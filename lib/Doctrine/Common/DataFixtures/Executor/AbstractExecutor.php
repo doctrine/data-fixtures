@@ -60,6 +60,7 @@ abstract class AbstractExecutor
             $this->log('loading ' . get_class($fixture));
         }
         $fixture->load($manager);
+        $manager->clear();
     }
 
     /**
