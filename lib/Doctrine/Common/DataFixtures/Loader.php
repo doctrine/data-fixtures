@@ -28,8 +28,19 @@ use Doctrine\ORM\EntityManager;
  */
 class Loader
 {
-    /** Array of fixture object instances to execute. */
+    /**
+     * Array of fixture object instances to execute.
+     *
+     * @var array
+     */
     private $fixtures = array();
+
+    /**
+     * The file extension of fixture files.
+     *
+     * @var string
+     */
+    private $fileExtension = '.php';
 
     /**
      * Find fixtures classes in a given directory and load them.
@@ -47,11 +58,14 @@ class Loader
         $includedFiles = array();
 
         $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
+            new \RecursiveDirectoryIterator($dir),
             \RecursiveIteratorIterator::LEAVES_ONLY
         );
 
         foreach ($iterator as $file) {
+            if (($fileName = $file->getBasename($this->fileExtension)) == $file->getBasename()) {
+                continue;
+            }
             $sourceFile = realpath($file->getPathName());
             require_once $sourceFile;
             $includedFiles[] = $sourceFile;
