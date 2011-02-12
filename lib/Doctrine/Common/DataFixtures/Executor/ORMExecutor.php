@@ -41,6 +41,7 @@ class ORMExecutor extends AbstractExecutor
             $this->purger = $purger;
             $this->purger->setEntityManager($em);
         }
+        parent::__construct($em);
     }
 
     /** @inheritDoc */

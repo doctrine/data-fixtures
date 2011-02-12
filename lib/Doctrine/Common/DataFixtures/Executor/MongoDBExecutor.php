@@ -41,6 +41,7 @@ class MongoDBExecutor extends AbstractExecutor
             $this->purger = $purger;
             $this->purger->setDocumentManager($dm);
         }
+        parent::__construct($dm);
     }
 
     /** @inheritDoc */

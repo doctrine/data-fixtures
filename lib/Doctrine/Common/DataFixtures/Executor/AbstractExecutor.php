@@ -2,7 +2,9 @@
 
 namespace Doctrine\Common\DataFixtures\Executor;
 
+use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 
 /**
  * Abstract fixture executor.
@@ -17,6 +19,22 @@ abstract class AbstractExecutor
     /** Logger callback for logging messages when loading data fixtures */
     protected $logger;
 
+    /**
+     * Fixture reference repository
+     * @var ReferenceRepository
+     */
+    protected $referenceRepository;
+    
+    /**
+     * Loads an instance of reference repository
+     * 
+     * @param object $manager
+     */
+    public function __construct($manager)
+    {
+        $this->referenceRepository = new ReferenceRepository($manager);
+    }
+    
     /**
      * Sets the Purger instance to use for this exector instance.
      *
@@ -58,6 +76,10 @@ abstract class AbstractExecutor
     {
         if ($this->logger) {
             $this->log('loading ' . get_class($fixture));
+        }
+        // additionaly pass the instance of reference repository to shared fixtures
+        if ($fixture instanceof SharedFixtureInterface) {
+            $fixture->setReferenceRepository($this->referenceRepository);
         }
         $fixture->load($manager);
         $manager->clear();
