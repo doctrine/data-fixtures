@@ -36,6 +36,16 @@ abstract class AbstractExecutor
     }
     
     /**
+     * Get reference repository
+     * 
+     * @return ReferenceRepository
+     */
+    public function getReferenceRepository()
+    {
+        return $this->referenceRepository;
+    }
+    
+    /**
      * Sets the Purger instance to use for this exector instance.
      *
      * @param Purger $purger

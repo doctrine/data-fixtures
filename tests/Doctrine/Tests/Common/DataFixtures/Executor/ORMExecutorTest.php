@@ -71,6 +71,11 @@ class ORMExecutorTest extends BaseTest
         $executor->execute(array($fixture), true);
     }
 
+    public function testSharedFixtureExecution()
+    {
+        $em = $this->getMockEntityManager();
+    }
+    
     private function getMockFixture($em)
     {
         return $this->getMock('Doctrine\Common\DataFixtures\FixtureInterface');

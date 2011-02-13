@@ -30,6 +30,11 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
  * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  */
 interface SharedFixtureInterface extends FixtureInterface
-{    
+{   
+    /**
+     * Set the reference repository
+     * 
+     * @param ReferenceRepository $referenceRepository
+     */ 
     public function setReferenceRepository(ReferenceRepository $referenceRepository);
 }
