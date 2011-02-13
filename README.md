@@ -105,7 +105,26 @@ And the **User** data loading fixture:
         }
     }
 
-**Notice** that the fixture loading order is important!
+**Notice** that the fixture loading order is important! To handle it manually
+implement the OrderedFixtureInterface and set the order:
+
+    namespace MyDataFixtures;
+
+    use Doctrine\Common\DataFixtures\AbstractFixture;
+    use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+
+    class MyFixture extends AbstractFixture implements OrderedFixtureInterface
+    {
+        public function load($manager)
+        {}
+        
+        public function getOrder()
+        {
+            return 10; // number in which order to load fixtures
+        }
+    }
+
+**Notice** the ordering is relevant to Loader class.
 
 ## Running the tests:
 
@@ -117,4 +136,5 @@ To setup and run tests follow these steps:
 - run: **git submodule update**
 - go to tests directory: **cd tests**
 - copy the phpunit config **cp phpunit.dist.xml phpunit.xml**
+- make temp dir for proxies **mkdir Doctrine/Common/DataFixtures/temp**
 - run: **phpunit**

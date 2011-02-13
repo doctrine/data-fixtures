@@ -41,6 +41,13 @@ class Loader
      * @var string
      */
     private $fileExtension = '.php';
+    
+    /**
+     * Flag to know if fixtures are ordered
+     * 
+     * @var boolean
+     */
+    private $needsFixtureOrdering = false;
 
     /**
      * Find fixtures classes in a given directory and load them.
@@ -91,6 +98,7 @@ class Loader
      */
     public function addFixture(FixtureInterface $fixture)
     {
+        $this->needsFixtureOrdering = true;
         $this->fixtures[] = $fixture;
     }
 
@@ -101,6 +109,7 @@ class Loader
      */
     public function getFixtures()
     {
+        $this->reorderFixtures();
         return $this->fixtures;
     }
 
@@ -114,5 +123,30 @@ class Loader
     {
         $interfaces = class_implements($className);
         return in_array('Doctrine\Common\DataFixtures\FixtureInterface', $interfaces) ? false : true;
+    }
+    
+    /**
+     * Reorders all fixtures if there were changes
+     * 
+     * @todo maybe there is a better way to handle reordering
+     * @return void
+     */
+    public function reorderFixtures()
+    {
+        if ($this->needsFixtureOrdering === true) {
+            usort($this->fixtures, function($a, $b) {
+                if ($a instanceof OrderedFixtureInterface && $b instanceof OrderedFixtureInterface) {
+                    if ($a->getOrder() === $b->getOrder()) {
+                        return 0;
+                    }
+                    return $a->getOrder() < $b->getOrder() ? -1 : 1;
+                } elseif ($a instanceof OrderedFixtureInterface) {
+                    return $a->getOrder() === 0 ? 0 : 1;
+                } elseif ($b instanceof OrderedFixtureInterface) {
+                    return $b->getOrder() === 0 ? 0 : -1;
+                }
+                return 0;
+            });
+        }
     }
 }

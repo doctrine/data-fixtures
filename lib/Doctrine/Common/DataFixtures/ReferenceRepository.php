@@ -131,6 +131,8 @@ class ReferenceRepository
                 $this->references[$name]['class'],
                 $this->references[$name]['identifier']
             );
+        } else {
+            throw new \InvalidArgumentException("There is no reference stored under the name: [{$name}], check if fixtures are loading in correct order");
         }
         return $object;
     }
