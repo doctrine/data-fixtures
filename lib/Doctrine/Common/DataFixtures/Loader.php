@@ -36,18 +36,18 @@ class Loader
     private $fixtures = array();
 
     /**
+     * Array of ordered fixture object instances.
+     *
+     * @var array
+     */
+    private $orderedFixtures;
+
+    /**
      * The file extension of fixture files.
      *
      * @var string
      */
     private $fileExtension = '.php';
-    
-    /**
-     * Flag to know if fixtures are ordered
-     * 
-     * @var boolean
-     */
-    private $needsFixtureOrdering = false;
 
     /**
      * Find fixtures classes in a given directory and load them.
@@ -98,7 +98,7 @@ class Loader
      */
     public function addFixture(FixtureInterface $fixture)
     {
-        $this->needsFixtureOrdering = true;
+        $this->orderedFixtures = null;
         $this->fixtures[] = $fixture;
     }
 
@@ -109,8 +109,10 @@ class Loader
      */
     public function getFixtures()
     {
-        $this->reorderFixtures();
-        return $this->fixtures;
+        if ($this->orderedFixtures === null) {
+            $this->orderFixtures();
+        }
+        return $this->orderedFixtures;
     }
 
     /**
@@ -126,27 +128,26 @@ class Loader
     }
     
     /**
-     * Reorders all fixtures if there were changes
+     * Orders fixtures
      * 
      * @todo maybe there is a better way to handle reordering
      * @return void
      */
-    public function reorderFixtures()
+    private function orderFixtures()
     {
-        if ($this->needsFixtureOrdering === true) {
-            usort($this->fixtures, function($a, $b) {
-                if ($a instanceof OrderedFixtureInterface && $b instanceof OrderedFixtureInterface) {
-                    if ($a->getOrder() === $b->getOrder()) {
-                        return 0;
-                    }
-                    return $a->getOrder() < $b->getOrder() ? -1 : 1;
-                } elseif ($a instanceof OrderedFixtureInterface) {
-                    return $a->getOrder() === 0 ? 0 : 1;
-                } elseif ($b instanceof OrderedFixtureInterface) {
-                    return $b->getOrder() === 0 ? 0 : -1;
+        $this->orderedFixtures = $this->fixtures;
+        usort($this->orderedFixtures, function($a, $b) {
+            if ($a instanceof OrderedFixtureInterface && $b instanceof OrderedFixtureInterface) {
+                if ($a->getOrder() === $b->getOrder()) {
+                    return 0;
                 }
-                return 0;
-            });
-        }
+                return $a->getOrder() < $b->getOrder() ? -1 : 1;
+            } elseif ($a instanceof OrderedFixtureInterface) {
+                return $a->getOrder() === 0 ? 0 : 1;
+            } elseif ($b instanceof OrderedFixtureInterface) {
+                return $b->getOrder() === 0 ? 0 : -1;
+            }
+            return 0;
+        });
     }
 }

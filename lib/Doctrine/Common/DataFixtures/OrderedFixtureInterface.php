@@ -25,6 +25,7 @@ namespace Doctrine\Common\DataFixtures;
  * when beeing loaded by directory scan for example
  * 
  * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
+ * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface OrderedFixtureInterface
 {   
@@ -33,5 +34,5 @@ interface OrderedFixtureInterface
      * 
      * @return integer
      */  
-    public function getOrder();
+    function getOrder();
 }
