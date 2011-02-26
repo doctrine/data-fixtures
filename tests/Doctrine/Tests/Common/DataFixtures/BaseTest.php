@@ -119,7 +119,7 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         $config = $this->getMock('Doctrine\ORM\Configuration');
         $config->expects($this->once())
             ->method('getProxyDir')
-            ->will($this->returnValue(__DIR__ . '/temp'));
+            ->will($this->returnValue(sys_get_temp_dir()));
 
         $config->expects($this->once())
             ->method('getProxyNamespace')

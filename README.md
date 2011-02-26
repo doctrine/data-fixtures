@@ -136,5 +136,4 @@ To setup and run tests follow these steps:
 - run: **git submodule update**
 - go to tests directory: **cd tests**
 - copy the phpunit config **cp phpunit.dist.xml phpunit.xml**
-- make temp dir for proxies **mkdir Doctrine/Common/DataFixtures/temp**
 - run: **phpunit**
