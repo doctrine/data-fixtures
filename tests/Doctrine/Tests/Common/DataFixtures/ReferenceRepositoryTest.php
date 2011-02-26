@@ -32,25 +32,6 @@ class ReferenceRepositoryTest extends BaseTest
 {
     const TEST_ENTITY_ROLE = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Role';
     
-    public function testInvalidReferenceObject()
-    {
-        $em = $this->getMockEntityManager();
-        $referenceRepo = new ReferenceRepository($em);
-        $this->setExpectedException('LogicException');
-        $referenceRepo->addReference('test', new \stdClass());
-    }
-    
-    public function testInvalidReferenceObjectNoPk()
-    {
-        $em = $this->getMockAnnotationReaderEntityManager();
-        $role = new TestEntity\Role;
-        $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
-        
-        $referenceRepo = new ReferenceRepository($em);
-        $this->setExpectedException('LogicException');
-        $referenceRepo->addReference('test', $role);
-    }
-    
     public function testReferenceEntry()
     {
         $em = $this->getMockAnnotationReaderEntityManager();
@@ -65,10 +46,7 @@ class ReferenceRepositoryTest extends BaseTest
         $references = $referenceRepo->getReferences();
         $this->assertEquals(1, count($references));
         $this->assertArrayHasKey('test', $references);
-        $this->assertEquals(self::TEST_ENTITY_ROLE, $references['test']['class']);
-        $this->assertEquals(1, count($references['test']['identifier']));
-        $this->assertArrayHasKey('id', $references['test']['identifier']);
-        $this->assertEquals(1, $references['test']['identifier']['id']);
+        $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
     }
     
     private function getMockReferenceRepository()

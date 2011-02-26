@@ -15,7 +15,7 @@ class Role
     private $id;
 
     /**
-     * @Column(length=50, unique=true)
+     * @Column(length=50)
      */
     private $name;
 

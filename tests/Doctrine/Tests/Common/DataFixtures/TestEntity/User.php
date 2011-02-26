@@ -25,12 +25,12 @@ class User
     private $password;
 
     /**
-     * @Column(length=255, unique=true)
+     * @Column(length=255)
      */
     private $email;
 
     /**
-     * @ManyToOne(targetEntity="Role")
+     * @ManyToOne(targetEntity="Role", cascade={"persist"})
      */
     private $role;
 

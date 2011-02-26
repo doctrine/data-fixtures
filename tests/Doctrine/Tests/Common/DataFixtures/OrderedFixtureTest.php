@@ -31,7 +31,7 @@ require_once __DIR__.'/TestInit.php';
  * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  */
 class OrderedFixtureTest extends BaseTest
-{    
+{
     public function testFixtureOrder()
     {
         $loader = new Loader();
@@ -53,7 +53,7 @@ class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
 {
     public function load($manager)
     {}
-    
+
     public function getOrder()
     {
         return 5;
@@ -64,7 +64,7 @@ class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
 {
     public function load($manager)
     {}
-    
+
     public function getOrder()
     {
         return 2;
@@ -75,7 +75,7 @@ class OrderedFixture3 implements FixtureInterface, OrderedFixtureInterface
 {
     public function load($manager)
     {}
-    
+
     public function getOrder()
     {
         return 8;

@@ -57,11 +57,7 @@ class ReferenceRepository
      * Set the reference entry identified by $name
      * and referenced to managed $object. If $name
      * already is set, it overrides it
-     * 
-     * Notice: in case if identifier is generated after
-     * the record is inserted, be sure tu use this method
-     * after $object is flushed
-     * 
+     *
      * @param string $name
      * @param object $object - managed object
      * @throws LogicException - if object is not mapped or
@@ -70,27 +66,7 @@ class ReferenceRepository
      */
     public function setReference($name, $object)
     {
-        $objectClass = get_class($object);
-        if (!$this->manager->getMetadataFactory()->hasMetadataFor(get_class($object))) {
-            throw new \LogicException("While setting a reference object {$objectClass} - must be mapped or persisted before");
-        }
-        $meta = $this->manager->getClassMetadata(get_class($object));
-        
-        $identifier = array();
-        foreach ((array)$meta->identifier as $field) {
-            $id = $meta->getReflectionProperty($field)->getValue($object);
-            if (!$id) {
-                throw new \LogicException("Object: {$objectClass} - must be flushed first in order to have generated id");
-            }
-            $identifier[$field] = $id;
-        }
-        if (!is_array($meta->identifier)) {
-            $identifier = reset($identifier);
-        }
-        $this->references[$name] = array(
-            'class' => $meta->name,
-            'identifier' => $identifier
-        );
+        $this->references[$name] = $object;
     }
     
     /**
@@ -125,16 +101,7 @@ class ReferenceRepository
      */
     public function getReference($name)
     {
-        $object = null;
-        if (isset($this->references[$name])) {
-            $object = $this->manager->getReference(
-                $this->references[$name]['class'],
-                $this->references[$name]['identifier']
-            );
-        } else {
-            throw new \InvalidArgumentException("There is no reference stored under the name: [{$name}], check if fixtures are loading in correct order");
-        }
-        return $object;
+        return $this->references[$name];
     }
     
     /**

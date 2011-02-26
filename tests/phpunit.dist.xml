@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<phpunit>
-    <testsuites>
-        <testsuite name="Data Fixture tests">
-            <directory suffix="Test.php">Doctrine/Tests/Common/DataFixtures/</directory>
-        </testsuite>
-    </testsuites>
-</phpunit>

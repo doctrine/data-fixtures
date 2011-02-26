@@ -15,10 +15,10 @@ class UserFixture extends AbstractFixture
         $admin->setPassword('secret');
         $role = $this->getReference('admin-role');
         $admin->setRole($role);
-        
+
         $manager->persist($admin);
         $manager->flush();
-        
+
         $this->addReference('admin', $admin);
     }
 }
