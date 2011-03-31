@@ -28,6 +28,10 @@ use Doctrine\ORM\EntityManager;
  */
 class Loader
 {
+    const ORDER_BY_NUMBER           = 0;
+    const ORDER_BY_PARENT_CLASS     = 1;
+    
+    
     /**
      * Array of fixture object instances to execute.
      *
@@ -40,7 +44,14 @@ class Loader
      *
      * @var array
      */
-    private $orderedFixtures;
+    private $orderedFixtures = null;
+
+    /**
+     * Ordering method used to load fixtures
+     *
+     * @var string
+     */
+    private $orderingType = null;
 
     /**
      * The file extension of fixture files.
@@ -78,7 +89,7 @@ class Loader
             $includedFiles[] = $sourceFile;
         }
         $declared = get_declared_classes();
-        $fixtures = array();
+        
         foreach ($declared as $className) {
             $reflClass = new \ReflectionClass($className);
             $sourceFile = $reflClass->getFileName();
@@ -86,7 +97,7 @@ class Loader
             if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
                 $fixture = new $className;
                 $fixtures[] = $fixture;
-                $this->addFixture($fixture);
+                $this->addFixture($fixture); 
             }
         }
         return $fixtures;
@@ -99,7 +110,15 @@ class Loader
      */
     public function addFixture(FixtureInterface $fixture)
     {
-        $this->orderedFixtures = null;
+        if ( $fixture instanceof OrderedFixtureInterface )
+        {
+            $this->orderingType = self::ORDER_BY_NUMBER;
+        }
+        else if ( $fixture instanceof OrderedByParentFixtureInterface )
+        {
+           $this->orderingType = self::ORDER_BY_PARENT_CLASS;
+        }
+        
         $this->fixtures[ get_class( $fixture ) ] = $fixture;
     }
 
@@ -111,7 +130,21 @@ class Loader
     public function getFixtures()
     {
         if ($this->orderedFixtures === null) {
-            $this->orderFixtures();
+            switch ( $this->orderingType )
+            {
+                case self::ORDER_BY_NUMBER:
+                    $this->orderFixturesByNumber();
+
+                    break;
+                case self::ORDER_BY_PARENT_CLASS:
+                    $this->orderFixturesByParentClass();
+
+                    break;
+                default:
+                    $this->orderedFixtures = $this->fixtures;
+
+                    break;
+            }
         }
         return $this->orderedFixtures;
     }
@@ -127,20 +160,44 @@ class Loader
         $interfaces = class_implements($className);
         return in_array('Doctrine\Common\DataFixtures\FixtureInterface', $interfaces) ? false : true;
     }
-    
+
     /**
-     * Orders fixtures
+     * Orders fixtures by number
      * 
      * @todo maybe there is a better way to handle reordering
      * @return void
      */
-    private function orderFixtures()
+    private function orderFixturesByNumber()
+    {
+        $this->orderedFixtures = $this->fixtures;
+        usort($this->orderedFixtures, function($a, $b) {
+            if ($a instanceof OrderedFixtureInterface && $b instanceof OrderedFixtureInterface) {
+                if ($a->getOrder() === $b->getOrder()) {
+                    return 0;
+                }
+                return $a->getOrder() < $b->getOrder() ? -1 : 1;
+            } elseif ($a instanceof OrderedFixtureInterface) {
+                return $a->getOrder() === 0 ? 0 : 1;
+            } elseif ($b instanceof OrderedFixtureInterface) {
+                return $b->getOrder() === 0 ? 0 : -1;
+            }
+            return 0;
+        });
+    }
+    
+    
+    /**
+     * Orders fixtures by parent
+     * 
+     * @return void
+     */
+    private function orderFixturesByParent()
     {
         $this->orderedFixtures = array();
         
         foreach ( $this->fixtures as $fixture )
         {
-            if ( $fixture instanceof OrderedFixtureInterface )
+            if ( $fixture instanceof OrderedByParentFixtureInterface )
             {
                 $parentClass    = $fixture->getParentDataFixtureClass();
                 $childClass     = get_class( $fixture );
@@ -175,7 +232,7 @@ class Loader
                         
                         $this->orderedFixtures = array( $parentClass => $this->fixtures[ $parentClass ] ) + $this->orderedFixtures;
                         
-                        if ( $this->fixtures[ $parentClass ] instanceof OrderedFixtureInterface )
+                        if ( $this->fixtures[ $parentClass ] instanceof OrderedByParentFixtureInterface )
                         {
                             $tmpFixture = $this->fixtures[ $parentClass ];
                         }

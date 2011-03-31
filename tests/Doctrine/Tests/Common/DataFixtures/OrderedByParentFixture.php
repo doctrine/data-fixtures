@@ -20,7 +20,7 @@
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Loader;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Common\DataFixtures\OrderedByParentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
 require_once __DIR__.'/TestInit.php';
@@ -28,9 +28,9 @@ require_once __DIR__.'/TestInit.php';
 /**
  * Test Fixture ordering.
  *
- * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
+ * @author Gustavo Adrian <comfortablynumb84@gmail.com>
  */
-class OrderedFixtureTest extends BaseTest
+class OrderedByParentFixtureTest extends BaseTest
 {
     public function testFixtureOrder()
     {
@@ -49,7 +49,7 @@ class OrderedFixtureTest extends BaseTest
     }
 }
 
-class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
+class OrderedFixture1 implements FixtureInterface, OrderedByParentFixtureInterface
 {
     public function load($manager)
     {}
@@ -60,7 +60,7 @@ class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
     }
 }
 
-class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
+class OrderedFixture2 implements FixtureInterface, OrderedByParentFixtureInterface
 {
     public function load($manager)
     {}
@@ -71,7 +71,7 @@ class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
     }
 }
 
-class OrderedFixture3 implements FixtureInterface, OrderedFixtureInterface
+class OrderedFixture3 implements FixtureInterface, OrderedByParentFixtureInterface
 {
     public function load($manager)
     {}

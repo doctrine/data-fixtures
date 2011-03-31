@@ -1,6 +1,6 @@
 <?php
 
-namespace ENC\DataFixtures;
+namespace Doctrine\Common\DataFixtures;
 
 interface OrderedByParentFixtureInterface
 {   
