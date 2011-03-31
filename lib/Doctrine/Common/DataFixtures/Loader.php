@@ -82,7 +82,7 @@ class Loader
         foreach ($declared as $className) {
             $reflClass = new \ReflectionClass($className);
             $sourceFile = $reflClass->getFileName();
-			
+            
             if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
                 $fixture = new $className;
                 $fixtures[] = $fixture;
@@ -136,60 +136,60 @@ class Loader
      */
     private function orderFixtures()
     {
-		$this->orderedFixtures = array();
-		
-		foreach ( $this->fixtures as $fixture )
-		{
-			if ( $fixture instanceof OrderedFixtureInterface )
-			{
-				$parentClass 	= $fixture->getParentDataFixtureClass();
-				$childClass		= get_class( $fixture );
-				
-				if ( !isset( $this->fixtures[ $parentClass ] ) )
-				{
-					throw new \InvalidArgumentException( sprintf( 'Parent fixture class "%s" of class "%s" does not exists or was not loaded.', $parentClass, $childClass ) );
-				}
-				else if ( $parentClass === $childClass )
-				{
-					throw new \InvalidArgumentException( sprintf( 'Parent class "%s" cannot be the same as the child class.', $parentClass ) );
-				}
-				else
-				{
-					$hasParent 	= true;
-					$tmpFixture = $fixture;
-					
-					while ( $hasParent )
-					{
-						$parentClass 	= $tmpFixture->getParentDataFixtureClass();
-						$childClass		= get_class( $tmpFixture );
-						
-						if ( $parentKey = array_search( $parentClass, array_keys( $this->orderedFixtures ) ) )
-						{
-							unset( $this->orderedFixtures[ $parentKey ] );
-						}
-						
-						if ( !( $childKey = array_search( $childClass, array_keys( $this->orderedFixtures ) ) ) )
-						{
-							$this->orderedFixtures = array( $childClass => $this->fixtures[ $childClass ] ) + $this->orderedFixtures;
-						}
-						
-						$this->orderedFixtures = array( $parentClass => $this->fixtures[ $parentClass ] ) + $this->orderedFixtures;
-						
-						if ( $this->fixtures[ $parentClass ] instanceof OrderedFixtureInterface )
-						{
-							$tmpFixture = $this->fixtures[ $parentClass ];
-						}
-						else
-						{
-							$hasParent = false;
-						}
-					}
-				}
-			}
-			else if ( !( $key = array_search( get_class( $fixture ), array_keys( $this->orderedFixtures ) ) ) ) 
-			{
-				$this->orderedFixtures[ get_class( $fixture ) ] = $fixture;
-			}
-		}
+        $this->orderedFixtures = array();
+        
+        foreach ( $this->fixtures as $fixture )
+        {
+            if ( $fixture instanceof OrderedFixtureInterface )
+            {
+                $parentClass    = $fixture->getParentDataFixtureClass();
+                $childClass     = get_class( $fixture );
+                
+                if ( !isset( $this->fixtures[ $parentClass ] ) )
+                {
+                    throw new \InvalidArgumentException( sprintf( 'Parent fixture class "%s" of class "%s" does not exists or was not loaded.', $parentClass, $childClass ) );
+                }
+                else if ( $parentClass === $childClass )
+                {
+                    throw new \InvalidArgumentException( sprintf( 'Parent class "%s" cannot be the same as the child class.', $parentClass ) );
+                }
+                else
+                {
+                    $hasParent  = true;
+                    $tmpFixture = $fixture;
+                    
+                    while ( $hasParent )
+                    {
+                        $parentClass    = $tmpFixture->getParentDataFixtureClass();
+                        $childClass     = get_class( $tmpFixture );
+                        
+                        if ( $parentKey = array_search( $parentClass, array_keys( $this->orderedFixtures ) ) )
+                        {
+                            unset( $this->orderedFixtures[ $parentKey ] );
+                        }
+                        
+                        if ( !( $childKey = array_search( $childClass, array_keys( $this->orderedFixtures ) ) ) )
+                        {
+                            $this->orderedFixtures = array( $childClass => $this->fixtures[ $childClass ] ) + $this->orderedFixtures;
+                        }
+                        
+                        $this->orderedFixtures = array( $parentClass => $this->fixtures[ $parentClass ] ) + $this->orderedFixtures;
+                        
+                        if ( $this->fixtures[ $parentClass ] instanceof OrderedFixtureInterface )
+                        {
+                            $tmpFixture = $this->fixtures[ $parentClass ];
+                        }
+                        else
+                        {
+                            $hasParent = false;
+                        }
+                    }
+                }
+            }
+            else if ( !( $key = array_search( get_class( $fixture ), array_keys( $this->orderedFixtures ) ) ) ) 
+            {
+                $this->orderedFixtures[ get_class( $fixture ) ] = $fixture;
+            }
+        }
     }
 }
