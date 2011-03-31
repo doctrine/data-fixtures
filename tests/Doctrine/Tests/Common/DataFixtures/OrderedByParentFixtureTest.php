@@ -32,57 +32,58 @@ require_once __DIR__.'/TestInit.php';
  */
 class OrderedByParentFixtureTest extends BaseTest
 {
-    public function testFixtureOrder()
+    public function test_FixtureOrder()
     {
         $loader = new Loader();
-        $loader->addFixture(new OrderedFixture1);
-        $loader->addFixture(new OrderedFixture2);
-        $loader->addFixture(new OrderedFixture3);
-        $loader->addFixture(new BaseFixture1);
+        $loader->addFixture(new OrderedByParentFixture3);
+        $loader->addFixture(new OrderedByParentFixture1);
+        $loader->addFixture(new OrderedByParentFixture2);
+        $loader->addFixture(new BaseParentFixture1);
 
         $orderedFixtures = $loader->getFixtures();
         $this->assertEquals(4, count($orderedFixtures));
-        $this->assertTrue($orderedFixtures[0] instanceof BaseFixture1);
-        $this->assertTrue($orderedFixtures[1] instanceof OrderedFixture2);
-        $this->assertTrue($orderedFixtures[2] instanceof OrderedFixture1);
-        $this->assertTrue($orderedFixtures[3] instanceof OrderedFixture3);
+
+        $this->assertTrue(array_shift($orderedFixtures) instanceof BaseParentFixture1);
+        $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByParentFixture1);
+        $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByParentFixture2);
+        $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByParentFixture3);
     }
 }
 
-class OrderedFixture1 implements FixtureInterface, OrderedByParentFixtureInterface
+class OrderedByParentFixture1 implements FixtureInterface, OrderedByParentFixtureInterface
 {
     public function load($manager)
     {}
 
-    public function getOrder()
+    public function getParentDataFixtureClass()
     {
-        return 5;
+        return 'Doctrine\Tests\Common\DataFixtures\BaseParentFixture1';
     }
 }
 
-class OrderedFixture2 implements FixtureInterface, OrderedByParentFixtureInterface
+class OrderedByParentFixture2 implements FixtureInterface, OrderedByParentFixtureInterface
 {
     public function load($manager)
     {}
 
-    public function getOrder()
+    public function getParentDataFixtureClass()
     {
-        return 2;
+        return 'Doctrine\Tests\Common\DataFixtures\OrderedByParentFixture1';
     }
 }
 
-class OrderedFixture3 implements FixtureInterface, OrderedByParentFixtureInterface
+class OrderedByParentFixture3 implements FixtureInterface, OrderedByParentFixtureInterface
 {
     public function load($manager)
     {}
 
-    public function getOrder()
+    public function getParentDataFixtureClass()
     {
-        return 8;
+        return 'Doctrine\Tests\Common\DataFixtures\OrderedByParentFixture2';
     }
 }
 
-class BaseFixture1 implements FixtureInterface
+class BaseParentFixture1 implements FixtureInterface
 {
     public function load($manager)
     {}

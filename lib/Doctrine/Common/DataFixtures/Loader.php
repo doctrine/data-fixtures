@@ -129,23 +129,22 @@ class Loader
      */
     public function getFixtures()
     {
-        if ($this->orderedFixtures === null) {
-            switch ( $this->orderingType )
-            {
-                case self::ORDER_BY_NUMBER:
-                    $this->orderFixturesByNumber();
+        switch ( $this->orderingType )
+        {
+            case self::ORDER_BY_NUMBER:
+                $this->orderFixturesByNumber();
 
-                    break;
-                case self::ORDER_BY_PARENT_CLASS:
-                    $this->orderFixturesByParentClass();
+                break;
+            case self::ORDER_BY_PARENT_CLASS:
+                $this->orderFixturesByParentClass();
 
-                    break;
-                default:
-                    $this->orderedFixtures = $this->fixtures;
+                break;
+            default:
+                $this->orderedFixtures = $this->fixtures;
 
-                    break;
-            }
+                break;
         }
+
         return $this->orderedFixtures;
     }
 
@@ -191,7 +190,7 @@ class Loader
      * 
      * @return void
      */
-    private function orderFixturesByParent()
+    private function orderFixturesByParentClass()
     {
         $this->orderedFixtures = array();
         
