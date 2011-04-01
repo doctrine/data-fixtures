@@ -20,6 +20,7 @@
 namespace Doctrine\Common\DataFixtures;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\Common\DataFixtures\Exception;
 
 /**
  * Class responsible for loading data fixture classes.
@@ -110,16 +111,21 @@ class Loader
      */
     public function addFixture(FixtureInterface $fixture)
     {
-        if ( $fixture instanceof OrderedFixtureInterface )
+        $fixtureClass = get_class( $fixture );
+
+        if ( !isset( $this->fixtures[ $fixtureClass ] ) )
         {
-            $this->orderingType = self::ORDER_BY_NUMBER;
+            if ( $fixture instanceof OrderedFixtureInterface )
+            {
+                $this->orderingType = self::ORDER_BY_NUMBER;
+            }
+            else if ( $fixture instanceof OrderedByParentFixtureInterface )
+            {
+                $this->orderingType = self::ORDER_BY_PARENT_CLASS;
+            }
+
+            $this->fixtures[ $fixtureClass ] = $fixture;
         }
-        else if ( $fixture instanceof OrderedByParentFixtureInterface )
-        {
-           $this->orderingType = self::ORDER_BY_PARENT_CLASS;
-        }
-        
-        $this->fixtures[ get_class( $fixture ) ] = $fixture;
     }
 
     /**
@@ -192,60 +198,87 @@ class Loader
      */
     private function orderFixturesByParentClass()
     {
-        $this->orderedFixtures = array();
-        
+        $sequenceForClasses = array();
+
+        // First we determine which classes has dependencies and which don't
         foreach ( $this->fixtures as $fixture )
         {
+            $fixtureClass = get_class( $fixture );
+            
             if ( $fixture instanceof OrderedByParentFixtureInterface )
             {
-                $parentClass    = $fixture->getParentDataFixtureClass();
-                $childClass     = get_class( $fixture );
+                $parentClasses  = $fixture->getParentDataFixtureClasses();
+
+                if ( !is_array( $parentClasses ) || empty( $parentClasses ) )
+                {
+                    throw new \InvalidArgumentException( sprintf( 'Method "%s" in class "%s" must return an array of parent classes for the fixture, and it must be NOT empty.', 'getParentDataFixtureClasses', $fixtureClass ) );
+                }
                 
-                if ( !isset( $this->fixtures[ $parentClass ] ) )
-                {
-                    throw new \InvalidArgumentException( sprintf( 'Parent fixture class "%s" of class "%s" does not exists or was not loaded.', $parentClass, $childClass ) );
-                }
-                else if ( $parentClass === $childClass )
-                {
-                    throw new \InvalidArgumentException( sprintf( 'Parent class "%s" cannot be the same as the child class.', $parentClass ) );
-                }
-                else
-                {
-                    $hasParent  = true;
-                    $tmpFixture = $fixture;
-                    
-                    while ( $hasParent )
-                    {
-                        $parentClass    = $tmpFixture->getParentDataFixtureClass();
-                        $childClass     = get_class( $tmpFixture );
-                        
-                        if ( $parentKey = array_search( $parentClass, array_keys( $this->orderedFixtures ) ) )
-                        {
-                            unset( $this->orderedFixtures[ $parentKey ] );
-                        }
-                        
-                        if ( !( $childKey = array_search( $childClass, array_keys( $this->orderedFixtures ) ) ) )
-                        {
-                            $this->orderedFixtures = array( $childClass => $this->fixtures[ $childClass ] ) + $this->orderedFixtures;
-                        }
-                        
-                        $this->orderedFixtures = array( $parentClass => $this->fixtures[ $parentClass ] ) + $this->orderedFixtures;
-                        
-                        if ( $this->fixtures[ $parentClass ] instanceof OrderedByParentFixtureInterface )
-                        {
-                            $tmpFixture = $this->fixtures[ $parentClass ];
-                        }
-                        else
-                        {
-                            $hasParent = false;
-                        }
-                    }
-                }
+                // We mark this class as unsequenced
+                $sequenceForClasses[ $fixtureClass ] = -1;
             }
-            else if ( !( $key = array_search( get_class( $fixture ), array_keys( $this->orderedFixtures ) ) ) ) 
+            else
             {
-                $this->orderedFixtures[ get_class( $fixture ) ] = $fixture;
+                // This class has no dependencies, so we assign 0
+                $sequenceForClasses[ $fixtureClass ] = 0;
+            }
+        }
+
+        $sequence   = 1;
+        $lastCount  = -1;
+
+        while ( ( $count = count( $unsequencedClasses = $this->getUnsequencedClasses( $sequenceForClasses, array_keys( $sequenceForClasses ) ) ) ) > 0 && $count !== $lastCount )
+        {
+            foreach ( $unsequencedClasses as $key => $class )
+            {
+                $fixture            = $this->fixtures[ $class ];
+                $parents            = $fixture->getParentDataFixtureClasses();
+                $unsequencedParents = $this->getUnsequencedClasses( $sequenceForClasses, $parents );
+
+                if ( count( $unsequencedParents ) === 0 )
+                {
+                    $sequenceForClasses[ $class ] = $sequence++;
+                }                
+            }
+            
+            $lastCount = $count;
+        }
+
+        if ( $count > 0 )
+        {
+            throw new Exception\CircularReferenceException( sprintf( 'Classes "%s" has produced a Circular Reference Exception.', implode( ',', $unsequencedClasses ) ) );
+        }
+        else
+        {
+            // We order the classes by sequence
+            asort( $sequenceForClasses );
+
+            $this->orderedFixtures = array();
+
+            foreach ( $sequenceForClasses as $class => $sequence )
+            {
+                $this->orderedFixtures[] = $this->fixtures[ $class ];
             }
         }
     }
+
+    private function getUnsequencedClasses( $sequences, $classes = null )
+    {
+        $unsequencedClasses = array();
+
+        if ( is_null( $classes ) )
+        {
+            $classes = $sequences;
+        }
+
+        foreach ( $classes as $class )
+        {
+            if ( $sequences[ $class ] === -1 )
+            {
+                $unsequencedClasses[] = $class;
+            }
+        }
+
+        return $unsequencedClasses;
+    }           
 }

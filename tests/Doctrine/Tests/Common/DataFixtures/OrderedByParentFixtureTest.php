@@ -32,7 +32,7 @@ require_once __DIR__.'/TestInit.php';
  */
 class OrderedByParentFixtureTest extends BaseTest
 {
-    public function test_FixtureOrder()
+    public function test_orderFixturesByParentClass_orderClassesWithASingleParent()
     {
         $loader = new Loader();
         $loader->addFixture(new OrderedByParentFixture3);
@@ -41,12 +41,73 @@ class OrderedByParentFixtureTest extends BaseTest
         $loader->addFixture(new BaseParentFixture1);
 
         $orderedFixtures = $loader->getFixtures();
+
         $this->assertEquals(4, count($orderedFixtures));
 
         $this->assertTrue(array_shift($orderedFixtures) instanceof BaseParentFixture1);
         $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByParentFixture1);
         $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByParentFixture2);
         $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByParentFixture3);
+    }
+
+    public function test_orderFixturesByParentClass_orderClassesWithAMultipleParents()
+    {
+        $loader = new Loader();
+
+        $addressFixture         = new AddressFixture();
+        $contactMethodFixture   = new ContactMethodFixture();
+        $contactFixture         = new ContactFixture();
+        $baseParentFixture      = new BaseParentFixture1();
+        $countryFixture         = new CountryFixture();
+        $stateFixture           = new StateFixture();
+
+        $loader->addFixture( $addressFixture );
+        $loader->addFixture( $contactMethodFixture );
+        $loader->addFixture( $contactFixture );
+        $loader->addFixture( $baseParentFixture );
+        $loader->addFixture( $countryFixture );
+        $loader->addFixture( $stateFixture );
+
+        $orderedFixtures = $loader->getFixtures();
+
+        $this->assertEquals(6, count($orderedFixtures));
+
+        $contactFixtureOrder        = array_search( $contactFixture, $orderedFixtures );
+        $contactMethodFixtureOrder  = array_search( $contactMethodFixture, $orderedFixtures );
+        $addressFixtureOrder        = array_search( $addressFixture, $orderedFixtures );
+        $countryFixtureOrder        = array_search( $countryFixture, $orderedFixtures );
+        $stateFixtureOrder          = array_search( $stateFixture, $orderedFixtures );
+        $baseParentFixtureOrder     = array_search( $baseParentFixture, $orderedFixtures );
+        
+        // Order of fixtures is not exact. We need to test, however, that dependencies are
+        // indeed satisfied
+        
+        // BaseParentFixture1 has no dependencies, so it will always be first in this case
+        $this->assertEquals( $baseParentFixtureOrder, 0 );
+
+        $this->assertTrue( ( $contactFixtureOrder > $contactMethodFixtureOrder ) );
+        $this->assertTrue( ( $contactFixtureOrder > $addressFixtureOrder ) );
+        $this->assertTrue( ( $contactFixtureOrder > $countryFixtureOrder ) );
+        $this->assertTrue( ( $contactFixtureOrder > $stateFixtureOrder ) );
+        $this->assertTrue( ( $contactFixtureOrder > $contactMethodFixtureOrder ) );
+
+        $this->assertTrue( ( $addressFixtureOrder > $stateFixtureOrder ) );
+        $this->assertTrue( ( $addressFixtureOrder > $countryFixtureOrder ) );
+    }
+
+
+    /**
+     * @expectedException Doctrine\Common\DataFixtures\Exception\CircularReferenceException
+     */
+    public function test_orderFixturesByParentClass_circularReferencesMakeMethodThrowCircularReferenceException()
+    {
+        $loader = new Loader();
+        
+        $loader->addFixture( new CircularReferenceFixture3 );
+        $loader->addFixture( new CircularReferenceFixture );
+        $loader->addFixture( new CircularReferenceFixture2 );
+
+        $orderedFixtures = $loader->getFixtures();
     }
 }
 
@@ -55,9 +116,9 @@ class OrderedByParentFixture1 implements FixtureInterface, OrderedByParentFixtur
     public function load($manager)
     {}
 
-    public function getParentDataFixtureClass()
+    public function getParentDataFixtureClasses()
     {
-        return 'Doctrine\Tests\Common\DataFixtures\BaseParentFixture1';
+        return array( 'Doctrine\Tests\Common\DataFixtures\BaseParentFixture1' );
     }
 }
 
@@ -66,9 +127,9 @@ class OrderedByParentFixture2 implements FixtureInterface, OrderedByParentFixtur
     public function load($manager)
     {}
 
-    public function getParentDataFixtureClass()
+    public function getParentDataFixtureClasses()
     {
-        return 'Doctrine\Tests\Common\DataFixtures\OrderedByParentFixture1';
+        return array( 'Doctrine\Tests\Common\DataFixtures\OrderedByParentFixture1' );
     }
 }
 
@@ -77,9 +138,9 @@ class OrderedByParentFixture3 implements FixtureInterface, OrderedByParentFixtur
     public function load($manager)
     {}
 
-    public function getParentDataFixtureClass()
+    public function getParentDataFixtureClasses()
     {
-        return 'Doctrine\Tests\Common\DataFixtures\OrderedByParentFixture2';
+        return array( 'Doctrine\Tests\Common\DataFixtures\OrderedByParentFixture2' );
     }
 }
 
@@ -87,4 +148,112 @@ class BaseParentFixture1 implements FixtureInterface
 {
     public function load($manager)
     {}
+}
+
+class CountryFixture implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\BaseParentFixture1'
+        );
+    }
+}
+
+class StateFixture implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\BaseParentFixture1',
+            'Doctrine\Tests\Common\DataFixtures\CountryFixture'
+        );
+    }
+}
+
+class AddressFixture implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\BaseParentFixture1',
+            'Doctrine\Tests\Common\DataFixtures\CountryFixture',
+            'Doctrine\Tests\Common\DataFixtures\StateFixture'
+        );
+    }
+}
+
+class ContactMethodFixture implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\BaseParentFixture1'
+        );
+    }
+}
+
+class ContactFixture implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\AddressFixture',
+            'Doctrine\Tests\Common\DataFixtures\ContactMethodFixture'
+        );
+    }
+}
+
+class CircularReferenceFixture implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\CircularReferenceFixture3'
+        );
+    }
+}
+
+class CircularReferenceFixture2 implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\CircularReferenceFixture'
+        );
+    }
+}
+
+class CircularReferenceFixture3 implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\CircularReferenceFixture2'
+        );
+    }
 }
