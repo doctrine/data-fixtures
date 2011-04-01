@@ -20,7 +20,7 @@
 namespace Doctrine\Common\DataFixtures;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\DataFixtures\Exception;
+use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 
 /**
  * Class responsible for loading data fixture classes.
@@ -29,8 +29,8 @@ use Doctrine\Common\DataFixtures\Exception;
  */
 class Loader
 {
-    const ORDER_BY_NUMBER           = 0;
-    const ORDER_BY_PARENT_CLASS     = 1;
+    const ORDER_BY_NUMBER = 0;
+    const ORDER_BY_PARENT_CLASS = 1;
     
     
     /**
@@ -45,14 +45,14 @@ class Loader
      *
      * @var array
      */
-    private $orderedFixtures = null;
+    private $orderedFixtures;
 
     /**
      * Ordering method used to load fixtures
      *
      * @var string
      */
-    private $orderingType = null;
+    private $orderingType;
 
     /**
      * The file extension of fixture files.
@@ -111,20 +111,17 @@ class Loader
      */
     public function addFixture(FixtureInterface $fixture)
     {
-        $fixtureClass = get_class( $fixture );
+        $fixtureClass = get_class($fixture);
 
-        if ( !isset( $this->fixtures[ $fixtureClass ] ) )
-        {
-            if ( $fixture instanceof OrderedFixtureInterface )
-            {
+        if (!isset($this->fixtures[$fixtureClass])) {
+            if ($fixture instanceof OrderedFixtureInterface) {
                 $this->orderingType = self::ORDER_BY_NUMBER;
             }
-            else if ( $fixture instanceof OrderedByParentFixtureInterface )
-            {
+            else if ($fixture instanceof OrderedByParentFixtureInterface) {
                 $this->orderingType = self::ORDER_BY_PARENT_CLASS;
             }
 
-            $this->fixtures[ $fixtureClass ] = $fixture;
+            $this->fixtures[$fixtureClass] = $fixture;
         }
     }
 
@@ -135,8 +132,7 @@ class Loader
      */
     public function getFixtures()
     {
-        switch ( $this->orderingType )
-        {
+        switch ($this->orderingType) {
             case self::ORDER_BY_NUMBER:
                 $this->orderFixturesByNumber();
 
@@ -201,80 +197,69 @@ class Loader
         $sequenceForClasses = array();
 
         // First we determine which classes has dependencies and which don't
-        foreach ( $this->fixtures as $fixture )
-        {
-            $fixtureClass = get_class( $fixture );
+        foreach ($this->fixtures as $fixture) {
+            $fixtureClass = get_class($fixture);
             
-            if ( $fixture instanceof OrderedByParentFixtureInterface )
-            {
+            if ($fixture instanceof OrderedByParentFixtureInterface) {
                 $parentClasses  = $fixture->getParentDataFixtureClasses();
 
-                if ( !is_array( $parentClasses ) || empty( $parentClasses ) )
-                {
-                    throw new \InvalidArgumentException( sprintf( 'Method "%s" in class "%s" must return an array of parent classes for the fixture, and it must be NOT empty.', 'getParentDataFixtureClasses', $fixtureClass ) );
+                if (!is_array($parentClasses) || empty($parentClasses)) {
+                    throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of parent classes for the fixture, and it must be NOT empty.', 'getParentDataFixtureClasses', $fixtureClass));
+                }
+
+                if (in_array($fixtureClass, $parentClasses)) {
+                    throw new \InvalidArgumentException(sprintf('Class "%s" can\'t have itself as parent', $fixtureClass));
                 }
                 
                 // We mark this class as unsequenced
                 $sequenceForClasses[ $fixtureClass ] = -1;
-            }
-            else
-            {
+            } else {
                 // This class has no dependencies, so we assign 0
                 $sequenceForClasses[ $fixtureClass ] = 0;
             }
         }
 
-        $sequence   = 1;
-        $lastCount  = -1;
+        $sequence = 1;
+        $lastCount = -1;
 
-        while ( ( $count = count( $unsequencedClasses = $this->getUnsequencedClasses( $sequenceForClasses, array_keys( $sequenceForClasses ) ) ) ) > 0 && $count !== $lastCount )
-        {
-            foreach ( $unsequencedClasses as $key => $class )
-            {
-                $fixture            = $this->fixtures[ $class ];
-                $parents            = $fixture->getParentDataFixtureClasses();
-                $unsequencedParents = $this->getUnsequencedClasses( $sequenceForClasses, $parents );
+        while (($count = count($unsequencedClasses = $this->getUnsequencedClasses($sequenceForClasses, array_keys($sequenceForClasses)))) > 0 && $count !== $lastCount) {
+            foreach ($unsequencedClasses as $key => $class) {
+                $fixture = $this->fixtures[$class];
+                $parents = $fixture->getParentDataFixtureClasses();
+                $unsequencedParents = $this->getUnsequencedClasses($sequenceForClasses, $parents);
 
-                if ( count( $unsequencedParents ) === 0 )
-                {
-                    $sequenceForClasses[ $class ] = $sequence++;
+                if (count($unsequencedParents) === 0) {
+                    $sequenceForClasses[$class] = $sequence++;
                 }                
             }
             
             $lastCount = $count;
         }
 
-        if ( $count > 0 )
-        {
-            throw new Exception\CircularReferenceException( sprintf( 'Classes "%s" has produced a Circular Reference Exception.', implode( ',', $unsequencedClasses ) ) );
-        }
-        else
-        {
+        if ($count > 0) {
+            throw new CircularReferenceException(sprintf('Classes "%s" has produced a Circular Reference Exception.', implode(',', $unsequencedClasses)));
+        } else {
             // We order the classes by sequence
-            asort( $sequenceForClasses );
+            asort($sequenceForClasses);
 
             $this->orderedFixtures = array();
 
-            foreach ( $sequenceForClasses as $class => $sequence )
-            {
-                $this->orderedFixtures[] = $this->fixtures[ $class ];
+            foreach ($sequenceForClasses as $class => $sequence) {
+                $this->orderedFixtures[] = $this->fixtures[$class];
             }
         }
     }
 
-    private function getUnsequencedClasses( $sequences, $classes = null )
+    private function getUnsequencedClasses($sequences, $classes = null)
     {
         $unsequencedClasses = array();
 
-        if ( is_null( $classes ) )
-        {
+        if (is_null($classes)) {
             $classes = $sequences;
         }
 
-        foreach ( $classes as $class )
-        {
-            if ( $sequences[ $class ] === -1 )
-            {
+        foreach ($classes as $class) {
+            if ($sequences[$class] === -1) {
                 $unsequencedClasses[] = $class;
             }
         }

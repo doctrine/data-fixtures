@@ -61,38 +61,38 @@ class OrderedByParentFixtureTest extends BaseTest
         $countryFixture         = new CountryFixture();
         $stateFixture           = new StateFixture();
 
-        $loader->addFixture( $addressFixture );
-        $loader->addFixture( $contactMethodFixture );
-        $loader->addFixture( $contactFixture );
-        $loader->addFixture( $baseParentFixture );
-        $loader->addFixture( $countryFixture );
-        $loader->addFixture( $stateFixture );
+        $loader->addFixture($addressFixture);
+        $loader->addFixture($contactMethodFixture);
+        $loader->addFixture($contactFixture);
+        $loader->addFixture($baseParentFixture);
+        $loader->addFixture($countryFixture);
+        $loader->addFixture($stateFixture);
 
         $orderedFixtures = $loader->getFixtures();
 
         $this->assertEquals(6, count($orderedFixtures));
 
-        $contactFixtureOrder        = array_search( $contactFixture, $orderedFixtures );
-        $contactMethodFixtureOrder  = array_search( $contactMethodFixture, $orderedFixtures );
-        $addressFixtureOrder        = array_search( $addressFixture, $orderedFixtures );
-        $countryFixtureOrder        = array_search( $countryFixture, $orderedFixtures );
-        $stateFixtureOrder          = array_search( $stateFixture, $orderedFixtures );
-        $baseParentFixtureOrder     = array_search( $baseParentFixture, $orderedFixtures );
+        $contactFixtureOrder = array_search($contactFixture, $orderedFixtures);
+        $contactMethodFixtureOrder = array_search($contactMethodFixture, $orderedFixtures);
+        $addressFixtureOrder = array_search($addressFixture, $orderedFixtures);
+        $countryFixtureOrder = array_search($countryFixture, $orderedFixtures);
+        $stateFixtureOrder = array_search($stateFixture, $orderedFixtures);
+        $baseParentFixtureOrder = array_search($baseParentFixture, $orderedFixtures);
         
         // Order of fixtures is not exact. We need to test, however, that dependencies are
         // indeed satisfied
         
         // BaseParentFixture1 has no dependencies, so it will always be first in this case
-        $this->assertEquals( $baseParentFixtureOrder, 0 );
+        $this->assertEquals($baseParentFixtureOrder, 0);
 
-        $this->assertTrue( ( $contactFixtureOrder > $contactMethodFixtureOrder ) );
-        $this->assertTrue( ( $contactFixtureOrder > $addressFixtureOrder ) );
-        $this->assertTrue( ( $contactFixtureOrder > $countryFixtureOrder ) );
-        $this->assertTrue( ( $contactFixtureOrder > $stateFixtureOrder ) );
-        $this->assertTrue( ( $contactFixtureOrder > $contactMethodFixtureOrder ) );
+        $this->assertTrue(($contactFixtureOrder > $contactMethodFixtureOrder));
+        $this->assertTrue(($contactFixtureOrder > $addressFixtureOrder));
+        $this->assertTrue(($contactFixtureOrder > $countryFixtureOrder));
+        $this->assertTrue(($contactFixtureOrder > $stateFixtureOrder));
+        $this->assertTrue(($contactFixtureOrder > $contactMethodFixtureOrder));
 
-        $this->assertTrue( ( $addressFixtureOrder > $stateFixtureOrder ) );
-        $this->assertTrue( ( $addressFixtureOrder > $countryFixtureOrder ) );
+        $this->assertTrue(($addressFixtureOrder > $stateFixtureOrder));
+        $this->assertTrue(($addressFixtureOrder > $countryFixtureOrder));
     }
 
 
@@ -103,9 +103,21 @@ class OrderedByParentFixtureTest extends BaseTest
     {
         $loader = new Loader();
         
-        $loader->addFixture( new CircularReferenceFixture3 );
-        $loader->addFixture( new CircularReferenceFixture );
-        $loader->addFixture( new CircularReferenceFixture2 );
+        $loader->addFixture(new CircularReferenceFixture3);
+        $loader->addFixture(new CircularReferenceFixture);
+        $loader->addFixture(new CircularReferenceFixture2);
+
+        $orderedFixtures = $loader->getFixtures();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_orderFixturesByParentClass_fixturesCantHaveItselfAsParent()
+    {
+        $loader = new Loader();
+        
+        $loader->addFixture(new FixtureWithItselfAsParent);
 
         $orderedFixtures = $loader->getFixtures();
     }
@@ -254,6 +266,19 @@ class CircularReferenceFixture3 implements FixtureInterface, OrderedByParentFixt
     {
         return array( 
             'Doctrine\Tests\Common\DataFixtures\CircularReferenceFixture2'
+        );
+    }
+}
+
+class FixtureWithItselfAsParent implements FixtureInterface, OrderedByParentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getParentDataFixtureClasses()
+    {
+        return array( 
+            'Doctrine\Tests\Common\DataFixtures\FixtureWithItselfAsParent'
         );
     }
 }
