@@ -98,7 +98,7 @@ class Loader
             if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
                 $fixture = new $className;
                 $fixtures[] = $fixture;
-                $this->addFixture($fixture); 
+                $this->addFixture($fixture);
             }
         }
         return $fixtures;
@@ -116,8 +116,7 @@ class Loader
         if (!isset($this->fixtures[$fixtureClass])) {
             if ($fixture instanceof OrderedFixtureInterface) {
                 $this->orderingType = self::ORDER_BY_NUMBER;
-            }
-            else if ($fixture instanceof OrderedByParentFixtureInterface) {
+            } elseif ($fixture instanceof OrderedByParentFixtureInterface) {
                 $this->orderingType = self::ORDER_BY_PARENT_CLASS;
             }
 
