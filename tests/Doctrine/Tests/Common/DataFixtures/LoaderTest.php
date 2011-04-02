@@ -33,9 +33,9 @@ class LoaderTest extends BaseTest
     public function testLoader()
     {
         $loader = new Loader();
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface'));
+        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface'), array(), array(), 'Mock1');
         $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface', array(), array(), 'Mock2'));
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface'));
+        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface', array(), array(), 'Mock3'));
 
         $this->assertEquals(3, count($loader->getFixtures()));
 

@@ -29,10 +29,6 @@ use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
  */
 class Loader
 {
-    const ORDER_BY_NUMBER = 0;
-    const ORDER_BY_PARENT_CLASS = 1;
-    
-    
     /**
      * Array of fixture object instances to execute.
      *
@@ -48,11 +44,18 @@ class Loader
     private $orderedFixtures;
 
     /**
-     * Ordering method used to load fixtures
+     * Determines if we must order fixtures by number
      *
-     * @var string
+     * @var boolean
      */
-    private $orderingType;
+    private $orderFixturesByNumber = false;
+    
+    /**
+     * Determines if we must order fixtures by its dependencies
+     *
+     * @var boolean
+     */
+    private $orderFixturesByDependencies = false;
 
     /**
      * The file extension of fixture files.
@@ -114,10 +117,15 @@ class Loader
         $fixtureClass = get_class($fixture);
 
         if (!isset($this->fixtures[$fixtureClass])) {
-            if ($fixture instanceof OrderedFixtureInterface) {
-                $this->orderingType = self::ORDER_BY_NUMBER;
-            } elseif ($fixture instanceof OrderedByParentFixtureInterface) {
-                $this->orderingType = self::ORDER_BY_PARENT_CLASS;
+            if ($fixture instanceof OrderedFixtureInterface && $fixture instanceof DependentFixtureInterface) {
+                throw new \InvalidArgumentException(sprintf('Class "%s" can\'t implement "%s" and "%s" at the same time.', 
+                    get_class($fixture),
+                    'OrderedFixtureInterface',
+                    'DependentFixtureInterface'));
+            } elseif ($fixture instanceof OrderedFixtureInterface) {
+                $this->orderFixturesByNumber = true;
+            } elseif ($fixture instanceof DependentFixtureInterface) {
+                $this->orderFixturesByDependencies = true;
             }
 
             $this->fixtures[$fixtureClass] = $fixture;
@@ -131,19 +139,16 @@ class Loader
      */
     public function getFixtures()
     {
-        switch ($this->orderingType) {
-            case self::ORDER_BY_NUMBER:
-                $this->orderFixturesByNumber();
+        if ($this->orderFixturesByNumber) {
+            $this->orderFixturesByNumber();
+        }
 
-                break;
-            case self::ORDER_BY_PARENT_CLASS:
-                $this->orderFixturesByParentClass();
-
-                break;
-            default:
-                $this->orderedFixtures = $this->fixtures;
-
-                break;
+        if ($this->orderFixturesByDependencies) {
+            $this->orderFixturesByDependencies();
+        }
+        
+        if (!$this->orderFixturesByNumber && !$this->orderFixturesByDependencies) {
+            $this->orderedFixtures = $this->fixtures;
         }
 
         return $this->orderedFixtures;
@@ -187,20 +192,38 @@ class Loader
     
     
     /**
-     * Orders fixtures by parent
+     * Orders fixtures by dependencies
      * 
      * @return void
      */
-    private function orderFixturesByParentClass()
+    private function orderFixturesByDependencies()
     {
         $sequenceForClasses = array();
+
+        // If fixtures were already ordered by number then we need 
+        // to remove classes which are not instances of OrderedFixtureInterface
+        // in case fixtures implementing DependentFixtureInterface exist.
+        // This is because, in that case, the method orderFixturesByDependencies
+        // will handle all fixtures which are not instances of 
+        // OrderedFixtureInterface
+        if ($this->orderFixturesByNumber) {
+            $count = count($this->orderedFixtures);
+
+            for ($i = 0 ; $i < $count ; ++$i) {
+                if (!($this->orderedFixtures[$i] instanceof OrderedFixtureInterface)) {
+                    unset($this->orderedFixtures[$i]);
+                }
+            }
+        }
 
         // First we determine which classes has dependencies and which don't
         foreach ($this->fixtures as $fixture) {
             $fixtureClass = get_class($fixture);
-            
-            if ($fixture instanceof OrderedByParentFixtureInterface) {
-                $parentClasses  = $fixture->getParentDataFixtureClasses();
+
+            if ($fixture instanceof OrderedFixtureInterface) {
+                continue;
+            } elseif ($fixture instanceof DependentFixtureInterface) {
+                $parentClasses = $fixture->getDependencies();
 
                 if (!is_array($parentClasses) || empty($parentClasses)) {
                     throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of parent classes for the fixture, and it must be NOT empty.', 'getParentDataFixtureClasses', $fixtureClass));
@@ -211,20 +234,21 @@ class Loader
                 }
                 
                 // We mark this class as unsequenced
-                $sequenceForClasses[ $fixtureClass ] = -1;
+                $sequenceForClasses[$fixtureClass] = -1;
             } else {
                 // This class has no dependencies, so we assign 0
-                $sequenceForClasses[ $fixtureClass ] = 0;
+                $sequenceForClasses[$fixtureClass] = 0;
             }
         }
 
+        // Now we order fixtures by sequence
         $sequence = 1;
         $lastCount = -1;
-
+        
         while (($count = count($unsequencedClasses = $this->getUnsequencedClasses($sequenceForClasses, array_keys($sequenceForClasses)))) > 0 && $count !== $lastCount) {
             foreach ($unsequencedClasses as $key => $class) {
                 $fixture = $this->fixtures[$class];
-                $parents = $fixture->getParentDataFixtureClasses();
+                $parents = $fixture->getDependencies();
                 $unsequencedParents = $this->getUnsequencedClasses($sequenceForClasses, $parents);
 
                 if (count($unsequencedParents) === 0) {
@@ -235,18 +259,23 @@ class Loader
             $lastCount = $count;
         }
 
+        $orderedFixtures = array();
+        
+        // If there're fixtures unsequenced left and they couldn't be sequenced, 
+        // it means we have a circular reference
         if ($count > 0) {
             throw new CircularReferenceException(sprintf('Classes "%s" has produced a Circular Reference Exception.', implode(',', $unsequencedClasses)));
         } else {
             // We order the classes by sequence
             asort($sequenceForClasses);
 
-            $this->orderedFixtures = array();
-
             foreach ($sequenceForClasses as $class => $sequence) {
-                $this->orderedFixtures[] = $this->fixtures[$class];
+                // If fixtures were ordered 
+                $orderedFixtures[] = $this->fixtures[$class];
             }
         }
+
+        $this->orderedFixtures = is_array($this->orderedFixtures) ? array_merge($this->orderedFixtures, $orderedFixtures) : $orderedFixtures;
     }
 
     private function getUnsequencedClasses($sequences, $classes = null)
