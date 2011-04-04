@@ -25,17 +25,11 @@ use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
 /**
  * Class responsible for executing data fixtures.
  *
+ * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Daniel Barsotti <daniel.barsotti@liip.ch>
  */
 class PHPCRExecutor extends AbstractExecutor
 {
-    /**
-     * The Dependency Injection Container
-     *
-     * @var Container
-     */
-    protected $container;
-
     /**
      * Construct new fixtures loader instance.
      *
@@ -62,3 +56,4 @@ class PHPCRExecutor extends AbstractExecutor
         }
     }
 }
+
