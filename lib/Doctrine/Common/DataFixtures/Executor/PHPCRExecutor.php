@@ -21,7 +21,6 @@ namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Class responsible for executing data fixtures.
@@ -52,16 +51,6 @@ class PHPCRExecutor extends AbstractExecutor
         parent::__construct($dm);
     }
 
-    /**
-     * Set the dependency injection container
-     *
-     * @param Container $container
-     */
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-    }
-
     /** @inheritDoc */
     public function execute(array $fixtures, $append = false)
     {
@@ -69,7 +58,6 @@ class PHPCRExecutor extends AbstractExecutor
             $this->purge();
         }
         foreach ($fixtures as $fixture) {
-            $fixture->setContainer($this->container);
             $this->load($this->dm, $fixture);
         }
     }
