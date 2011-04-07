@@ -20,7 +20,6 @@
 namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\ODM\PHPCR\DocumentManager;
-use Jackalope\Node;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
