@@ -146,6 +146,17 @@ class DependentFixtureTest extends BaseTest
         $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture2);
         $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture3);
     }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function test_inCaseAFixtureHasAnUnexistenDependencyOrIfItWasntLoaded_throwsException()
+    {
+        $loader = new Loader();
+        $loader->addFixture(new FixtureWithUnexistentDependency);
+
+        $orderedFixtures = $loader->getFixtures();
+    }
 }
 
 class DependentFixture1 implements FixtureInterface, DependentFixtureInterface
@@ -304,6 +315,19 @@ class FixtureWithItselfAsParent implements FixtureInterface, DependentFixtureInt
     {
         return array( 
             'Doctrine\Tests\Common\DataFixtures\FixtureWithItselfAsParent'
+        );
+    }
+}
+
+class FixtureWithUnexistentDependency implements FixtureInterface, DependentFixtureInterface
+{
+    public function load($manager)
+    {}
+
+    public function getDependencies()
+    {
+        return array( 
+            'UnexistentDependency'
         );
     }
 }

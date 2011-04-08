@@ -223,14 +223,16 @@ class Loader
             if ($fixture instanceof OrderedFixtureInterface) {
                 continue;
             } elseif ($fixture instanceof DependentFixtureInterface) {
-                $parentClasses = $fixture->getDependencies();
+                $dependenciesClasses = $fixture->getDependencies();
+                
+                $this->validateDependencies($dependenciesClasses);
 
-                if (!is_array($parentClasses) || empty($parentClasses)) {
-                    throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of parent classes for the fixture, and it must be NOT empty.', 'getParentDataFixtureClasses', $fixtureClass));
+                if (!is_array($dependenciesClasses) || empty($dependenciesClasses)) {
+                    throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.', 'getDependencies', $fixtureClass));
                 }
 
-                if (in_array($fixtureClass, $parentClasses)) {
-                    throw new \InvalidArgumentException(sprintf('Class "%s" can\'t have itself as parent', $fixtureClass));
+                if (in_array($fixtureClass, $dependenciesClasses)) {
+                    throw new \InvalidArgumentException(sprintf('Class "%s" can\'t have itself as a dependency', $fixtureClass));
                 }
                 
                 // We mark this class as unsequenced
@@ -245,13 +247,13 @@ class Loader
         $sequence = 1;
         $lastCount = -1;
         
-        while (($count = count($unsequencedClasses = $this->getUnsequencedClasses($sequenceForClasses, array_keys($sequenceForClasses)))) > 0 && $count !== $lastCount) {
+        while (($count = count($unsequencedClasses = $this->getUnsequencedClasses($sequenceForClasses))) > 0 && $count !== $lastCount) {
             foreach ($unsequencedClasses as $key => $class) {
                 $fixture = $this->fixtures[$class];
-                $parents = $fixture->getDependencies();
-                $unsequencedParents = $this->getUnsequencedClasses($sequenceForClasses, $parents);
+                $dependencies = $fixture->getDependencies();
+                $unsequencedDependencies = $this->getUnsequencedClasses($sequenceForClasses, $dependencies);
 
-                if (count($unsequencedParents) === 0) {
+                if (count($unsequencedDependencies) === 0) {
                     $sequenceForClasses[$class] = $sequence++;
                 }                
             }
@@ -264,7 +266,12 @@ class Loader
         // If there're fixtures unsequenced left and they couldn't be sequenced, 
         // it means we have a circular reference
         if ($count > 0) {
-            throw new CircularReferenceException(sprintf('Classes "%s" has produced a Circular Reference Exception.', implode(',', $unsequencedClasses)));
+            $msg = 'Classes "%s" have produced a CircularReferenceException. ';
+            $msg .= 'An example of this problem would be the following: Class C has class B as its dependency. ';
+            $msg .= 'Then, class B has class A has its dependency. Finally, class A has class C as its dependency. ';
+            $msg .= 'This case would produce a CircularReferenceException.';
+            
+            throw new CircularReferenceException(sprintf($msg, implode(',', $unsequencedClasses)));
         } else {
             // We order the classes by sequence
             asort($sequenceForClasses);
@@ -278,12 +285,25 @@ class Loader
         $this->orderedFixtures = is_array($this->orderedFixtures) ? array_merge($this->orderedFixtures, $orderedFixtures) : $orderedFixtures;
     }
 
+    private function validateDependencies($dependenciesClasses)
+    {
+        $loadedFixtureClasses = array_keys($this->fixtures);
+        
+        foreach ($dependenciesClasses as $class) {
+            if (!in_array($class, $loadedFixtureClasses)) {
+                throw new \RuntimeException(sprintf('Fixture "%s" was declared as a dependency, but it doesn\'t exist.', $class));
+            }
+        }
+
+        return true;
+    }
+
     private function getUnsequencedClasses($sequences, $classes = null)
     {
         $unsequencedClasses = array();
 
         if (is_null($classes)) {
-            $classes = $sequences;
+            $classes = array_keys($sequences);
         }
 
         foreach ($classes as $class) {
