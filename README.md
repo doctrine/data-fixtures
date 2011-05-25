@@ -137,6 +137,6 @@ To setup and run tests follow these steps:
 - go to the root directory of data-fixtures
 - run: **git submodule init**
 - run: **git submodule update**
+- copy the phpunit config **cp phpunit.xml.dist tests/phpunit.xml**
 - go to tests directory: **cd tests**
-- copy the phpunit config **cp phpunit.dist.xml phpunit.xml**
 - run: **phpunit**
