@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestFixtures;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
+use Doctrine\ORM\EntityManager;
 
 class RoleFixture implements SharedFixtureInterface
 {
@@ -15,7 +16,7 @@ class RoleFixture implements SharedFixtureInterface
         $this->referenceRepository = $referenceRepository;
     }
 
-    public function load($manager)
+    public function load(EntityManager $manager)
     {
         $adminRole = new Role();
         $adminRole->setName('admin');

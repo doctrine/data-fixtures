@@ -22,6 +22,7 @@ namespace Doctrine\Tests\Common\DataFixtures;
 require_once __DIR__.'/TestInit.php';
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Test Fixture interface.
@@ -44,7 +45,7 @@ class MyFixture2 implements FixtureInterface
 {
     public $loaded = false;
 
-    public function load($manager)
+    public function load(EntityManager $manager)
     {
         $this->loaded = true;
     }
