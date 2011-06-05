@@ -82,8 +82,9 @@ class ORMPurger implements PurgerInterface
             $orderedTables[] = $class->getTableName();
         }
 
+        $platform = $this->em->getConnection()->getDatabasePlatform();
         foreach($orderedTables as $tbl) {
-            $this->em->getConnection()->executeUpdate("DELETE FROM $tbl");
+            $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl));
         }
     }
 
