@@ -51,16 +51,10 @@ class PHPCRPurger implements PurgerInterface
         $this->dm = $dm;
     }
 
-    /** @inheritDoc */
-    public function purge()
-    {
-        $this->deleteAllNodes();
-    }
-
     /**
      * Delete all the nodes in the repository which are not prefixed with jcr:
      */
-    protected function deleteAllNodes()
+    public function purge()
     {
         $session = $this->dm->getPhpcrSession();
         foreach($session->getRootNode()->getNodes() as $node) {
