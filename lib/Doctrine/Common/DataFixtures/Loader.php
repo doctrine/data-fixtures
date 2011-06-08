@@ -123,6 +123,9 @@ class Loader
      */
     public function isTransient($className)
     {
+        $rc = new \ReflectionClass($className);
+        if ($rc->isAbstract()) return true;
+
         $interfaces = class_implements($className);
         return in_array('Doctrine\Common\DataFixtures\FixtureInterface', $interfaces) ? false : true;
     }
