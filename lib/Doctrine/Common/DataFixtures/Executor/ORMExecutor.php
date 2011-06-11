@@ -21,6 +21,7 @@ namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 
 /**
  * Class responsible for executing data fixtures.
@@ -42,6 +43,9 @@ class ORMExecutor extends AbstractExecutor
             $this->purger->setEntityManager($em);
         }
         parent::__construct($em);
+        $em->getEventManager()->addEventSubscriber(
+            new ORMReferenceListener($this->referenceRepository)
+        );
     }
 
     /** @inheritDoc */

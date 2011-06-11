@@ -21,6 +21,7 @@ namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
+use Doctrine\Common\DataFixtures\Event\Listener\MongoDBReferenceListener;
 
 /**
  * Class responsible for executing data fixtures.
@@ -42,6 +43,9 @@ class MongoDBExecutor extends AbstractExecutor
             $this->purger->setDocumentManager($dm);
         }
         parent::__construct($dm);
+        $dm->getEventManager()->addEventSubscriber(
+            new MongoDBReferenceListener($this->referenceRepository)
+        );
     }
 
     /** @inheritDoc */
