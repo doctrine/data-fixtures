@@ -20,6 +20,9 @@
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
+use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\Proxy\Proxy;
 
 require_once __DIR__.'/TestInit.php';
 
@@ -31,7 +34,7 @@ require_once __DIR__.'/TestInit.php';
 class ReferenceRepositoryTest extends BaseTest
 {
     const TEST_ENTITY_ROLE = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Role';
-    
+
     public function testReferenceEntry()
     {
         $em = $this->getMockAnnotationReaderEntityManager();
@@ -39,20 +42,72 @@ class ReferenceRepositoryTest extends BaseTest
         $role->setName('admin');
         $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
         $meta->getReflectionProperty('id')->setValue($role, 1);
-        
+
         $referenceRepo = new ReferenceRepository($em);
         $referenceRepo->addReference('test', $role);
-        
+
         $references = $referenceRepo->getReferences();
         $this->assertEquals(1, count($references));
         $this->assertArrayHasKey('test', $references);
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
     }
-    
-    private function getMockReferenceRepository()
+
+    public function testReferenceIdentityPopulation()
     {
-        return $this->getMockBuilder('Doctrine\Common\DataFixtures\ReferenceRepository')
-            ->setConstructorArgs(array($this->em))
+        $em = $this->getMockSqliteEntityManager();
+        $referenceRepository = $this->getMockBuilder('Doctrine\Common\DataFixtures\ReferenceRepository')
+            ->setConstructorArgs(array($em))
             ->getMock();
+        $em->getEventManager()->addEventSubscriber(
+            new ORMReferenceListener($referenceRepository)
+        );
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema(array());
+        $schemaTool->createSchema(array(
+            $em->getClassMetadata(self::TEST_ENTITY_ROLE)
+        ));
+
+        $referenceRepository->expects($this->once())
+            ->method('addReference')
+            ->with('admin-role');
+
+        $referenceRepository->expects($this->once())
+            ->method('getReferenceName')
+            ->will($this->returnValue('admin-role'));
+
+        $referenceRepository->expects($this->once())
+            ->method('setReferenceIdentity')
+            ->with('admin-role', array('id' => 1));
+
+        $roleFixture = new TestFixtures\RoleFixture;
+        $roleFixture->setReferenceRepository($referenceRepository);
+
+        $roleFixture->load($em);
+    }
+
+    public function testReferenceReconstruction()
+    {
+        $em = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ReferenceRepository($em);
+        $em->getEventManager()->addEventSubscriber(
+            new ORMReferenceListener($referenceRepository)
+        );
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema(array());
+        $schemaTool->createSchema(array(
+            $em->getClassMetadata(self::TEST_ENTITY_ROLE)
+        ));
+        $roleFixture = new TestFixtures\RoleFixture;
+        $roleFixture->setReferenceRepository($referenceRepository);
+
+        $roleFixture->load($em);
+        // first test against managed state
+        $ref = $referenceRepository->getReference('admin-role');
+        $this->assertFalse($ref instanceof Proxy);
+
+        // now test reference reconstruction from identity
+        $em->clear();
+        $ref = $referenceRepository->getReference('admin-role');
+        $this->assertTrue($ref instanceof Proxy);
     }
 }

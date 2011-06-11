@@ -59,11 +59,11 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         $em = EntityManager::create($conn, $config);
         return $em;
     }
-    
+
     /**
      * EntityManager mock object together with
      * annotation mapping driver
-     * 
+     *
      * @return EntityManager
      */
     protected function getMockAnnotationReaderEntityManager()
@@ -93,7 +93,7 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
             $reader,
             __DIR__ . '/TestEntity'
         );
-            
+
         $config->expects($this->any())
             ->method('getMetadataDriverImpl')
             ->will($this->returnValue($mappingDriver));
@@ -101,12 +101,12 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         $em = EntityManager::create($conn, $config);
         return $em;
     }
-    
+
     /**
      * EntityManager mock object together with
      * annotation mapping driver and pdo_sqlite
      * database in memory
-     * 
+     *
      * @return EntityManager
      */
     protected function getMockSqliteEntityManager()
@@ -124,7 +124,7 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         $config->expects($this->once())
             ->method('getProxyNamespace')
             ->will($this->returnValue('Proxy'));
-            
+
         $config->expects($this->once())
             ->method('getAutoGenerateProxyClasses')
             ->will($this->returnValue(true));
@@ -132,13 +132,12 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         $reader = new \Doctrine\Common\Annotations\AnnotationReader();
         $reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
         $mappingDriver = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader);
-            
+
         $config->expects($this->any())
             ->method('getMetadataDriverImpl')
             ->will($this->returnValue($mappingDriver));
 
-        $evm = $this->getMock('Doctrine\Common\EventManager');
-        $em = EntityManager::create($conn, $config, $evm);
+        $em = EntityManager::create($conn, $config);
         return $em;
     }
 }

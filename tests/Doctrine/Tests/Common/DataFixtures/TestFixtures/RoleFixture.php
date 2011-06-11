@@ -20,13 +20,8 @@ class RoleFixture implements SharedFixtureInterface
         $adminRole = new Role();
         $adminRole->setName('admin');
 
-        $anonymousRole = new Role;
-        $anonymousRole->setName('anonymous');
-
         $manager->persist($adminRole);
-        $manager->persist($anonymousRole);
-        $manager->flush();
-
         $this->referenceRepository->addReference('admin-role', $adminRole);
+        $manager->flush();
     }
 }
