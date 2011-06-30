@@ -89,8 +89,10 @@ class Loader
                 continue;
             }
             $sourceFile = realpath($file->getPathName());
-            require_once $sourceFile;
-            $includedFiles[] = $sourceFile;
+            if (file_exists($sourceFile)) {
+                require_once $sourceFile;
+                $includedFiles[] = $sourceFile;
+            }
         }
         $declared = get_declared_classes();
         
