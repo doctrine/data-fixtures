@@ -82,10 +82,12 @@ class ORMPurger implements PurgerInterface
             $orderedTables[] = $class->getTableName();
         }
 
+        $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 0;");
         $platform = $this->em->getConnection()->getDatabasePlatform();
         foreach($orderedTables as $tbl) {
             $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
         }
+        $this->em->getConnection()->executeUpdate("SET foreign_key_checks = 1;");
     }
 
     private function getCommitOrder(EntityManager $em, array $classes)
