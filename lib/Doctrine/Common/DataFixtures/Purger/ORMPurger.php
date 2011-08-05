@@ -83,8 +83,14 @@ class ORMPurger implements PurgerInterface
         }
 
         $platform = $this->em->getConnection()->getDatabasePlatform();
+        if(get_class($platform) == 'Doctrine\\DBAL\\Platforms\\MySqlPlatform') {
+            $this->em->getConnection()->executeQuery("SET foreign_key_checks = 0;");
+        }
         foreach($orderedTables as $tbl) {
             $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+        }
+        if(get_class($platform) == 'Doctrine\\DBAL\\Platforms\\MySqlPlatform') {
+            $this->em->getConnection()->executeQuery("SET foreign_key_checks = 1;");
         }
     }
 
