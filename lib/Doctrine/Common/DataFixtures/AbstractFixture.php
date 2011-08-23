@@ -87,4 +87,17 @@ abstract class AbstractFixture implements SharedFixtureInterface
     {
         return $this->referenceRepository->getReference($name);
     }
+    
+    /**
+     * Check if an object is stored using reference
+     * named by $name
+     * 
+     * @param string $name
+     * @see Doctrine\Common\DataFixtures\ReferenceRepository::hasReference
+     * @return boolean
+     */
+    public function hasReference($name)
+    {
+        return $this->referenceRepository->hasReference($name);
+    }
 }

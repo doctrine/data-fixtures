@@ -137,6 +137,18 @@ class ReferenceRepository
     }
 
     /**
+     * Check if an object is stored using reference
+     * named by $name
+     *
+     * @param string $name
+     * @return boolean
+     */
+    public function hasReference($name)
+    {
+        return isset($this->references[$name]);
+    }
+
+    /**
      * Searches for a reference name in the
      * list of stored references
      *
