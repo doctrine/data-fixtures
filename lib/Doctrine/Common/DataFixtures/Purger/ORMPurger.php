@@ -27,11 +27,22 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  * Class responsible for purging databases of data before reloading data fixtures.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
 class ORMPurger implements PurgerInterface
 {
+    const PURGE_MODE_DELETE = 1;
+    const PURGE_MODE_TRUNCATE = 2;
+
     /** EntityManager instance used for persistence. */
     private $em;
+
+    /**
+     * If the purge should be done through DELETE or TRUNCATE statements
+     *
+     * @var int
+     */
+    private $purgeMode = self::PURGE_MODE_DELETE;
 
     /**
      * Construct new purger instance.
@@ -41,6 +52,27 @@ class ORMPurger implements PurgerInterface
     public function __construct(EntityManager $em = null)
     {
         $this->em = $em;
+    }
+
+    /**
+     * Set the purge mode
+     *
+     * @param $mode
+     * @return void
+     */
+    public function setPurgeMode($mode)
+    {
+        $this->purgeMode = $mode;
+    }
+
+    /**
+     * Get the purge mode
+     *
+     * @return int
+     */
+    public function getPurgeMode()
+    {
+        return $this->purgeMode;
     }
 
     /**
@@ -84,7 +116,11 @@ class ORMPurger implements PurgerInterface
 
         $platform = $this->em->getConnection()->getDatabasePlatform();
         foreach($orderedTables as $tbl) {
-            $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+            if ($this->purgeMode === self::PURGE_MODE_DELETE) {
+                $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
+            } else {
+                $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+            }
         }
     }
 
