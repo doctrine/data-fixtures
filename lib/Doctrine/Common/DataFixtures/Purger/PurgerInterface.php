@@ -31,5 +31,5 @@ interface PurgerInterface
      *
      * @return void
      */
-    public function purge();
+    function purge();
 }
