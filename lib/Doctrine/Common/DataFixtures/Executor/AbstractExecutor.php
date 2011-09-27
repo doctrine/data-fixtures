@@ -5,6 +5,7 @@ namespace Doctrine\Common\DataFixtures\Executor;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Abstract fixture executor.
@@ -28,9 +29,9 @@ abstract class AbstractExecutor
     /**
      * Loads an instance of reference repository
      * 
-     * @param object $manager
+     * @param Doctrine\Common\Persistence\ObjectManager $manager
      */
-    public function __construct($manager)
+    public function __construct(ObjectManager $manager)
     {
         $this->referenceRepository = new ReferenceRepository($manager);
     }
@@ -79,10 +80,10 @@ abstract class AbstractExecutor
     /**
      * Load a fixture with the given persistence manager.
      *
-     * @param object $manager
+     * @param Doctrine\Common\Persistence\ObjectManager $manager
      * @param FixtureInterface $fixture
      */
-    public function load($manager, FixtureInterface $fixture)
+    public function load(ObjectManager $manager, FixtureInterface $fixture)
     {
         if ($this->logger) {
             $this->log('loading ' . get_class($fixture));
