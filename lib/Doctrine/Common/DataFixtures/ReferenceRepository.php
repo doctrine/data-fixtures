@@ -76,7 +76,11 @@ class ReferenceRepository
         // in case if reference is set after flush, store its identity
         $uow = $this->manager->getUnitOfWork();
         if ($uow->isInIdentityMap($reference)) {
-            $this->identities[$name] = $uow->getEntityIdentifier($reference);
+            if ($uow instanceof \Doctrine\ORM\UnitOfWork) {
+                $this->identities[$name] = $uow->getEntityIdentifier($reference);
+            } else {
+                $this->identities[$name] = $uow->getDocumentIdentifier($reference);
+            }            
         }
     }
 
