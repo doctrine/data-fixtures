@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\DataFixtures;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 /**
  * ReferenceRepository class manages references for
  * fixtures in order to easily support the relations
@@ -48,16 +50,16 @@ class ReferenceRepository
     /**
      * Currently used object manager
      *
-     * @var object - object manager
+     * @var Doctrine\Common\Persistence\ObjectManager
      */
     private $manager;
 
     /**
      * Initialize the ReferenceRepository
      *
-     * @param object $manager
+     * @param Doctrine\Common\Persistence\ObjectManager $manager
      */
-    public function __construct($manager)
+    public function __construct(ObjectManager$manager)
     {
         $this->manager = $manager;
     }

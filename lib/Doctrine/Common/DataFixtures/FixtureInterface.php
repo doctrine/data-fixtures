@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\DataFixtures;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 /**
  * Interface contract for fixture classes to implement.
  *
@@ -29,7 +31,7 @@ interface FixtureInterface
     /**
      * Load data fixtures with the passed EntityManager
      *
-     * @param object $manager
+     * @param Doctrine\Common\Persistence\ObjectManager $manager
      */
-    public function load($manager);
+    public function load(ObjectManager $manager);
 }
