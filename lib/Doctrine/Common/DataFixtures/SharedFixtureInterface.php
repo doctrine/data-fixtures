@@ -36,5 +36,5 @@ interface SharedFixtureInterface extends FixtureInterface
      * 
      * @param ReferenceRepository $referenceRepository
      */ 
-    public function setReferenceRepository(ReferenceRepository $referenceRepository);
+    function setReferenceRepository(ReferenceRepository $referenceRepository);
 }
