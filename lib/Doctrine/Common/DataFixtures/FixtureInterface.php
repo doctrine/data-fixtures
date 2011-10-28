@@ -31,5 +31,5 @@ interface FixtureInterface
      *
      * @param object $manager
      */
-    public function load($manager);
+    function load($manager);
 }
