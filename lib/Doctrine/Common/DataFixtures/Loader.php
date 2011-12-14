@@ -294,7 +294,7 @@ class Loader
         
         foreach ($dependenciesClasses as $class) {
             if (!in_array($class, $loadedFixtureClasses)) {
-                throw new \RuntimeException(sprintf('Fixture "%s" was declared as a dependency, but it doesn\'t exist.', $class));
+                throw new \RuntimeException(sprintf('Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.', $class));
             }
         }
 
