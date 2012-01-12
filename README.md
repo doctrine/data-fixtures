@@ -46,7 +46,7 @@ Now you can easily execute the fixtures:
     $executor = new ORMExecutor($em, $purger);
     $executor->execute($loader->getFixtures());
 
-If you want to append the fixtures instead of purging before loading then pass false
+If you want to append the fixtures instead of purging before loading then pass true
 to the 2nd argument of execute:
 
     $executor->execute($loader->getFixtures(), true);
