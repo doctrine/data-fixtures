@@ -6,12 +6,12 @@ Doctrine\Common\DataFixtures\FixtureInterface interface:
 
     namespace MyDataFixtures;
 
-    use Doctrine\ORM\EntityManager;
+    use Doctrine\Common\Persistence\ObjectManager;
     use Doctrine\Common\DataFixtures\FixtureInterface;
 
     class LoadUserData implements FixtureInterface
     {
-        public function load($manager)
+        public function load(ObjectManager $manager)
         {
             $user = new User();
             $user->setUsername('jwage');
@@ -60,10 +60,11 @@ a relation. Here is an example fixtures for **Role** and **User** relation
     namespace MyDataFixtures;
 
     use Doctrine\Common\DataFixtures\AbstractFixture;
+    use Doctrine\Common\Persistence\ObjectManager;
 
     class LoadUserRoleData extends AbstractFixture
     {
-        public function load($manager)
+        public function load(ObjectManager $manager)
         {
             $adminRole = new Role();
             $adminRole->setName('admin');
@@ -85,10 +86,11 @@ And the **User** data loading fixture:
     namespace MyDataFixtures;
 
     use Doctrine\Common\DataFixtures\AbstractFixture;
+    use Doctrine\Common\Persistence\ObjectManager;
 
     class LoadUserData extends AbstractFixture
     {
-        public function load($manager)
+        public function load(ObjectManager $manager)
         {
             $user = new User();
             $user->setUsername('jwage');
@@ -112,10 +114,11 @@ implement the OrderedFixtureInterface and set the order:
 
     use Doctrine\Common\DataFixtures\AbstractFixture;
     use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+    use Doctrine\Common\Persistence\ObjectManager;
 
     class MyFixture extends AbstractFixture implements OrderedFixtureInterface
     {
-        public function load($manager)
+        public function load(ObjectManager $manager)
         {}
         
         public function getOrder()
