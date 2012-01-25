@@ -3,10 +3,11 @@ namespace Doctrine\Tests\Common\DataFixtures\TestFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class UserFixture extends AbstractFixture
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {
         $admin = new User;
         $admin->setId(4);

@@ -35,7 +35,7 @@ class ORMExecutorTest extends BaseTest
 {
     public function testExecuteWithNoPurge()
     {
-        $em = $this->getMockEntityManager();
+        $em = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('setEntityManager')
@@ -50,7 +50,7 @@ class ORMExecutorTest extends BaseTest
 
     public function testExecuteWithPurge()
     {
-        $em = $this->getMockEntityManager();
+        $em = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('purge')
@@ -65,15 +65,10 @@ class ORMExecutorTest extends BaseTest
 
     public function testExecuteTransaction()
     {
-        $em = $this->getMockEntityManager();
+        $em = $this->getMockSqliteEntityManager();
         $executor = new ORMExecutor($em);
         $fixture = $this->getMockFixture($em);
         $executor->execute(array($fixture), true);
-    }
-
-    public function testSharedFixtureExecution()
-    {
-        $em = $this->getMockEntityManager();
     }
     
     private function getMockFixture($em)

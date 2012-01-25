@@ -23,6 +23,7 @@ use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
 require_once __DIR__.'/TestInit.php';
 
@@ -161,7 +162,7 @@ class DependentFixtureTest extends BaseTest
 
 class DependentFixture1 implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -172,7 +173,7 @@ class DependentFixture1 implements FixtureInterface, DependentFixtureInterface
 
 class DependentFixture2 implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -183,7 +184,7 @@ class DependentFixture2 implements FixtureInterface, DependentFixtureInterface
 
 class DependentFixture3 implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -194,13 +195,13 @@ class DependentFixture3 implements FixtureInterface, DependentFixtureInterface
 
 class BaseParentFixture1 implements FixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 }
 
 class CountryFixture implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -213,7 +214,7 @@ class CountryFixture implements FixtureInterface, DependentFixtureInterface
 
 class StateFixture implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -227,7 +228,7 @@ class StateFixture implements FixtureInterface, DependentFixtureInterface
 
 class AddressFixture implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -242,7 +243,7 @@ class AddressFixture implements FixtureInterface, DependentFixtureInterface
 
 class ContactMethodFixture implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -255,7 +256,7 @@ class ContactMethodFixture implements FixtureInterface, DependentFixtureInterfac
 
 class ContactFixture implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -269,7 +270,7 @@ class ContactFixture implements FixtureInterface, DependentFixtureInterface
 
 class CircularReferenceFixture implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -282,7 +283,7 @@ class CircularReferenceFixture implements FixtureInterface, DependentFixtureInte
 
 class CircularReferenceFixture2 implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -295,7 +296,7 @@ class CircularReferenceFixture2 implements FixtureInterface, DependentFixtureInt
 
 class CircularReferenceFixture3 implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -308,7 +309,7 @@ class CircularReferenceFixture3 implements FixtureInterface, DependentFixtureInt
 
 class FixtureWithItselfAsParent implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -321,7 +322,7 @@ class FixtureWithItselfAsParent implements FixtureInterface, DependentFixtureInt
 
 class FixtureWithUnexistentDependency implements FixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
@@ -334,7 +335,7 @@ class FixtureWithUnexistentDependency implements FixtureInterface, DependentFixt
 
 class FixtureImplementingBothOrderingInterfaces implements FixtureInterface, OrderedFixtureInterface, DependentFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
     
     public function getOrder()
@@ -352,7 +353,7 @@ class FixtureImplementingBothOrderingInterfaces implements FixtureInterface, Ord
 
 class OrderedByNumberFixture1 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getOrder()
@@ -363,7 +364,7 @@ class OrderedByNumberFixture1 implements FixtureInterface, OrderedFixtureInterfa
 
 class OrderedByNumberFixture2 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getOrder()
@@ -374,7 +375,7 @@ class OrderedByNumberFixture2 implements FixtureInterface, OrderedFixtureInterfa
 
 class OrderedByNumberFixture3 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getOrder()

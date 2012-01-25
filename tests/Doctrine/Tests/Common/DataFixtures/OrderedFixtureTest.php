@@ -22,6 +22,7 @@ namespace Doctrine\Tests\Common\DataFixtures;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
 require_once __DIR__.'/TestInit.php';
 
@@ -51,7 +52,7 @@ class OrderedFixtureTest extends BaseTest
 
 class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getOrder()
@@ -62,7 +63,7 @@ class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
 
 class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getOrder()
@@ -73,7 +74,7 @@ class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
 
 class OrderedFixture3 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 
     public function getOrder()
@@ -84,6 +85,6 @@ class OrderedFixture3 implements FixtureInterface, OrderedFixtureInterface
 
 class BaseFixture1 implements FixtureInterface
 {
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {}
 }
