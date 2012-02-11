@@ -110,7 +110,7 @@ class Loader
     /**
      * Add a fixture object instance to the loader.
      *
-     * @param object $fixture
+     * @param FixtureInterface $fixture
      */
     public function addFixture(FixtureInterface $fixture)
     {
