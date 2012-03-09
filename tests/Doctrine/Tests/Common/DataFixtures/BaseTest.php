@@ -29,6 +29,7 @@ use PHPUnit_Framework_TestCase;
  * Base test class
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
+ * @author Saem Ghani
  */
 abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
@@ -57,8 +58,14 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
             ->method('getMetadataDriverImpl')
             ->will($this->returnValue($this->getMock('Doctrine\ORM\Mapping\Driver\DriverChain')));
 
-        $em = EntityManager::create($conn, $config);
-        return $em;
+        $metadataFactory = $this->getMock('\Doctrine\ORM\Mapping\ClassMetadataFactory');
+        $metadataFactoryName = get_class($metadataFactory);
+
+        $config->expects($this->once())
+            ->method('getClassMetadataFactoryName')
+            ->will($this->returnValue($metadataFactoryName));
+
+        return EntityManager::create($conn, $config);
     }
 
     /**
