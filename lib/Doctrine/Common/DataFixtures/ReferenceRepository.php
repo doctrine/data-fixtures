@@ -59,7 +59,7 @@ class ReferenceRepository
      *
      * @param Doctrine\Common\Persistence\ObjectManager $manager
      */
-    public function __construct(ObjectManager$manager)
+    public function __construct(ObjectManager $manager)
     {
         $this->manager = $manager;
     }
