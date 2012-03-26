@@ -135,11 +135,16 @@ class ORMPurger implements PurgerInterface
             if (isset($this->excludedTables[$tbl])) {
                 continue;
             }
-            if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-                $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
-            } else {
-                $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
-            }
+            $this->purgeTable($tbl, $platform);
+        }
+    }
+
+    protected function purgeTable($tbl, $platform)
+    {
+        if ($this->purgeMode === self::PURGE_MODE_DELETE) {
+            $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
+        } else {
+            $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
         }
     }
 
