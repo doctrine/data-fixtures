@@ -50,18 +50,19 @@ class Add
 		$dir = realpath($em->getConfiguration()->getProxyDir()) . '/';
 
 		if (!($input->getOption('directory'))) {
-			$output->write('You need to input the directory' . PHP_EOL);
+			$output->write($this->getSynopsis() . PHP_EOL);
+			throw new \Exception('You need to input the directory');
 		} else {
 			$dir = realpath($dir . $input->getOption('directory') . '/');
 			if (! is_dir($dir)) {
-				$output->write('The inputted "' . $dir . '" is not a directory.' . PHP_EOL);
+				throw new \Exception(sprintf('The inputted "%s" is not a directory', $dir));
 			} else {
 				$loader = new Loader();
 				$loader->loadFromDirectory($dir);
 				$fixtures = $loader->getFixtures();
 
 				if ($input->getOption('dump-fixtures') === true) {
-					$output->writeln($fixtures . PHP_EOL);
+					throw new \Exception('Dumping fixtures is not implemented yet');
 				} elseif ($input->getOption('append') === true) {
 					$purger = new ORMPurger();
 					$executor = new ORMExecutor($em, $purger);
