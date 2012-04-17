@@ -101,6 +101,9 @@ class ORMPurger implements PurgerInterface
 
         // Drop association tables first
         $orderedTables = $this->getAssociationTables($commitOrder);
+        
+        // Get platform parameters
+        $platform = $this->em->getConnection()->getDatabasePlatform();
 
         // Drop tables in reverse commit order
         for ($i = count($commitOrder) - 1; $i >= 0; --$i) {
@@ -111,10 +114,9 @@ class ORMPurger implements PurgerInterface
                 continue;
             }
 
-            $orderedTables[] = $class->getTableName();
+            $orderedTables[] = $class->getQuotedTableName($platform);
         }
 
-        $platform = $this->em->getConnection()->getDatabasePlatform();
         foreach($orderedTables as $tbl) {
             if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                 $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
