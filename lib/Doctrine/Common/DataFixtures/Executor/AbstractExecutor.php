@@ -4,6 +4,7 @@ namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -96,7 +97,11 @@ abstract class AbstractExecutor
     public function load(ObjectManager $manager, FixtureInterface $fixture)
     {
         if ($this->logger) {
-            $this->log('loading ' . get_class($fixture));
+            $prefix = '';
+            if ($fixture instanceof OrderedFixtureInterface) {
+                $prefix = sprintf('[%d] ',$fixture->getOrder());
+            }
+            $this->log('loading ' . $prefix . get_class($fixture));
         }
         // additionaly pass the instance of reference repository to shared fixtures
         if ($fixture instanceof SharedFixtureInterface) {
