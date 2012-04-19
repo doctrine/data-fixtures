@@ -25,27 +25,37 @@ abstract class AbstractExecutor
      * @var ReferenceRepository
      */
     protected $referenceRepository;
-    
+
     /**
      * Loads an instance of reference repository
-     * 
+     *
      * @param Doctrine\Common\Persistence\ObjectManager $manager
      */
     public function __construct(ObjectManager $manager)
     {
         $this->referenceRepository = new ReferenceRepository($manager);
     }
-    
+
     /**
      * Get reference repository
-     * 
+     *
      * @return ReferenceRepository
      */
     public function getReferenceRepository()
     {
         return $this->referenceRepository;
     }
-    
+
+    /**
+     * Set reference repository
+     *
+     * @param ReferenceRepository $referenceRepository Reference repository
+     */
+    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    {
+        $this->referenceRepository = $referenceRepository;
+    }
+
     /**
      * Sets the Purger instance to use for this exector instance.
      *
