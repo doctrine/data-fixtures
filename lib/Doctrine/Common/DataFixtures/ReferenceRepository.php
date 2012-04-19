@@ -36,7 +36,7 @@ class ReferenceRepository
      *
      * @var array
      */
-    private $references = array();
+    protected $references = array();
 
     /**
      * List of identifiers stored for references
@@ -45,14 +45,14 @@ class ReferenceRepository
      *
      * @var array
      */
-    private $identities = array();
+    protected $identities = array();
 
     /**
      * Currently used object manager
      *
      * @var Doctrine\Common\Persistence\ObjectManager
      */
-    private $manager;
+    protected $manager;
 
     /**
      * Initialize the ReferenceRepository
