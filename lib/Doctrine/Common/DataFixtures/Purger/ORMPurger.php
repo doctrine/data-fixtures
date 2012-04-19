@@ -133,6 +133,17 @@ class ORMPurger implements PurgerInterface
         foreach ($classes as $class) {
             $calc->addClass($class);
 
+            // $class before its parents
+            foreach ($class->parentClasses as $parentClass) {
+                $parentClass = $em->getClassMetadata($parentClass);
+
+                if ( ! $calc->hasClass($parentClass->name)) {
+                    $calc->addClass($parentClass);
+                }
+
+                $calc->addDependency($class, $parentClass);
+            }
+
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide']) {
                     $targetClass = $em->getClassMetadata($assoc['targetEntity']);
@@ -143,6 +154,17 @@ class ORMPurger implements PurgerInterface
 
                     // add dependency ($targetClass before $class)
                     $calc->addDependency($targetClass, $class);
+
+                    // parents of $targetClass before $class, too
+                    foreach ($targetClass->parentClasses as $parentClass) {
+                        $parentClass = $em->getClassMetadata($parentClass);
+
+                        if ( ! $calc->hasClass($parentClass->name)) {
+                            $calc->addClass($parentClass);
+                        }
+
+                        $calc->addDependency($parentClass, $class);
+                    }
                 }
             }
         }
