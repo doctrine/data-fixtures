@@ -177,6 +177,16 @@ class ReferenceRepository
     }
 
     /**
+     * Get all stored identities
+     *
+     * @return array
+     */
+    public function getIdentities()
+    {
+        return $this->identities;
+    }
+
+    /**
      * Get all stored references
      *
      * @return array
