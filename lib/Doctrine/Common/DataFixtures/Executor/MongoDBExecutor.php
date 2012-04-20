@@ -48,7 +48,7 @@ class MongoDBExecutor extends AbstractExecutor
     }
 
     /** @inheritDoc */
-    public function setReferenceRepository($referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository)
     {
         $this->dm->getEventManager()->removeEventListener(
             $this->listener->getSubscribedEvents(),

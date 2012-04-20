@@ -48,7 +48,7 @@ class ORMExecutor extends AbstractExecutor
     }
 
     /** @inheritDoc */
-    public function setReferenceRepository($referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository)
     {
         $this->em->getEventManager()->removeEventListener(
             $this->listener->getSubscribedEvents(),
