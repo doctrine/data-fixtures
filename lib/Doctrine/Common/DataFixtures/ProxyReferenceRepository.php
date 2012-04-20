@@ -24,6 +24,9 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 /**
  * Proxy reference repository
  *
+ * Allow data fixture references and identities to be persisted when cached data fixtures
+ * are pre-loaded, for example, by LiipFunctionalTestBundle\Test\WebTestCase loadFixtures().
+ *
  * @since Doctrine ORM 2.2
  *
  * @author Anthon Pang <anthonp@nationalfibre.net>
@@ -70,5 +73,29 @@ class ProxyReferenceRepository extends ReferenceRepository
         foreach ($identities as $name => $identity) {
             $this->setReferenceIdentity($name, $identity);
         }
+    }
+
+    /**
+     * Load data fixture reference repository
+     *
+     * @param string $baseCacheName Base cache name
+     */
+    public function load($baseCacheName)
+    {
+        $serializedData = file_get_contents($baseCacheName.'.ser');
+
+        $this->unserialize($serializedData);
+    }
+
+    /**
+     * Save data fixture reference repository
+     *
+     * @param string $baseCacheName Base cache name
+     */
+    public function save($baseCacheName)
+    {
+        $serializedData = $this->serialize();
+
+        file_put_contents($baseCacheName.'.ser', $serializedData);
     }
 }
