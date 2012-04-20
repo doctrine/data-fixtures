@@ -48,7 +48,7 @@ abstract class AbstractExecutor
     }
 
     /**
-     * Set reference repository
+     * Set the reference repository
      *
      * @param ReferenceRepository $referenceRepository Reference repository
      */
@@ -103,7 +103,7 @@ abstract class AbstractExecutor
             }
             $this->log('loading ' . $prefix . get_class($fixture));
         }
-        // additionaly pass the instance of reference repository to shared fixtures
+        // additionally pass the instance of reference repository to shared fixtures
         if ($fixture instanceof SharedFixtureInterface) {
             $fixture->setReferenceRepository($this->referenceRepository);
         }
