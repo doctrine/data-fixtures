@@ -82,7 +82,7 @@ class ReferenceRepository
                 $this->identities[$name] = $uow->getEntityIdentifier($reference);
             } else {
                 $this->identities[$name] = $uow->getDocumentIdentifier($reference);
-            }            
+            }
         }
     }
 
@@ -194,5 +194,15 @@ class ReferenceRepository
     public function getReferences()
     {
         return $this->references;
+    }
+
+    /**
+     * Get object manager
+     *
+     * @return Doctrine\Common\Persistence\ObjectManager
+     */
+    public function getManager()
+    {
+        return $this->manager;
     }
 }
