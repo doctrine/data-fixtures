@@ -43,9 +43,21 @@ class ORMExecutor extends AbstractExecutor
             $this->purger->setEntityManager($em);
         }
         parent::__construct($em);
-        $em->getEventManager()->addEventSubscriber(
-            new ORMReferenceListener($this->referenceRepository)
+        $this->listener = new ORMReferenceListener($this->referenceRepository);
+        $em->getEventManager()->addEventSubscriber($this->listener);
+    }
+
+    /** @inheritDoc */
+    public function setReferenceRepository($referenceRepository)
+    {
+        $this->em->getEventManager()->removeEventListener(
+            $this->listener->getSubscribedEvents(),
+            $this->listener
         );
+
+        $this->referenceRepository = $referenceRepository;
+        $this->listener = new ORMReferenceListener($this->referenceRepository);
+        $this->em->getEventManager()->addEventSubscriber($this->listener);
     }
 
     /** @inheritDoc */
