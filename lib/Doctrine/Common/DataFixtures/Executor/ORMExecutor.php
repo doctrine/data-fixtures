@@ -22,6 +22,7 @@ namespace Doctrine\Common\DataFixtures\Executor;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Class responsible for executing data fixtures.

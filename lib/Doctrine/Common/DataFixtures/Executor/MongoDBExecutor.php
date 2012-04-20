@@ -22,6 +22,7 @@ namespace Doctrine\Common\DataFixtures\Executor;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\Event\Listener\MongoDBReferenceListener;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Class responsible for executing data fixtures.
