@@ -110,13 +110,15 @@ class Loader
     /**
      * Has fixture?
      *
-     * @param FixtureInterface $fixture
+     * @param string|FixtureInterface $fixture
      *
      * @return boolean
      */
-    public function hasFixture(FixtureInterface $fixture)
+    public function hasFixture($fixture)
     {
-        return isset($this->fixtures[get_class($fixture)]);
+        $fixtureClass = $fixture instanceof FixtureInterface ? get_class($fixture) : $fixture;
+
+        return isset($this->fixtures[$fixtureClass]);
     }
 
     /**
