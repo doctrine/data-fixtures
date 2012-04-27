@@ -108,6 +108,18 @@ class Loader
     }
 
     /**
+     * Has fixture?
+     *
+     * @param FixtureInterface $fixture
+     *
+     * @return boolean
+     */
+    public function hasFixture(FixtureInterface $fixture)
+    {
+        return isset($this->fixtures[get_class($fixture)]);
+    }
+
+    /**
      * Add a fixture object instance to the loader.
      *
      * @param FixtureInterface $fixture
