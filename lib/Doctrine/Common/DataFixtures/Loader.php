@@ -116,7 +116,7 @@ class Loader
      */
     public function hasFixture($fixture)
     {
-        return isset($this->fixtures[get_class($fixtureClass)]);
+        return isset($this->fixtures[get_class($fixture)]);
     }
 
     /**
