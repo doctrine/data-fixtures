@@ -44,7 +44,7 @@ class ProxyReferenceRepository extends ReferenceRepository
             return $className;
         }
 
-        if (\Doctrine\ORM\Version::compare('2.2.0') >= 0) {
+        if (\Doctrine\Common\Version::compare('2.2.0') >= 0) {
             return \Doctrine\Common\Util\ClassUtils::getRealClass($className);
         }
 
