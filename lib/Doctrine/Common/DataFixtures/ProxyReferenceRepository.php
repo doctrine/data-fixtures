@@ -40,8 +40,10 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     public function serialize() {
         $simpleReferences = array();
+
         foreach ($this->getReferences() as $name => $reference) {
             $className = str_replace('Proxies\\__CG__\\', '', get_class($reference));
+
             $simpleReferences[$name] = array($className, $reference->getId());
         }
 
@@ -50,7 +52,7 @@ class ProxyReferenceRepository extends ReferenceRepository
             'identities' => $this->getIdentities(),
         ));
 
-	return $serializedData;
+        return $serializedData;
     }
 
     /**
@@ -60,16 +62,20 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     public function unserialize($serializedData) {
         $repositoryData = json_decode($serializedData, true);
+        $references     = $repositoryData['references'];
 
-        $references = $repositoryData['references'];
         foreach ($references as $name => $proxyReference) {
-            $this->setReference($name, $this->getManager()->getReference(
-                $proxyReference[0], // entity class name
-                $proxyReference[1]  // id
-            ));
+            $this->setReference(
+                $name,
+                $this->getManager()->getReference(
+                    $proxyReference[0], // entity class name
+                    $proxyReference[1]  // id
+                )
+            );
         }
 
         $identities = $repositoryData['identities'];
+
         foreach ($identities as $name => $identity) {
             $this->setReferenceIdentity($name, $identity);
         }
@@ -82,7 +88,7 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     public function load($baseCacheName)
     {
-        $serializedData = file_get_contents($baseCacheName.'.ser');
+        $serializedData = file_get_contents($baseCacheName . '.ser');
 
         $this->unserialize($serializedData);
     }
@@ -96,6 +102,6 @@ class ProxyReferenceRepository extends ReferenceRepository
     {
         $serializedData = $this->serialize();
 
-        file_put_contents($baseCacheName.'.ser', $serializedData);
+        file_put_contents($baseCacheName . '.ser', $serializedData);
     }
 }
