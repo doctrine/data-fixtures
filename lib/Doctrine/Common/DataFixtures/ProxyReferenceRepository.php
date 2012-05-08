@@ -19,30 +19,49 @@
 
 namespace Doctrine\Common\DataFixtures;
 
-use Doctrine\Common\DataFixtures\ReferenceRepository;
-
 /**
  * Proxy reference repository
  *
  * Allow data fixture references and identities to be persisted when cached data fixtures
  * are pre-loaded, for example, by LiipFunctionalTestBundle\Test\WebTestCase loadFixtures().
  *
- * @since Doctrine ORM 2.2
- *
  * @author Anthon Pang <anthonp@nationalfibre.net>
  */
 class ProxyReferenceRepository extends ReferenceRepository
 {
     /**
+     * Get real class name of a reference that could be a proxy
+     *
+     * @param mixed $reference Reference
+     *
+     * @return string
+     */
+    protected function getRealClass($reference)
+    {
+        $className = get_class($reference);
+
+        if ( ! $reference instanceof \Doctrine\ORM\Proxy\Proxy) {
+            return $className;
+        }
+
+        if (\Doctrine\ORM\Version::compare('2.2.0') >= 0) {
+            return \Doctrine\Common\Util\ClassUtils::getRealClass($className);
+        }
+
+        return substr($className, 0, -5);
+    }
+
+    /**
      * Serialize reference repository
      *
      * @return string
      */
-    public function serialize() {
+    public function serialize()
+    {
         $simpleReferences = array();
 
         foreach ($this->getReferences() as $name => $reference) {
-            $className = str_replace('Proxies\\__CG__\\', '', get_class($reference));
+            $className = $this->getRealClass($reference);
 
             $simpleReferences[$name] = array($className, $reference->getId());
         }
@@ -60,7 +79,8 @@ class ProxyReferenceRepository extends ReferenceRepository
      *
      * @param string $serializedData Serialized data
      */
-    public function unserialize($serializedData) {
+    public function unserialize($serializedData)
+    {
         $repositoryData = json_decode($serializedData, true);
         $references     = $repositoryData['references'];
 
@@ -88,7 +108,11 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     public function load($baseCacheName)
     {
-        $serializedData = file_get_contents($baseCacheName . '.ser');
+        $filename = $baseCacheName . '.ser';
+
+        if ( ! file_exists($filename) || ($serializedData = file_get_contents($filename)) === false) {
+            return;
+        }
 
         $this->unserialize($serializedData);
     }
