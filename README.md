@@ -41,8 +41,9 @@ You can get the added fixtures using the getFixtures() method:
 Now you can easily execute the fixtures:
 
     use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+    use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 
-    $purger = new Purger();
+    $purger = new ORMPurger();
     $executor = new ORMExecutor($em, $purger);
     $executor->execute($loader->getFixtures());
 
