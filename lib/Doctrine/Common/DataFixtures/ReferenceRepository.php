@@ -65,6 +65,23 @@ class ReferenceRepository
     }
 
     /**
+     * Get identifier for a unit of work
+     *
+     * @param object $reference Reference object
+     * @param object $uow       Unit of work
+     *
+     * @return mixed
+     */
+    protected function getIdentifier($reference, $uow)
+    {
+        if (method_exists($uow, 'getEntityIdentifier')) {
+            return $uow->getEntityIdentifier($reference);
+        }
+
+        return $uow->getDocumentIdentifier($reference);
+    }
+
+    /**
      * Set the reference entry identified by $name
      * and referenced to $reference. If $name
      * already is set, it overrides it
@@ -78,11 +95,7 @@ class ReferenceRepository
         // in case if reference is set after flush, store its identity
         $uow = $this->manager->getUnitOfWork();
         if ($uow->isInIdentityMap($reference)) {
-            if ($uow instanceof \Doctrine\ORM\UnitOfWork) {
-                $this->identities[$name] = $uow->getEntityIdentifier($reference);
-            } else {
-                $this->identities[$name] = $uow->getDocumentIdentifier($reference);
-            }
+            $this->identities[$name] = $this->getIdentifier($reference, $uow);
         }
     }
 
