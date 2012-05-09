@@ -40,15 +40,15 @@ class ProxyReferenceRepository extends ReferenceRepository
     {
         $className = get_class($reference);
 
-        if ( ! $reference instanceof \Doctrine\ORM\Proxy\Proxy) {
-            return $className;
-        }
-
-        if (\Doctrine\Common\Version::compare('2.2.0') >= 0) {
+        if (\Doctrine\Common\Version::compare('2.2.0') === -1) {
             return \Doctrine\Common\Util\ClassUtils::getRealClass($className);
         }
 
-        return substr($className, 0, -5);
+        if (substr($className, -5) === 'Proxy') {
+            return substr($className, 0, -5);
+        }
+
+        return $className;
     }
 
     /**
