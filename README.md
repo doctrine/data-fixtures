@@ -69,6 +69,8 @@ a relation. Here is an example fixtures for **Role** and **User** relation
         {
             $adminRole = new Role();
             $adminRole->setName('admin');
+            // store reference to admin role for User relation to Role
+            $this->addReference('admin-role', $adminRole);
             
             $anonymousRole = new Role;
             $anonymousRole->setName('anonymous');
@@ -76,13 +78,12 @@ a relation. Here is an example fixtures for **Role** and **User** relation
             $manager->persist($adminRole);
             $manager->persist($anonymousRole);
             $manager->flush();
-            
-            // store reference to admin role for User relation to Role
-            $this->addReference('admin-role', $adminRole);
         }
     }
     
 And the **User** data loading fixture:
+**Notice**: that stored references may not be at the **managed** state in UnitOfWork.
+Use $manager->merge($object); function to restore the state of object
 
     namespace MyDataFixtures;
 
@@ -96,8 +97,10 @@ And the **User** data loading fixture:
             $user = new User();
             $user->setUsername('jwage');
             $user->setPassword('test');
+            // load the stored reference, notice that, its state can get unmanaged
+            // so we merge it into identity map of UnitOfWork
             $user->setRole(
-                $this->getReference('admin-role') // load the stored reference
+                $manager->merge($this->getReference('admin-role'))
             );
 
             $manager->persist($user);
