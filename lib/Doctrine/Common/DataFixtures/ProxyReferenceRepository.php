@@ -41,7 +41,7 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     protected function getRealClass($className)
     {
-        if (Version::compare('2.2.0') === -1) {
+        if (Version::compare('2.2.0') <= 0) {
             return ClassUtils::getRealClass($className);
         }
 
