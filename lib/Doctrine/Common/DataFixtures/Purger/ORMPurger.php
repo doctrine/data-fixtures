@@ -28,6 +28,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Saem Ghani
  */
 class ORMPurger implements PurgerInterface
 {
@@ -36,6 +37,9 @@ class ORMPurger implements PurgerInterface
 
     /** EntityManager instance used for persistence. */
     private $em;
+
+    /** @var array An array of table names to ignore */
+    private $excludedTables = array();
 
     /**
      * If the purge should be done through DELETE or TRUNCATE statements
@@ -48,10 +52,12 @@ class ORMPurger implements PurgerInterface
      * Construct new purger instance.
      *
      * @param EntityManager $em EntityManager instance used for persistence.
+     * @param array $excludedTables tables to be excluded from the purge
      */
-    public function __construct(EntityManager $em = null)
+    public function __construct(EntityManager $em = null, array $excludedTables = array())
     {
         $this->em = $em;
+        $this->setExcludedTables($excludedTables);
     }
 
     /**
@@ -83,6 +89,16 @@ class ORMPurger implements PurgerInterface
     public function setEntityManager(EntityManager $em)
     {
       $this->em = $em;
+    }
+
+    /**
+     * Set the classes to be ignored during the purge
+     *
+     * @param array $excludedTables An array of class names to ignore
+     */
+    public function setExcludedTables(array $excludedTables = array())
+    {
+        $this->excludedTables = ($excludedTables) ? array_flip($excludedTables) : array();
     }
 
     /** @inheritDoc */
@@ -118,11 +134,19 @@ class ORMPurger implements PurgerInterface
         }
 
         foreach($orderedTables as $tbl) {
-            if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-                $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
-            } else {
-                $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+            if (isset($this->excludedTables[$tbl])) {
+                continue;
             }
+            $this->purgeTable($tbl, $platform);
+        }
+    }
+
+    protected function purgeTable($tbl, $platform)
+    {
+        if ($this->purgeMode === self::PURGE_MODE_DELETE) {
+            $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
+        } else {
+            $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
         }
     }
 
