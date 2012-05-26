@@ -4,7 +4,7 @@
     "description": "Data Fixtures for all Doctrine Object Managers",
     "keywords": ["database"],
     "homepage": "http://www.doctrine-project.org",
-    "license": "LGPL",
+    "license": "MIT",
     "authors": [
         {"name": "Jonathan Wage", "email": "jonwage@gmail.com"}
     ],
