@@ -57,6 +57,16 @@ class PHPCRPurger implements PurgerInterface
     }
 
     /**
+     * Retrieve the DocumentManager instance this purger isntance is using.
+     *
+     * @return \Doctrine\ODM\PHPCR\DocumentManager
+     */
+    public function getDocumentManager()
+    {
+        return $this->dm;
+    }
+
+    /**
      * @inheritDoc
      */
     public function purge()

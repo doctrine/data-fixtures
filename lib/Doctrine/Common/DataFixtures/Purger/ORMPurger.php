@@ -85,6 +85,16 @@ class ORMPurger implements PurgerInterface
       $this->em = $em;
     }
 
+    /**
+     * Retrieve the EntityManager instance this purger instance is using.
+     *
+     * @return \Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->em;
+    }
+
     /** @inheritDoc */
     public function purge()
     {
@@ -101,7 +111,7 @@ class ORMPurger implements PurgerInterface
 
         // Drop association tables first
         $orderedTables = $this->getAssociationTables($commitOrder);
-        
+
         // Get platform parameters
         $platform = $this->em->getConnection()->getDatabasePlatform();
 

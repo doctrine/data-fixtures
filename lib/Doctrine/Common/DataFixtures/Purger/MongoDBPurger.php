@@ -51,6 +51,16 @@ class MongoDBPurger implements PurgerInterface
         $this->dm = $dm;
     }
 
+    /**
+     * Retrieve the DocumentManager instance this purger isntance is using.
+     *
+     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     */
+    public function getDocumentManager()
+    {
+        return $this->dm;
+    }
+
     /** @inheritDoc */
     public function purge()
     {
