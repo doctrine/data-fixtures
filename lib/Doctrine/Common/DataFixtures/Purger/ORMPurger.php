@@ -90,7 +90,7 @@ class ORMPurger implements PurgerInterface
      *
      * @return \Doctrine\ORM\EntityManager
      */
-    public function getEntityManager()
+    public function getObjectManager()
     {
         return $this->em;
     }
