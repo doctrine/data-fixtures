@@ -48,6 +48,16 @@ class ORMExecutor extends AbstractExecutor
         $em->getEventManager()->addEventSubscriber($this->listener);
     }
 
+    /**
+     * Retrieve the EntityManager instance this executor instance is using.
+     *
+     * @return \Doctrine\ORM\EntityManager
+     */
+    public function getObjectManager()
+    {
+        return $this->em;
+    }
+
     /** @inheritDoc */
     public function setReferenceRepository(ReferenceRepository $referenceRepository)
     {

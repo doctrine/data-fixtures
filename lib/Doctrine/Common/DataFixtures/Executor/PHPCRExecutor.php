@@ -45,6 +45,16 @@ class PHPCRExecutor extends AbstractExecutor
         parent::__construct($dm);
     }
 
+    /**
+     * Retrieve the DocumentManager instance this executor instance is using.
+     *
+     * @return \Doctrine\ODM\PHPCR\DocumentManager
+     */
+    public function getObjectManager()
+    {
+        return $this->dm;
+    }
+
     /** @inheritDoc */
     public function execute(array $fixtures, $append = false)
     {

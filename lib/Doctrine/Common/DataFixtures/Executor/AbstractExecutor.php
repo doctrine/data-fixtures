@@ -68,6 +68,16 @@ abstract class AbstractExecutor
     }
 
     /**
+     * Get purger
+     *
+     * @return Purger
+     */
+    public function getPurger()
+    {
+        return $this->purger;
+    }
+
+    /**
      * Set the logger callable to execute with the log() method.
      *
      * @param $logger

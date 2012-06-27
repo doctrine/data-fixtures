@@ -48,6 +48,16 @@ class MongoDBExecutor extends AbstractExecutor
         $dm->getEventManager()->addEventSubscriber($this->listener);
     }
 
+    /**
+     * Retrieve the DocumentManager instance this executor instance is using.
+     *
+     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     */
+    public function getObjectManager()
+    {
+        return $this->dm;
+    }
+
     /** @inheritDoc */
     public function setReferenceRepository(ReferenceRepository $referenceRepository)
     {
