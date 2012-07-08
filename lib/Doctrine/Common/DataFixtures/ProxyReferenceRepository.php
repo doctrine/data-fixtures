@@ -106,16 +106,20 @@ class ProxyReferenceRepository extends ReferenceRepository
      * Load data fixture reference repository
      *
      * @param string $baseCacheName Base cache name
+     *
+     * @return boolean
      */
     public function load($baseCacheName)
     {
         $filename = $baseCacheName . '.ser';
 
         if ( ! file_exists($filename) || ($serializedData = file_get_contents($filename)) === false) {
-            return;
+            return false;
         }
 
         $this->unserialize($serializedData);
+
+        return true;
     }
 
     /**
