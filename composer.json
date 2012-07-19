@@ -13,5 +13,10 @@
     },
     "autoload": {
         "psr-0": { "Doctrine\\Common\\DataFixtures": "lib/" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
     }
 }
