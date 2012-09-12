@@ -264,7 +264,13 @@ class Loader
                 continue;
             } elseif ($fixture instanceof DependentFixtureInterface) {
                 $dependenciesClasses = $fixture->getDependencies();
-                
+
+                foreach ($dependenciesClasses as &$dependency) {
+                    if (isset($this->fixtureProvides[$dependency])) {
+                        $dependency = $this->fixtureProvides[$dependency];
+                    }
+                }
+
                 $this->validateDependencies($dependenciesClasses);
 
                 if (!is_array($dependenciesClasses) || empty($dependenciesClasses)) {
@@ -347,6 +353,10 @@ class Loader
         }
 
         foreach ($classes as $class) {
+            if (isset($this->fixtureProvides[$class])) {
+                $class = $this->fixtureProvides[$class];
+            }
+
             if ($sequences[$class] === -1) {
                 $unsequencedClasses[] = $class;
             }
