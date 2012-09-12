@@ -138,7 +138,7 @@ class Loader
         if (!isset($this->fixtures[$fixtureClass])) {
             if ($fixture instanceof OrderedFixtureInterface && $fixture instanceof DependentFixtureInterface) {
                 throw new \InvalidArgumentException(sprintf('Class "%s" can\'t implement "%s" and "%s" at the same time.', 
-                    get_class($fixture),
+                    $fixtureClass,
                     'OrderedFixtureInterface',
                     'DependentFixtureInterface'));
             } elseif ($fixture instanceof OrderedFixtureInterface) {
