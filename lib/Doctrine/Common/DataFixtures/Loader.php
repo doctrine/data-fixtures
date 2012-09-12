@@ -65,6 +65,13 @@ class Loader
     private $fileExtension = '.php';
 
     /**
+     * Array for provide string to class name lookup
+     *
+     * @var array
+     */
+    private $fixtureProvides = array();
+
+    /**
      * Find fixtures classes in a given directory and load them.
      *
      * @param string $dir Directory to find fixture classes in.
@@ -138,6 +145,24 @@ class Loader
                 $this->orderFixturesByNumber = true;
             } elseif ($fixture instanceof DependentFixtureInterface) {
                 $this->orderFixturesByDependencies = true;
+            }
+
+            if ($fixture instanceof ProvidesFixtureInterface) {
+                $fixtureProvides = $fixture->getProvides();
+                if (!empty($fixtureProvides) && is_string($fixtureProvides)) {
+                    if (isset($this->fixtureProvides[$fixtureProvides])) {
+                        throw new \InvalidArgumentException(sprintf('Class "%s" can\'t provide "%s", it is already provided by "%s".',
+                                                            $fixtureClass,
+                                                            $fixtureProvides,
+                                                            $this->fixtureProvides[$fixtureProvides]));
+                    } else {
+                        $this->fixtureProvides[$fixture->getProvides()] = $fixtureClass;
+                    }
+                } else {
+                    throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return a non empty string.',
+                                                        'getProvides',
+                                                        $fixtureClass));
+                }
             }
 
             $this->fixtures[$fixtureClass] = $fixture;
