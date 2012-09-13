@@ -69,19 +69,19 @@ a relation. Here is an example fixtures for **Role** and **User** relation
         {
             $adminRole = new Role();
             $adminRole->setName('admin');
-            
+
             $anonymousRole = new Role;
             $anonymousRole->setName('anonymous');
-    
+
             $manager->persist($adminRole);
             $manager->persist($anonymousRole);
             $manager->flush();
-            
+
             // store reference to admin role for User relation to Role
             $this->addReference('admin-role', $adminRole);
         }
     }
-    
+
 And the **User** data loading fixture:
 
     namespace MyDataFixtures;
@@ -102,14 +102,19 @@ And the **User** data loading fixture:
 
             $manager->persist($user);
             $manager->flush();
-            
+
             // store reference of admin-user for other Fixtures
             $this->addReference('admin-user', $user);
         }
     }
 
+## Fixture ordering
 **Notice** that the fixture loading order is important! To handle it manually
-implement the OrderedFixtureInterface and set the order:
+implement one of the following interfaces:
+
+### OrderedFixtureInterface
+
+Set the order manually:
 
     namespace MyDataFixtures;
 
@@ -121,11 +126,38 @@ implement the OrderedFixtureInterface and set the order:
     {
         public function load(ObjectManager $manager)
         {}
-        
+
         public function getOrder()
         {
             return 10; // number in which order to load fixtures
         }
+    }
+
+### DependentFixtureInterface
+
+Provide an array of fixture class names:
+
+    namespace MyDataFixtures;
+
+    use Doctrine\Common\DataFixtures\AbstractFixture;
+    use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+    use Doctrine\Common\Persistence\ObjectManager;
+
+    class MyFixture extends AbstractFixture implements DependentFixtureInterface
+    {
+        public function load(ObjectManager $manager)
+        {}
+
+        public function getDepends()
+        {
+            return array('MyDataFixtures\MyOtherFixture'); // fixture classes fixture is dependent on
+        }
+    }
+
+    class MyOtherFixture extends AbstractFixture
+    {
+        public function load(ObjectManager $manager)
+        {}
     }
 
 **Notice** the ordering is relevant to Loader class.
