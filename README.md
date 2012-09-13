@@ -69,19 +69,19 @@ a relation. Here is an example fixtures for **Role** and **User** relation
         {
             $adminRole = new Role();
             $adminRole->setName('admin');
-            
+
             $anonymousRole = new Role;
             $anonymousRole->setName('anonymous');
-    
+
             $manager->persist($adminRole);
             $manager->persist($anonymousRole);
             $manager->flush();
-            
+
             // store reference to admin role for User relation to Role
             $this->addReference('admin-role', $adminRole);
         }
     }
-    
+
 And the **User** data loading fixture:
 
     namespace MyDataFixtures;
@@ -102,7 +102,7 @@ And the **User** data loading fixture:
 
             $manager->persist($user);
             $manager->flush();
-            
+
             // store reference of admin-user for other Fixtures
             $this->addReference('admin-user', $user);
         }
@@ -126,7 +126,7 @@ Set the order manually:
     {
         public function load(ObjectManager $manager)
         {}
-        
+
         public function getOrder()
         {
             return 10; // number in which order to load fixtures
