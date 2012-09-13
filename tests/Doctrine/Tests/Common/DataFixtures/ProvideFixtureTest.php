@@ -45,12 +45,12 @@ class ProvideDependentFixtureTest extends BaseTest
 
         $orderedFixtures = $loader->getFixtures();
 
-        $this->assertEquals(4, count($orderedFixtures));
+        $this->assertCount(4, $orderedFixtures);
 
-        $this->assertTrue(array_shift($orderedFixtures) instanceof ProvidesFixture1);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof ProvidesFixture2);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof ProvidesFixture3);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof ProvidesFixture4);
+        $this->assertInstanceOf('Doctrine\Tests\Common\DataFixtures\ProvideFixture1', array_shift($orderedFixtures));
+        $this->assertInstanceOf('Doctrine\Tests\Common\DataFixtures\ProvideFixture2', array_shift($orderedFixtures));
+        $this->assertInstanceOf('Doctrine\Tests\Common\DataFixtures\ProvideFixture3', array_shift($orderedFixtures));
+        $this->assertInstanceOf('Doctrine\Tests\Common\DataFixtures\ProvideFixture4', array_shift($orderedFixtures));
     }
 
     /**
