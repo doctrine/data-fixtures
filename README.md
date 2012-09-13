@@ -176,7 +176,7 @@ or define alias names with ProvideFixtureInterface:
 
         public function getDepends()
         {
-            return array('Other'); // fixture class(es) or provide string(s) fixture is dependent on
+            return array('Other'); // fixture classes or provide aliases fixture is dependent on
         }
     }
 
