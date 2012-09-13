@@ -108,8 +108,13 @@ And the **User** data loading fixture:
         }
     }
 
+## Fixture ordering
 **Notice** that the fixture loading order is important! To handle it manually
-implement the OrderedFixtureInterface and set the order:
+implement one of the following interfaces:
+
+### OrderedFixtureInterface
+
+Set the order manually:
 
     namespace MyDataFixtures;
 
@@ -126,6 +131,33 @@ implement the OrderedFixtureInterface and set the order:
         {
             return 10; // number in which order to load fixtures
         }
+    }
+
+### DependentFixtureInterface
+
+Provide an array of fixture class names:
+
+    namespace MyDataFixtures;
+
+    use Doctrine\Common\DataFixtures\AbstractFixture;
+    use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+    use Doctrine\Common\Persistence\ObjectManager;
+
+    class MyFixture extends AbstractFixture implements DependentFixtureInterface
+    {
+        public function load(ObjectManager $manager)
+        {}
+
+        public function getDepends()
+        {
+            return array('MyDataFixtures\MyOtherFixture'); // fixture classes fixture is dependent on
+        }
+    }
+
+    class MyOtherFixture extends AbstractFixture
+    {
+        public function load(ObjectManager $manager)
+        {}
     }
 
 **Notice** the ordering is relevant to Loader class.
