@@ -20,7 +20,7 @@
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Loader;
-use Doctrine\Common\DataFixtures\ProvidesFixtureInterface;
+use Doctrine\Common\DataFixtures\ProvideFixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -38,10 +38,10 @@ class ProvideDependentFixtureTest extends BaseTest
     public function testOrderFixturesByProvidesDependencies()
     {
         $loader = new Loader();
-        $loader->addFixture(new ProvidesFixture4);
-        $loader->addFixture(new ProvidesFixture2);
-        $loader->addFixture(new ProvidesFixture3);
-        $loader->addFixture(new ProvidesFixture1);
+        $loader->addFixture(new ProvideFixture4);
+        $loader->addFixture(new ProvideFixture2);
+        $loader->addFixture(new ProvideFixture3);
+        $loader->addFixture(new ProvideFixture1);
 
         $orderedFixtures = $loader->getFixtures();
 
@@ -59,8 +59,8 @@ class ProvideDependentFixtureTest extends BaseTest
     public function testDuplicateProvidesException()
     {
         $loader = new Loader();
-        $loader->addFixture(new ProvidesFixture1);
-        $loader->addFixture(new DuplicateProvidesFixture);
+        $loader->addFixture(new ProvideFixture1);
+        $loader->addFixture(new DuplicateProvideFixture);
     }
 
     /**
@@ -69,82 +69,82 @@ class ProvideDependentFixtureTest extends BaseTest
     public function testBadProvidesException()
     {
         $loader = new Loader();
-        $loader->addFixture(new ProvidesFixture1);
-        $loader->addFixture(new BadProvidesFixture);
+        $loader->addFixture(new ProvideFixture1);
+        $loader->addFixture(new BadProvideFixture);
     }
 }
 
-class ProvidesFixture1 implements FixtureInterface, ProvidesFixtureInterface
+class ProvideFixture1 implements FixtureInterface, ProvideFixtureInterface
 {
     public function load(ObjectManager $manager)
     {}
 
-    public function getProvides()
+    public function getProvide()
     {
-        return 'ProvidesFixture1';
+        return 'ProvideFixture1';
     }
 }
 
-class ProvidesFixture2 implements FixtureInterface, DependentFixtureInterface, ProvidesFixtureInterface
-{
-    public function load(ObjectManager $manager)
-    {}
-
-    public function getDependencies()
-    {
-        return array('ProvidesFixture1' );
-    }
-
-    public function getProvides()
-    {
-        return 'ProvidesFixture2';
-    }
-}
-
-class ProvidesFixture3 implements FixtureInterface, DependentFixtureInterface, ProvidesFixtureInterface
+class ProvideFixture2 implements FixtureInterface, DependentFixtureInterface, ProvideFixtureInterface
 {
     public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
     {
-        return array('ProvidesFixture2' );
+        return array('ProvideFixture1' );
     }
 
-    public function getProvides()
+    public function getProvide()
     {
-        return 'ProvidesFixture3';
+        return 'ProvideFixture2';
     }
 }
 
-class ProvidesFixture4 implements FixtureInterface, DependentFixtureInterface
+class ProvideFixture3 implements FixtureInterface, DependentFixtureInterface, ProvideFixtureInterface
 {
     public function load(ObjectManager $manager)
     {}
 
     public function getDependencies()
     {
-        return array( 'ProvidesFixture3' );
+        return array('ProvideFixture2' );
     }
-}
 
-class DuplicateProvidesFixture implements FixtureInterface, ProvidesFixtureInterface
-{
-    public function load(ObjectManager $manager)
-    {}
-
-    public function getProvides()
+    public function getProvide()
     {
-        return 'ProvidesFixture1';
+        return 'ProvideFixture3';
     }
 }
 
-class BadProvidesFixture implements FixtureInterface, ProvidesFixtureInterface
+class ProvideFixture4 implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
     {}
 
-    public function getProvides()
+    public function getDependencies()
+    {
+        return array( 'ProvideFixture3' );
+    }
+}
+
+class DuplicateProvideFixture implements FixtureInterface, ProvideFixtureInterface
+{
+    public function load(ObjectManager $manager)
+    {}
+
+    public function getProvide()
+    {
+        return 'ProvideFixture1';
+    }
+}
+
+class BadProvideFixture implements FixtureInterface, ProvideFixtureInterface
+{
+    public function load(ObjectManager $manager)
+    {}
+
+    public function getProvide()
     {
         return '';
     }

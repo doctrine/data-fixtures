@@ -147,20 +147,20 @@ class Loader
                 $this->orderFixturesByDependencies = true;
             }
 
-            if ($fixture instanceof ProvidesFixtureInterface) {
-                $fixtureProvides = $fixture->getProvides();
-                if (!empty($fixtureProvides) && is_string($fixtureProvides)) {
-                    if (isset($this->fixtureProvides[$fixtureProvides])) {
+            if ($fixture instanceof ProvideFixtureInterface) {
+                $fixtureProvide = $fixture->getProvide();
+                if (!empty($fixtureProvide) && is_string($fixtureProvide)) {
+                    if (isset($this->fixtureProvides[$fixtureProvide])) {
                         throw new \InvalidArgumentException(sprintf('Class "%s" can\'t provide "%s", it is already provided by "%s".',
                                                             $fixtureClass,
-                                                            $fixtureProvides,
-                                                            $this->fixtureProvides[$fixtureProvides]));
+                                                            $fixtureProvide,
+                                                            $this->fixtureProvides[$fixtureProvide]));
                     } else {
                         $this->fixtureProvides[$fixture->getProvides()] = $fixtureClass;
                     }
                 } else {
                     throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return a non empty string.',
-                                                        'getProvides',
+                                                        'getProvide',
                                                         $fixtureClass));
                 }
             }

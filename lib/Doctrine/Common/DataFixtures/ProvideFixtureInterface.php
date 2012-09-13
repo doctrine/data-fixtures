@@ -20,13 +20,13 @@
 namespace Doctrine\Common\DataFixtures;
 
 /**
- * ProvidesFixtureInterface can be implemented to use
+ * ProvideFixtureInterface can be implemented to use
  * string values instead of class names by fixtures to
  * depend on other fixtures
  *
  * @author Derek J. Lambert <dlambert@dereklambert.com>
  */
-interface ProvidesFixtureInterface
+interface ProvideFixtureInterface
 {
     /**
      * This method must return a string representing what the
@@ -34,5 +34,5 @@ interface ProvidesFixtureInterface
      *
      * @return string
      */
-    public function getProvides();
+    public function getProvide();
 }

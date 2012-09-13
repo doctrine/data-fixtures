@@ -160,13 +160,13 @@ Provide an array of fixture class names:
         {}
     }
 
-or define alias names with ProvidesFixtureInterface:
+or define alias names with ProvideFixtureInterface:
 
     namespace MyDataFixtures;
 
     use Doctrine\Common\DataFixtures\AbstractFixture;
     use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-    use Doctrine\Common\DataFixtures\ProvidesFixtureInterface;
+    use Doctrine\Common\DataFixtures\ProvideFixtureInterface;
     use Doctrine\Common\Persistence\ObjectManager;
 
     class MyFixture extends AbstractFixture implements DependentFixtureInterface
@@ -176,16 +176,16 @@ or define alias names with ProvidesFixtureInterface:
 
         public function getDepends()
         {
-            return array('Other'); // fixture class(es) or provides string(s) fixture is dependent on
+            return array('Other'); // fixture class(es) or provide string(s) fixture is dependent on
         }
     }
 
-    class MyOtherFixture extends AbstractFixture implements ProvidesFixtureInterface
+    class MyOtherFixture extends AbstractFixture implements ProvideFixtureInterface
     {
         public function load(ObjectManager $manager)
         {}
 
-        public function getProvides()
+        public function getProvide()
         {
             return 'Other';
         }
