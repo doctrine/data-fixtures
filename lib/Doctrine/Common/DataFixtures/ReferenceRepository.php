@@ -174,7 +174,7 @@ class ReferenceRepository
      * @param object $reference
      * @return string
      */
-    public function getReferenceName($reference)
+    public function getReferenceNames($reference)
     {
         return array_search($reference, $this->references, true);
     }

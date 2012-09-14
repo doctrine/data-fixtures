@@ -72,7 +72,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
             ->with('admin-role');
 
         $referenceRepository->expects($this->once())
-            ->method('getReferenceName')
+            ->method('getReferenceNames')
             ->will($this->returnValue('admin-role'));
 
         $referenceRepository->expects($this->once())
