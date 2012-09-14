@@ -72,7 +72,7 @@ class ReferenceRepositoryTest extends BaseTest
 
         $referenceRepository->expects($this->once())
             ->method('getReferenceNames')
-            ->will($this->returnValue('admin-role'));
+            ->will($this->returnValue(array('admin-role')));
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
