@@ -25,8 +25,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-require_once __DIR__.'/TestInit.php';
-
 /**
  * Test fixture ordering by provided dependencies.
  *
