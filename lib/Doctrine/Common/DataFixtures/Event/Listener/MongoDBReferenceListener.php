@@ -65,11 +65,13 @@ final class MongoDBReferenceListener implements EventSubscriber
     public function postPersist(LifecycleEventArgs $args)
     {
         $object = $args->getDocument();
+
         if (($names = $this->referenceRepository->getReferenceNames($object)) !== false) {
             foreach ($names as $name) {
                 $identity = $args->getDocumentManager()
                     ->getUnitOfWork()
                     ->getDocumentIdentifier($object);
+
                 $this->referenceRepository->setReferenceIdentity($name, $identity);
             }
         }
