@@ -102,7 +102,8 @@ class ReferenceRepositoryTest extends BaseTest
         $roleFixture->load($em);
         // first test against managed state
         $ref = $referenceRepository->getReference('admin-role');
-        $this->assertFalse($ref instanceof Proxy);
+
+        $this->assertNotInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
 
         // now test reference reconstruction from identity
         $em->clear();
