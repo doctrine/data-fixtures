@@ -24,8 +24,6 @@ use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Proxy\Proxy;
 
-require_once __DIR__.'/TestInit.php';
-
 /**
  * Test ReferenceRepository.
  *
