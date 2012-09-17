@@ -111,12 +111,14 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $proxyReferenceRepository->unserialize($serializedData);
 
         $ref = $proxyReferenceRepository->getReference('admin-role');
-        $this->assertTrue($ref instanceof Proxy);
+
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
 
         // now test reference reconstruction from identity
         $em->clear();
         $ref = $referenceRepository->getReference('admin-role');
-        $this->assertTrue($ref instanceof Proxy);
+
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
 
         // test reference reconstruction from serialized data (was identity)
         $serializedData = $referenceRepository->serialize();
@@ -125,6 +127,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $proxyReferenceRepository->unserialize($serializedData);
 
         $ref = $proxyReferenceRepository->getReference('admin-role');
-        $this->assertTrue($ref instanceof Proxy);
+
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
     }
 }

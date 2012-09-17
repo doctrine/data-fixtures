@@ -43,11 +43,10 @@ class DependentFixtureTest extends BaseTest
         $orderedFixtures = $loader->getFixtures();
 
         $this->assertCount(4, $orderedFixtures);
-
-        $this->assertTrue(array_shift($orderedFixtures) instanceof BaseParentFixture1);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture1);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture2);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture3);
+        $this->assertInstanceOf(__NAMESPACE__ . '\BaseParentFixture1', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture1', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture2', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture3', array_shift($orderedFixtures));
     }
 
     public function test_orderFixturesByDependencies_orderClassesWithAMultipleParents()
@@ -136,14 +135,13 @@ class DependentFixtureTest extends BaseTest
         $orderedFixtures = $loader->getFixtures();
 
         $this->assertCount(7, $orderedFixtures);
-        
-        $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByNumberFixture1);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByNumberFixture2);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByNumberFixture3);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof BaseParentFixture1);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture1);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture2);
-        $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture3);
+        $this->assertInstanceOf(__NAMESPACE__ . '\OrderedByNumberFixture1', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\OrderedByNumberFixture2', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\OrderedByNumberFixture3', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\BaseParentFixture1', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture1', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture2', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture3', array_shift($orderedFixtures));
     }
 
     /**
