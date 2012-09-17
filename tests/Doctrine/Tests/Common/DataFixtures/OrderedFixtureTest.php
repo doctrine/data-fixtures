@@ -40,7 +40,8 @@ class OrderedFixtureTest extends BaseTest
         $loader->addFixture(new BaseFixture1);
 
         $orderedFixtures = $loader->getFixtures();
-        $this->assertEquals(4, count($orderedFixtures));
+
+        $this->assertCount(4, $orderedFixtures);
         $this->assertTrue($orderedFixtures[0] instanceof BaseFixture1);
         $this->assertTrue($orderedFixtures[1] instanceof OrderedFixture2);
         $this->assertTrue($orderedFixtures[2] instanceof OrderedFixture1);

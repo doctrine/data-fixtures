@@ -42,7 +42,7 @@ class DependentFixtureTest extends BaseTest
 
         $orderedFixtures = $loader->getFixtures();
 
-        $this->assertEquals(4, count($orderedFixtures));
+        $this->assertCount(4, $orderedFixtures);
 
         $this->assertTrue(array_shift($orderedFixtures) instanceof BaseParentFixture1);
         $this->assertTrue(array_shift($orderedFixtures) instanceof DependentFixture1);
@@ -70,7 +70,7 @@ class DependentFixtureTest extends BaseTest
 
         $orderedFixtures = $loader->getFixtures();
 
-        $this->assertEquals(6, count($orderedFixtures));
+        $this->assertCount(6, $orderedFixtures);
 
         $contactFixtureOrder = array_search($contactFixture, $orderedFixtures);
         $contactMethodFixtureOrder = array_search($contactMethodFixture, $orderedFixtures);
@@ -135,7 +135,7 @@ class DependentFixtureTest extends BaseTest
 
         $orderedFixtures = $loader->getFixtures();
 
-        $this->assertEquals(7, count($orderedFixtures));
+        $this->assertCount(7, $orderedFixtures);
         
         $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByNumberFixture1);
         $this->assertTrue(array_shift($orderedFixtures) instanceof OrderedByNumberFixture2);

@@ -45,7 +45,8 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepo->addReference('test', $role);
 
         $references = $referenceRepo->getReferences();
-        $this->assertEquals(1, count($references));
+
+        $this->assertCount(1, $references);
         $this->assertArrayHasKey('test', $references);
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
     }
