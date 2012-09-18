@@ -24,8 +24,6 @@ use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Proxy\Proxy;
 
-require_once __DIR__.'/TestInit.php';
-
 /**
  * Test ProxyReferenceRepository.
  *
@@ -48,7 +46,8 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $referenceRepo->addReference('test', $role);
 
         $references = $referenceRepo->getReferences();
-        $this->assertEquals(1, count($references));
+
+        $this->assertCount(1, $references);
         $this->assertArrayHasKey('test', $references);
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
     }
@@ -103,7 +102,8 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $roleFixture->load($em);
         // first test against managed state
         $ref = $referenceRepository->getReference('admin-role');
-        $this->assertFalse($ref instanceof Proxy);
+
+        $this->assertNotInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
 
         // test reference reconstruction from serialized data (was managed)
         $serializedData = $referenceRepository->serialize();
@@ -112,12 +112,14 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $proxyReferenceRepository->unserialize($serializedData);
 
         $ref = $proxyReferenceRepository->getReference('admin-role');
-        $this->assertTrue($ref instanceof Proxy);
+
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
 
         // now test reference reconstruction from identity
         $em->clear();
         $ref = $referenceRepository->getReference('admin-role');
-        $this->assertTrue($ref instanceof Proxy);
+
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
 
         // test reference reconstruction from serialized data (was identity)
         $serializedData = $referenceRepository->serialize();
@@ -126,6 +128,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $proxyReferenceRepository->unserialize($serializedData);
 
         $ref = $proxyReferenceRepository->getReference('admin-role');
-        $this->assertTrue($ref instanceof Proxy);
+
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
     }
 }

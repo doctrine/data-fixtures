@@ -37,10 +37,10 @@ class LoaderTest extends BaseTest
         $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface', array(), array(), 'Mock2'));
         $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface', array(), array(), 'Mock3'));
 
-        $this->assertEquals(3, count($loader->getFixtures()));
+        $this->assertCount(3, $loader->getFixtures());
 
         $loader->loadFromDirectory(__DIR__.'/TestFixtures');
-        $this->assertEquals(7, count($loader->getFixtures()));
+        $this->assertCount(7, $loader->getFixtures());
         $this->assertTrue($loader->isTransient('TestFixtures\NotAFixture'));
         $this->assertFalse($loader->isTransient('TestFixtures\MyFixture1'));
     }
