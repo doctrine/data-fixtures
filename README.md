@@ -148,7 +148,7 @@ Provide an array of fixture class names:
         public function load(ObjectManager $manager)
         {}
 
-        public function getDepends()
+        public function getDependencies()
         {
             return array('MyDataFixtures\MyOtherFixture'); // fixture classes fixture is dependent on
         }
