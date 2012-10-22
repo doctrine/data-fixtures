@@ -150,7 +150,7 @@ class ReferenceRepository
                 $meta->name,
                 $this->identities[$name]
             );
-            $this->references[$name] = $reference; // allready in identity map
+            $this->references[$name] = $reference; // already in identity map
         }
         return $reference;
     }
