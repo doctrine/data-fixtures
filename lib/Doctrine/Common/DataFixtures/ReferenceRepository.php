@@ -152,7 +152,7 @@ class ReferenceRepository
             );
             $this->references[$name] = $reference; // allready in identity map
         }
-        return $reference;
+        return $this->manager->merge($reference);
     }
 
     /**
