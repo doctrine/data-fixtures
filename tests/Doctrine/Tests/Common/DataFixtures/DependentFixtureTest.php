@@ -154,6 +154,21 @@ class DependentFixtureTest extends BaseTest
 
         $orderedFixtures = $loader->getFixtures();
     }
+
+    public function test_inCaseGetFixturesReturnsDifferentResultsEachTime()
+    {
+        $loader = new Loader();
+        $loader->addFixture(new DependentFixture1);
+        $loader->addFixture(new BaseParentFixture1);
+
+        // Intentionally calling getFixtures() twice
+        $loader->getFixtures();
+        $orderedFixtures = $loader->getFixtures();
+
+        $this->assertCount(2, $orderedFixtures);
+        $this->assertInstanceOf(__NAMESPACE__ . '\BaseParentFixture1', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture1', array_shift($orderedFixtures));
+    }
 }
 
 class DependentFixture1 implements FixtureInterface, DependentFixtureInterface
