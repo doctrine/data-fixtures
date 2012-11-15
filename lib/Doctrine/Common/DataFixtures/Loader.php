@@ -138,6 +138,9 @@ class Loader
                 $this->orderFixturesByNumber = true;
             } elseif ($fixture instanceof DependentFixtureInterface) {
                 $this->orderFixturesByDependencies = true;
+                foreach($fixture->getDependencies() as $class) {
+                    $this->addFixture(new $class);
+                }
             }
 
             $this->fixtures[$fixtureClass] = $fixture;
