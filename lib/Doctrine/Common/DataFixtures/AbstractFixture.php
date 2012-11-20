@@ -35,7 +35,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * 
      * @var ReferenceRepository
      */
-    private $referenceRepository;
+    protected $referenceRepository;
     
     /**
      * {@inheritdoc}
