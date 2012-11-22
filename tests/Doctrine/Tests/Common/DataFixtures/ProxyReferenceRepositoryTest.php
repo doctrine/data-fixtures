@@ -72,8 +72,8 @@ class ProxyReferenceRepositoryTest extends BaseTest
             ->with('admin-role');
 
         $referenceRepository->expects($this->once())
-            ->method('getReferenceName')
-            ->will($this->returnValue('admin-role'));
+            ->method('getReferenceNames')
+            ->will($this->returnValue(array('admin-role')));
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
@@ -130,5 +130,26 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $ref = $proxyReferenceRepository->getReference('admin-role');
 
         $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
+    }
+
+    public function testReferenceMultipleEntries()
+    {
+        $em = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ProxyReferenceRepository($em);
+        $em->getEventManager()->addEventSubscriber(new ORMReferenceListener($referenceRepository));
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->createSchema(array($em->getClassMetadata(self::TEST_ENTITY_ROLE)));
+
+        $role = new TestEntity\Role;
+        $role->setName('admin');
+
+        $em->persist($role);
+        $referenceRepository->addReference('admin', $role);
+        $referenceRepository->addReference('duplicate', $role);
+        $em->flush();
+        $em->clear();
+
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $referenceRepository->getReference('admin'));
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $referenceRepository->getReference('duplicate'));
     }
 }

@@ -65,11 +65,15 @@ final class ORMReferenceListener implements EventSubscriber
     public function postPersist(LifecycleEventArgs $args)
     {
         $object = $args->getEntity();
-        if (($name = $this->referenceRepository->getReferenceName($object)) !== false) {
-            $identity = $args->getEntityManager()
-                ->getUnitOfWork()
-                ->getEntityIdentifier($object);
-            $this->referenceRepository->setReferenceIdentity($name, $identity);
+
+        if (($names = $this->referenceRepository->getReferenceNames($object)) !== false) {
+            foreach ($names as $name) {
+                $identity = $args->getEntityManager()
+                    ->getUnitOfWork()
+                    ->getEntityIdentifier($object);
+
+                $this->referenceRepository->setReferenceIdentity($name, $identity);
+            }
         }
     }
 }
