@@ -19,8 +19,6 @@
 
 namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
-require_once __DIR__.'/../TestInit.php';
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use PHPUnit_Framework_TestCase;
@@ -70,7 +68,7 @@ class ORMExecutorTest extends BaseTest
         $fixture = $this->getMockFixture($em);
         $executor->execute(array($fixture), true);
     }
-    
+
     private function getMockFixture($em)
     {
         return $this->getMock('Doctrine\Common\DataFixtures\FixtureInterface');

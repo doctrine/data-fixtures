@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -17,34 +18,5 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Tests\Common\DataFixtures;
-
-use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-
-/**
- * Test Fixture interface.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- */
-class FixtureTest extends BaseTest
-{
-    public function testFixtureInterface()
-    {
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $fixture = new MyFixture2();
-        $fixture->load($em);
-
-        $this->assertTrue($fixture->loaded);
-    }
-}
-
-class MyFixture2 implements FixtureInterface
-{
-    public $loaded = false;
-
-    public function load(ObjectManager $manager)
-    {
-        $this->loaded = true;
-    }
-}
+$loader = require_once __DIR__ . "/../vendor/autoload.php";
+$loader->add('Doctrine\\Tests\\', __DIR__);

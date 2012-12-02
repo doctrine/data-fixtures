@@ -1,2 +1,3 @@
-tests/phpunit.xml
-tests/Doctrine/Tests/Common/DataFixtures/temp/*
+phpunit.xml
+vendor/
+composer.lock
