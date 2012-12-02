@@ -19,8 +19,6 @@
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
-require_once __DIR__.'/TestInit.php';
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use PHPUnit_Framework_TestCase;
