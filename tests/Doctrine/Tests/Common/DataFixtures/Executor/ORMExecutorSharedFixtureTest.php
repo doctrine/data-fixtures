@@ -19,8 +19,6 @@
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
-require_once __DIR__.'/../TestInit.php';
-
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Proxy\Proxy;
