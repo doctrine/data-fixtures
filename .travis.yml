@@ -7,6 +7,5 @@ php:
 before_script:
   - composer install --prefer-source --dev
   - gem install colored -v=1.2
-  - cp phpunit.xml.dist phpunit.xml
 
 script: phpunit
