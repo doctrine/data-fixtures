@@ -10,5 +10,6 @@ before_script:
   - chmod +x composer.phar
   - ./composer.phar install --prefer-dist --dev
   - gem install colored -v=1.2
+  - cp phpunit.xml.dist phpunit.xml
 
 script: phpunit
