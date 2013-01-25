@@ -1,0 +1,14 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+
+before_script:
+  - ./bin/travis.sh
+  - wget http://getcomposer.org/composer.phar -O ./composer.phar
+  - chmod +x composer.phar
+  - ./composer.phar install --prefer-dist --dev
+  - gem install colored -v=1.2
+
+script: phpunit
