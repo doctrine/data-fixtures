@@ -1,5 +1,7 @@
 # Doctrine Data Fixtures Extension
 
+[![Build Status](https://travis-ci.org/doctrine/data-fixtures.png)](https://travis-ci.org/doctrine/data-fixtures)
+
 This extension aims to provide a simple way to manage and execute the loading of data fixtures
 for the Doctrine ORM or ODM. You can write fixture classes by implementing the
 Doctrine\Common\DataFixtures\FixtureInterface interface:
