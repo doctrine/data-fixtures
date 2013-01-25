@@ -5,9 +5,7 @@ php:
   - 5.4
 
 before_script:
-  - wget http://getcomposer.org/composer.phar -O ./composer.phar
-  - chmod +x composer.phar
-  - ./composer.phar install --prefer-dist --dev
+  - composer install --prefer-source --dev
   - gem install colored -v=1.2
   - cp phpunit.xml.dist phpunit.xml
 
