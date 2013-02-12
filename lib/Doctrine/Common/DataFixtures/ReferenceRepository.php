@@ -142,6 +142,9 @@ class ReferenceRepository
      */
     public function getReference($name)
     {
+        if (empty($this->references[$name])) {
+            throw new \Exception('Undefined reference ' . $name);   
+        }
         $reference = $this->references[$name];
         $meta = $this->manager->getClassMetadata(get_class($reference));
         $uow = $this->manager->getUnitOfWork();
