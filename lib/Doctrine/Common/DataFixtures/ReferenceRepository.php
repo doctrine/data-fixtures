@@ -144,7 +144,7 @@ class ReferenceRepository
      */
     public function getReference($name)
     {
-        if (empty($this->references[$name])) {
+        if (!$this->hasReference($name)) {
             throw new \InvalidArgumentException('Undefined reference ' . $name);   
         }
 
