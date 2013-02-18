@@ -18,9 +18,25 @@
  * <http://www.doctrine-project.org>.
  */
 
-if (!@include __DIR__ . '/../vendor/autoload.php') {
-    die("You must set up the project dependencies, run the following commands:
-wget http://getcomposer.org/composer.phar
-php composer.phar install --dev
-");
+namespace Doctrine\Fixture\Sorter;
+
+use Doctrine\Fixture\Fixture;
+
+/**
+ * DependentFixture provides the contract for fixtures that are interdependent.
+ * This means implementors of this interface can define other fixtures that
+ * they depend on during import process.
+ *
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Gustavo Adrian <comfortablynumb@gmail.com>
+ */
+interface DependentFixture extends Fixture
+{
+    /**
+     * Returns a list of fixture classes (fully qualified class names) on which
+     * implementing class dependends on.
+     *
+     * @return array<string>
+     */
+    function getDependencyList();
 }

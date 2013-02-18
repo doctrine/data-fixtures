@@ -18,9 +18,33 @@
  * <http://www.doctrine-project.org>.
  */
 
-if (!@include __DIR__ . '/../vendor/autoload.php') {
-    die("You must set up the project dependencies, run the following commands:
-wget http://getcomposer.org/composer.phar
-php composer.phar install --dev
-");
+namespace Doctrine\Fixture\Sorter;
+
+/**
+ * Calculate the execution order of fixture when there is no relation between
+ * each other.
+ *
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ */
+class UnassignedCalculator implements Calculator
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function accept(array $fixtureList)
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * {@internal There is no specific order for the given fixtures, since
+     *            they are not related anyhow with each other. Just return
+     *            them here.}
+     */
+    public function calculate(array $fixtureList)
+    {
+        return $fixtureList;
+    }
 }

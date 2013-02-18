@@ -18,9 +18,26 @@
  * <http://www.doctrine-project.org>.
  */
 
-if (!@include __DIR__ . '/../vendor/autoload.php') {
-    die("You must set up the project dependencies, run the following commands:
-wget http://getcomposer.org/composer.phar
-php composer.phar install --dev
-");
+namespace Doctrine\Fixture\Sorter;
+
+use Doctrine\Fixture\Fixture;
+
+/**
+ * OrderedFixture provides the contract for fixtures that are needed to be
+ * executed in a particular, sequential order.
+ * An implementor of this interface requires to describe the specific order
+ * that is requires to be loaded during the load stage.
+ *
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
+ * @author Jonathan H. Wage <jonwage@gmail.com>
+ */
+interface OrderedFixture extends Fixture
+{
+    /**
+     * Return the fixture order as an integer value.
+     *
+     * @return integer
+     */
+    function getOrder();
 }

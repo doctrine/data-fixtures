@@ -18,9 +18,36 @@
  * <http://www.doctrine-project.org>.
  */
 
-if (!@include __DIR__ . '/../vendor/autoload.php') {
-    die("You must set up the project dependencies, run the following commands:
-wget http://getcomposer.org/composer.phar
-php composer.phar install --dev
-");
+namespace Doctrine\Fixture\Sorter;
+
+/**
+ * Contract required for any possible list of fixture reordering.
+ * This class implements the Visitor pattern to identity (accept) and process
+ * (visit) a list of fixtures.
+ *
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ */
+interface Calculator
+{
+    /**
+     * Checks if calculator accepts this list of fixtures for reordering.
+     *
+     * {@internal Any implementor algorithm should not exceed O(n) for
+     *            performance reasons.}
+     *
+     * @param array<Doctrine\Fixture\Fixture> $fixtureList
+     *
+     * @return boolean
+     */
+    function accept(array $fixtureList);
+
+    /**
+     * Processes the reordering a given list of fixtures and returns the
+     * reordered list.
+     *
+     * @param array<Doctrine\Fixture\Fixture> $fixtureList
+     *
+     * @return array<Doctrine\Fixture\Fixture>
+     */
+    function calculate(array $fixtureList);
 }
