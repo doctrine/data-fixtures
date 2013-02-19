@@ -18,11 +18,29 @@
  * <http://www.doctrine-project.org>.
  */
 
-if (!($loader = @include __DIR__ . '/../vendor/autoload.php')) {
-    die("You must set up the project dependencies, run the following commands:
-wget http://getcomposer.org/composer.phar
-php composer.phar install --dev
-");
-}
+namespace Doctrine\Test\Mock;
 
-$loader->add('Doctrine\\Test\\', __DIR__);
+use Doctrine\Fixture\Sorter\OrderedFixture;
+
+/**
+ * OrderedFixture C.
+ *
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ */
+class OrderedFixtureC implements OrderedFixture
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 2;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function import()
+    {
+    }
+}

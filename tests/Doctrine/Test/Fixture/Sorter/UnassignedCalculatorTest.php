@@ -21,7 +21,7 @@
 namespace Doctrine\Test\Fixture\Sorter;
 
 use Doctrine\Fixture\Sorter\UnassignedCalculator;
-use Doctrine\Fixture\Fixture;
+use Doctrine\Test\Mock;
 
 /**
  * UnassignedCalculator tests.
@@ -46,7 +46,7 @@ class UnassignedCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testSuccessAcceptSingleFixture()
     {
         $fixtureList = array(
-            new UnassignedCalculatorTestFixtureA()
+            new Mock\FixtureA()
         );
 
         $this->assertTrue($this->calculator->accept($fixtureList));
@@ -55,8 +55,8 @@ class UnassignedCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testSuccessAcceptMultiFixture()
     {
         $fixtureList = array(
-            new UnassignedCalculatorTestFixtureA(),
-            new UnassignedCalculatorTestFixtureB()
+            new Mock\FixtureA(),
+            new Mock\FixtureB()
         );
 
         $this->assertTrue($this->calculator->accept($fixtureList));
@@ -64,7 +64,7 @@ class UnassignedCalculatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessCalculateSingleFixture()
     {
-        $fixtureA = new UnassignedCalculatorTestFixtureA();
+        $fixtureA = new Mock\FixtureA();
 
         $fixtureList = array($fixtureA);
 
@@ -76,8 +76,8 @@ class UnassignedCalculatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessCalculatorMultiFixture()
     {
-        $fixtureA = new UnassignedCalculatorTestFixtureA();
-        $fixtureB = new UnassignedCalculatorTestFixtureB();
+        $fixtureA = new Mock\FixtureA();
+        $fixtureB = new Mock\FixtureB();
 
         $fixtureList = array($fixtureB, $fixtureA);
 
@@ -85,19 +85,5 @@ class UnassignedCalculatorTest extends \PHPUnit_Framework_TestCase
         $correctList = array($fixtureB, $fixtureA);
 
         $this->assertSame($correctList, $sortedList);
-    }
-}
-
-class UnassignedCalculatorTestFixtureA implements Fixture
-{
-    public function import()
-    {
-    }
-}
-
-class UnassignedCalculatorTestFixtureB implements Fixture
-{
-    public function import()
-    {
     }
 }

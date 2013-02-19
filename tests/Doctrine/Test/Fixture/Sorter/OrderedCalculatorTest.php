@@ -21,8 +21,7 @@
 namespace Doctrine\Test\Fixture\Sorter;
 
 use Doctrine\Fixture\Sorter\OrderedCalculator;
-use Doctrine\Fixture\Sorter\OrderedFixture;
-use Doctrine\Fixture\Fixture;
+use Doctrine\Test\Mock;
 
 /**
  * OrderedCalculator tests.
@@ -47,7 +46,7 @@ class OrderedCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testSuccessAcceptSingleFixture()
     {
         $fixtureList = array(
-            new OrderedCalculatorTestFixtureC()
+            new Mock\OrderedFixtureB()
         );
 
         $this->assertTrue($this->calculator->accept($fixtureList));
@@ -56,9 +55,9 @@ class OrderedCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testSuccessAcceptMultiFixture()
     {
         $fixtureList = array(
-            new OrderedCalculatorTestFixtureA(),
-            new OrderedCalculatorTestFixtureB(),
-            new OrderedCalculatorTestFixtureC()
+            new Mock\OrderedFixtureA(),
+            new Mock\FixtureB(),
+            new Mock\OrderedFixtureB()
         );
 
         $this->assertTrue($this->calculator->accept($fixtureList));
@@ -67,7 +66,7 @@ class OrderedCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testFailureAcceptFixture()
     {
         $fixtureList = array(
-            new OrderedCalculatorTestFixtureB()
+            new Mock\FixtureB()
         );
 
         $this->assertFalse($this->calculator->accept($fixtureList));
@@ -75,19 +74,19 @@ class OrderedCalculatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessCalculateSingleFixture()
     {
-        $fixtureC = new OrderedCalculatorTestFixtureC();
+        $fixtureB = new Mock\OrderedFixtureB();
 
-        $fixtureList = array($fixtureC);
+        $fixtureList = array($fixtureB);
 
         $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureC);
+        $correctList = array($fixtureB);
 
         $this->assertSame($correctList, $sortedList);
     }
 
     public function testSuccessCalculateSingleFixtureNotDependent()
     {
-        $fixtureB = new OrderedCalculatorTestFixtureB();
+        $fixtureB = new Mock\FixtureB();
 
         $fixtureList = array($fixtureB);
 
@@ -99,72 +98,29 @@ class OrderedCalculatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessCalculatorMultiFixture()
     {
-        $fixtureC = new OrderedCalculatorTestFixtureC();
-        $fixtureD = new OrderedCalculatorTestFixtureD();
+        $fixtureB = new Mock\OrderedFixtureB();
+        $fixtureC = new Mock\OrderedFixtureC();
 
-        $fixtureList = array($fixtureD, $fixtureC);
+        $fixtureList = array($fixtureC, $fixtureB);
 
         $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureC, $fixtureD);
+        $correctList = array($fixtureB, $fixtureC);
 
         $this->assertSame($correctList, $sortedList);
     }
 
     public function testSuccessCalculatorWithFixtureNotDependent()
     {
-        $fixtureA = new OrderedCalculatorTestFixtureA();
-        $fixtureB = new OrderedCalculatorTestFixtureB();
-        $fixtureC = new OrderedCalculatorTestFixtureC();
-        $fixtureD = new OrderedCalculatorTestFixtureD();
+        $fixtureA = new Mock\OrderedFixtureA();
+        $fixtureZ = new Mock\FixtureB();
+        $fixtureB = new Mock\OrderedFixtureB();
+        $fixtureC = new Mock\OrderedFixtureC();
 
-        $fixtureList = array($fixtureD, $fixtureB, $fixtureC, $fixtureA);
+        $fixtureList = array($fixtureC, $fixtureZ, $fixtureB, $fixtureA);
 
         $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB, $fixtureC, $fixtureA, $fixtureD);
+        $correctList = array($fixtureZ, $fixtureB, $fixtureA, $fixtureC);
 
         $this->assertSame($correctList, $sortedList);
-    }
-}
-
-class OrderedCalculatorTestFixtureA implements OrderedFixture
-{
-    public function getOrder()
-    {
-        return 2;
-    }
-
-    public function import()
-    {
-    }
-}
-
-class OrderedCalculatorTestFixtureB implements Fixture
-{
-    public function import()
-    {
-    }
-}
-
-class OrderedCalculatorTestFixtureC implements OrderedFixture
-{
-    public function getOrder()
-    {
-        return 1;
-    }
-
-    public function import()
-    {
-    }
-}
-
-class OrderedCalculatorTestFixtureD implements OrderedFixture
-{
-    public function getOrder()
-    {
-        return 2;
-    }
-
-    public function import()
-    {
     }
 }

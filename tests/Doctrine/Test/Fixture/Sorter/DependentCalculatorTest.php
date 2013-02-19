@@ -21,8 +21,7 @@
 namespace Doctrine\Test\Fixture\Sorter;
 
 use Doctrine\Fixture\Sorter\DependentCalculator;
-use Doctrine\Fixture\Sorter\DependentFixture;
-use Doctrine\Fixture\Fixture;
+use Doctrine\Test\Mock;
 
 /**
  * DependentCalculator tests.
@@ -47,7 +46,7 @@ class DependentCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testSuccessAcceptSingleFixture()
     {
         $fixtureList = array(
-            new DependentCalculatorTestFixtureC()
+            new Mock\DependentFixtureB()
         );
 
         $this->assertTrue($this->calculator->accept($fixtureList));
@@ -56,9 +55,9 @@ class DependentCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testSuccessAcceptMultiFixture()
     {
         $fixtureList = array(
-            new DependentCalculatorTestFixtureA(),
-            new DependentCalculatorTestFixtureB(),
-            new DependentCalculatorTestFixtureC()
+            new Mock\DependentFixtureA(),
+            new Mock\FixtureB(),
+            new Mock\DependentFixtureB()
         );
 
         $this->assertTrue($this->calculator->accept($fixtureList));
@@ -67,7 +66,7 @@ class DependentCalculatorTest extends \PHPUnit_Framework_TestCase
     public function testFailureAcceptFixture()
     {
         $fixtureList = array(
-            new DependentCalculatorTestFixtureB()
+            new Mock\FixtureB()
         );
 
         $this->assertFalse($this->calculator->accept($fixtureList));
@@ -75,19 +74,19 @@ class DependentCalculatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessCalculateSingleFixture()
     {
-        $fixtureC = new DependentCalculatorTestFixtureC();
+        $fixtureB = new Mock\DependentFixtureB();
 
-        $fixtureList = array($fixtureC);
+        $fixtureList = array($fixtureB);
 
         $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureC);
+        $correctList = array($fixtureB);
 
         $this->assertSame($correctList, $sortedList);
     }
 
     public function testSuccessCalculateSingleFixtureNotDependent()
     {
-        $fixtureB = new DependentCalculatorTestFixtureB();
+        $fixtureB = new Mock\FixtureB();
 
         $fixtureList = array($fixtureB);
 
@@ -99,76 +98,29 @@ class DependentCalculatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessCalculatorMultiFixture()
     {
-        $fixtureC = new DependentCalculatorTestFixtureC();
-        $fixtureD = new DependentCalculatorTestFixtureD();
+        $fixtureB = new Mock\DependentFixtureB();
+        $fixtureC = new Mock\DependentFixtureC();
 
-        $fixtureList = array($fixtureD, $fixtureC);
+        $fixtureList = array($fixtureC, $fixtureB);
 
         $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureC, $fixtureD);
+        $correctList = array($fixtureB, $fixtureC);
 
         $this->assertSame($correctList, $sortedList);
     }
 
     public function testSuccessCalculatorWithFixtureNotDependent()
     {
-        $fixtureA = new DependentCalculatorTestFixtureA();
-        $fixtureB = new DependentCalculatorTestFixtureB();
-        $fixtureC = new DependentCalculatorTestFixtureC();
-        $fixtureD = new DependentCalculatorTestFixtureD();
+        $fixtureA = new Mock\DependentFixtureA();
+        $fixtureZ = new Mock\FixtureB();
+        $fixtureB = new Mock\DependentFixtureB();
+        $fixtureC = new Mock\DependentFixtureC();
 
-        $fixtureList = array($fixtureD, $fixtureB, $fixtureC, $fixtureA);
+        $fixtureList = array($fixtureC, $fixtureZ, $fixtureB, $fixtureA);
 
         $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureC, $fixtureD, $fixtureB, $fixtureA);
+        $correctList = array($fixtureB, $fixtureC, $fixtureZ, $fixtureA);
 
         $this->assertSame($correctList, $sortedList);
-    }
-}
-
-class DependentCalculatorTestFixtureA implements DependentFixture
-{
-    public function getDependencyList()
-    {
-        return array(
-            __NAMESPACE__ . '\DependentCalculatorTestFixtureB'
-        );
-    }
-
-    public function import()
-    {
-    }
-}
-
-class DependentCalculatorTestFixtureB implements Fixture
-{
-    public function import()
-    {
-    }
-}
-
-class DependentCalculatorTestFixtureC implements DependentFixture
-{
-    public function getDependencyList()
-    {
-        return array();
-    }
-
-    public function import()
-    {
-    }
-}
-
-class DependentCalculatorTestFixtureD implements DependentFixture
-{
-    public function getDependencyList()
-    {
-        return array(
-            __NAMESPACE__ . '\DependentCalculatorTestFixtureC'
-        );
-    }
-
-    public function import()
-    {
     }
 }

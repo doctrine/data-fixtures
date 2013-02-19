@@ -21,6 +21,7 @@
 namespace Doctrine\Test\Fixture\Sorter;
 
 use Doctrine\Fixture\Sorter\TopologicalSorter;
+use Doctrine\Test\Mock;
 
 /**
  * TopologicalSorter tests.
@@ -48,11 +49,11 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessSortLinearDependency()
     {
-        $node1 = new TopologicalSorterTestNode(1);
-        $node2 = new TopologicalSorterTestNode(2);
-        $node3 = new TopologicalSorterTestNode(3);
-        $node4 = new TopologicalSorterTestNode(4);
-        $node5 = new TopologicalSorterTestNode(5);
+        $node1 = new Mock\Node(1);
+        $node2 = new Mock\Node(2);
+        $node3 = new Mock\Node(3);
+        $node4 = new Mock\Node(4);
+        $node5 = new Mock\Node(5);
 
         $this->sorter->addNode('1', $node1);
         $this->sorter->addNode('2', $node2);
@@ -73,11 +74,11 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessSortMultiDependency()
     {
-        $node1 = new TopologicalSorterTestNode(1);
-        $node2 = new TopologicalSorterTestNode(2);
-        $node3 = new TopologicalSorterTestNode(3);
-        $node4 = new TopologicalSorterTestNode(4);
-        $node5 = new TopologicalSorterTestNode(5);
+        $node1 = new Mock\Node(1);
+        $node2 = new Mock\Node(2);
+        $node3 = new Mock\Node(3);
+        $node4 = new Mock\Node(4);
+        $node5 = new Mock\Node(5);
 
         $this->sorter->addNode('1', $node1);
         $this->sorter->addNode('2', $node2);
@@ -102,9 +103,9 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
      */
     public function testFailureSortCyclicDependency()
     {
-        $node1 = new TopologicalSorterTestNode(1);
-        $node2 = new TopologicalSorterTestNode(2);
-        $node3 = new TopologicalSorterTestNode(3);
+        $node1 = new Mock\Node(1);
+        $node2 = new Mock\Node(2);
+        $node3 = new Mock\Node(3);
 
         $this->sorter->addNode('1', $node1);
         $this->sorter->addNode('2', $node2);
@@ -122,22 +123,12 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
      */
     public function testFailureSortMissingDependency()
     {
-        $node1 = new TopologicalSorterTestNode(1);
+        $node1 = new Mock\Node(1);
 
         $this->sorter->addNode('1', $node1);
 
         $this->sorter->addDependency('1', '2');
 
         $this->sorter->sort();
-    }
-}
-
-class TopologicalSorterTestNode
-{
-    public $value;
-
-    public function __construct($value)
-    {
-        $this->value = $value;
     }
 }

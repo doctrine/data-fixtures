@@ -21,6 +21,7 @@
 namespace Doctrine\Test\Fixture\Sorter;
 
 use Doctrine\Fixture\Sorter\PrioritySorter;
+use Doctrine\Test\Mock;
 
 /**
  * PrioritySorter tests.
@@ -44,11 +45,11 @@ class PrioritySorterTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessLinearOrdering()
     {
-        $node1 = new PrioritySorterTestNode(1);
-        $node2 = new PrioritySorterTestNode(2);
-        $node3 = new PrioritySorterTestNode(3);
-        $node4 = new PrioritySorterTestNode(4);
-        $node5 = new PrioritySorterTestNode(5);
+        $node1 = new Mock\Node(1);
+        $node2 = new Mock\Node(2);
+        $node3 = new Mock\Node(3);
+        $node4 = new Mock\Node(4);
+        $node5 = new Mock\Node(5);
 
         $this->sorter->insert($node1, 2);
         $this->sorter->insert($node2, 3);
@@ -64,11 +65,11 @@ class PrioritySorterTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessCollisionOrdering()
     {
-        $node1 = new PrioritySorterTestNode(1);
-        $node2 = new PrioritySorterTestNode(2);
-        $node3 = new PrioritySorterTestNode(3);
-        $node4 = new PrioritySorterTestNode(4);
-        $node5 = new PrioritySorterTestNode(5);
+        $node1 = new Mock\Node(1);
+        $node2 = new Mock\Node(2);
+        $node3 = new Mock\Node(3);
+        $node4 = new Mock\Node(4);
+        $node5 = new Mock\Node(5);
 
         $this->sorter->insert($node1, 2);
         $this->sorter->insert($node2, 1);
@@ -80,15 +81,5 @@ class PrioritySorterTest extends \PHPUnit_Framework_TestCase
         $correctList = array($node5, $node3, $node4, $node2, $node1);
 
         $this->assertSame($sortedList, $correctList);
-    }
-}
-
-class PrioritySorterTestNode
-{
-    public $value;
-
-    public function __construct($value)
-    {
-        $this->value = $value;
     }
 }
