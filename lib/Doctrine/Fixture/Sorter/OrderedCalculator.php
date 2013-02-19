@@ -20,6 +20,8 @@
 
 namespace Doctrine\Fixture\Sorter;
 
+use Doctrine\Fixture\Fixture;
+
 /**
  * Calculate the order between fixtures by using a priority queue.
  * Order is calculated using a specialized version of Max-Heap algorithm, in
