@@ -40,9 +40,9 @@ class CalculatorFactory
      */
     public function __construct()
     {
+        $this->addCalculator(new MixedCalculator());
         $this->addCalculator(new OrderedCalculator());
         $this->addCalculator(new DependentCalculator());
-        $this->addCalculator(new UnassignedCalculator());
     }
 
     /**
@@ -56,14 +56,15 @@ class CalculatorFactory
     public function getCalculator(array $fixtureList)
     {
         foreach ($this->calculatorList as $calculator) {
-            // NOTE: UnassignedCalculator always return true here, removing the
-            // need to deal with a possible no match on Calculators acceptance.
             if ( ! $calculator->accept($fixtureList)) {
                 continue;
             }
 
             return $calculator;
         }
+
+        // Fallback, return fixtures the same way they were provided.
+        return new UnassignedCalculator();
     }
 
     /**

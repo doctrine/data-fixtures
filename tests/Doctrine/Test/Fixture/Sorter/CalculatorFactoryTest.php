@@ -43,6 +43,32 @@ class CalculatorFactoryTest extends \PHPUnit_Framework_TestCase
         $this->calculatorFactory = new CalculatorFactory();
     }
 
+    public function testMixedFixture()
+    {
+        $fixtureList = array(
+            new Mock\OrderedFixtureA(),
+            new Mock\DependentFixtureB(),
+        );
+
+        $calculator = $this->calculatorFactory->getCalculator($fixtureList);
+
+        $this->assertInstanceOf('Doctrine\Fixture\Sorter\MixedCalculator', $calculator);
+    }
+
+    public function testMixedFixtureMixed()
+    {
+        $fixtureList = array(
+            new Mock\FixtureA(),
+            new Mock\FixtureB(),
+            new Mock\OrderedFixtureA(),
+            new Mock\DependentFixtureB(),
+        );
+
+        $calculator = $this->calculatorFactory->getCalculator($fixtureList);
+
+        $this->assertInstanceOf('Doctrine\Fixture\Sorter\MixedCalculator', $calculator);
+    }
+
     public function testOrderedFixture()
     {
         $fixtureList = array(
@@ -93,5 +119,18 @@ class CalculatorFactoryTest extends \PHPUnit_Framework_TestCase
         $calculator = $this->calculatorFactory->getCalculator($fixtureList);
 
         $this->assertInstanceOf('Doctrine\Fixture\Sorter\DependentCalculator', $calculator);
+    }
+
+    public function testUnassignedFixture()
+    {
+        $fixtureList = array(
+            new Mock\FixtureA(),
+            new Mock\FixtureB(),
+            new Mock\FixtureC(),
+        );
+
+        $calculator = $this->calculatorFactory->getCalculator($fixtureList);
+
+        $this->assertInstanceOf('Doctrine\Fixture\Sorter\UnassignedCalculator', $calculator);
     }
 }
