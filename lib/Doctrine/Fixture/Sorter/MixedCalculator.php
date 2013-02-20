@@ -66,78 +66,31 @@ class MixedCalculator implements Calculator
      */
     public function calculate(array $fixtureList)
     {
-        $orderedFixtureList   = $this->calculateOrdered($fixtureList);
-        $remainingFixtureList = array();
+        $prioritySorter    = new PrioritySorter();
+        $topologicalSorter = new TopologicalSorter();
 
         foreach ($fixtureList as $fixture) {
-            if (in_array($fixture, $orderedFixtureList)) {
-                continue;
-            }
+            switch (true) {
+                case $this->isOrdered($fixture):
+                    $prioritySorter->insert($fixture, $fixture->getOrder());
+                    break;
 
-            $remainingFixtureList[] = $fixture;
+                case $this->isDependent($fixture):
+                    $fixtureHash = get_class($fixture);
+
+                    $topologicalSorter->addNode($fixtureHash, $fixture);
+                    $topologicalSorter->setDependencyList($fixtureHash, $fixture->getDependencyList());
+                    break;
+
+                default:
+                    $topologicalSorter->addNode(get_class($fixture), $fixture);
+            }
         }
 
-        $dependentFixtureList = $this->calculateDependent($remainingFixtureList);
+        $orderedFixtureList   = $prioritySorter->sort();
+        $dependentFixtureList = $topologicalSorter->sort();
 
         return array_merge($orderedFixtureList, $dependentFixtureList);
-    }
-
-    /**
-     * Processes the fixture list and returns a subset of given list,
-     * containing only ordered fixtures.
-     *
-     * {@internal Highly performance-sensitive method.}
-     *
-     * @param array $fixtureList
-     *
-     * @return array
-     */
-    private function calculateOrdered(array $fixtureList)
-    {
-        $sorter = new PrioritySorter();
-
-        foreach ($fixtureList as $fixture) {
-            if ( ! $this->isOrdered($fixture)) {
-                continue;
-            }
-
-            $sorter->insert($fixture, $fixture->getOrder());
-        }
-
-        return $sorter->sort();
-    }
-
-    /**
-     * Processes the fixture list and returns a subset of given list,
-     * containing only dependent and unassigned fixtures.
-     *
-     * {@internal Highly performance-sensitive method.}
-     *
-     * @param array $fixtureList
-     *
-     * @return array
-     */
-    private function calculateDependent(array $fixtureList)
-    {
-        $sorter = new TopologicalSorter();
-
-        foreach ($fixtureList as $fixture) {
-            // Adding nodes
-            $fixtureHash = get_class($fixture);
-
-            $sorter->addNode($fixtureHash, $fixture);
-
-            if ( ! $this->isDependent($fixture)) {
-                continue;
-            }
-
-            // Adding dependencies
-            foreach ($fixture->getDependencyList() as $dependencyClass) {
-                $sorter->addDependency($fixtureHash, $dependencyClass);
-            }
-        }
-
-        return $sorter->sort();
     }
 
     /**

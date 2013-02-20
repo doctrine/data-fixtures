@@ -97,6 +97,21 @@ class TopologicalSorter
     }
 
     /**
+     * Sets the dependency list (edges) to the graph using their hashes.
+     *
+     * @param string $fromHash
+     * @param array  $dependencyList
+     *
+     * @return void
+     */
+    public function setDependencyList($fromHash, array $dependencyList)
+    {
+        $definition = $this->nodeList[$fromHash];
+
+        $definition->dependencyList = $dependencyList;
+    }
+
+    /**
      * Return a valid order list of all current nodes.
      * The desired topological sorting is the postorder of these searches.
      *
