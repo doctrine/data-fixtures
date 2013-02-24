@@ -18,31 +18,50 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock;
+namespace Doctrine\Test\Fixture\Loader;
 
-use Doctrine\Fixture\Sorter\DependentFixture;
+use Doctrine\Fixture\Loader\GlobLoader;
 
 /**
- * DependentFixture A.
+ * GlobLoader tests.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class DependentFixtureA implements DependentFixture
+class GlobLoaderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencyList()
+    public function testConstructorSuccess()
     {
-        return array(
-            __NAMESPACE__ . '\FixtureB'
-        );
+        new GlobLoader(realpath(__DIR__ . '/../../Mock') . '/*.php');
     }
 
     /**
-     * {@inheritdoc}
+     * @dataProvider provideDataForLoad
      */
-    public function import()
+    public function testLoad($count, $directory)
     {
+        $loader = new GlobLoader($directory);
+
+        $fixtureList = $loader->load();
+
+        $this->assertCount($count, $fixtureList);
+    }
+
+    public function provideDataForLoad()
+    {
+        return array(
+            // Branch folder
+            array(0, realpath(__DIR__ . '/../../Mock') . '/*.php'),
+            // Leaf folder
+            array(3, realpath(__DIR__ . '/../../Mock/Unassigned') . '/*.php'),
+        );
+    }
+
+    public function testGetDirectory()
+    {
+        $loader = new GlobLoader(__DIR__);
+
+        $directory = $loader->getDirectory();
+
+        $this->assertEquals(__DIR__, $directory);
     }
 }

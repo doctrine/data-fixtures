@@ -18,23 +18,23 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock;
+namespace Doctrine\Test\Mock\Ordered;
 
-use Doctrine\Fixture\Sorter\DependentFixture;
+use Doctrine\Fixture\Sorter\OrderedFixture;
 
 /**
- * DependentFixture B.
+ * Ordered Fixture A.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class DependentFixtureB implements DependentFixture
+class FixtureA implements OrderedFixture
 {
     /**
      * {@inheritdoc}
      */
-    public function getDependencyList()
+    public function getOrder()
     {
-        return array();
+        return 2;
     }
 
     /**

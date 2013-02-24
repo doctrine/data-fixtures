@@ -18,17 +18,27 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock;
+namespace Doctrine\Test\Mock\Dependent;
 
-use Doctrine\Fixture\Fixture;
+use Doctrine\Fixture\Sorter\DependentFixture;
 
 /**
- * Fixture A.
+ * Dependent Fixture C.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureA implements Fixture
+class FixtureC implements DependentFixture
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencyList()
+    {
+        return array(
+            __NAMESPACE__ . '\FixtureB'
+        );
+    }
+
     /**
      * {@inheritdoc}
      */

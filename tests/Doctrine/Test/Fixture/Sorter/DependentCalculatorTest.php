@@ -43,84 +43,90 @@ class DependentCalculatorTest extends \PHPUnit_Framework_TestCase
         $this->calculator = new DependentCalculator();
     }
 
-    public function testSuccessAcceptSingleFixture()
+    /**
+     * @dataProvider provideDataForAccept
+     */
+    public function testAccept($expected, $fixtureList)
     {
-        $fixtureList = array(
-            new Mock\DependentFixtureB()
+        $this->assertEquals($expected, $this->calculator->accept($fixtureList));
+    }
+
+    public function provideDataForAccept()
+    {
+        $dependentFixtureA = new Mock\Dependent\FixtureA();
+        $dependentFixtureB = new Mock\Dependent\FixtureB();
+        $fixtureB          = new Mock\Unassigned\FixtureB();
+
+        return array(
+            // Single
+            array(true, array(
+                $dependentFixtureB,
+            )),
+            // Multi
+            array(true, array(
+                $dependentFixtureA,
+                $fixtureB,
+                $dependentFixtureB,
+            )),
+            // Failure
+            array(false, array(
+                $fixtureB,
+            )),
         );
-
-        $this->assertTrue($this->calculator->accept($fixtureList));
     }
 
-    public function testSuccessAcceptMultiFixture()
+    /**
+     * @dataProvider provideDataForCalculate
+     */
+    public function testCalculate($correctList, $fixtureList)
     {
-        $fixtureList = array(
-            new Mock\DependentFixtureA(),
-            new Mock\FixtureB(),
-            new Mock\DependentFixtureB()
+        $this->assertSame($correctList, $this->calculator->calculate($fixtureList));
+    }
+
+    public function provideDataForCalculate()
+    {
+        $dependentFixtureA = new Mock\Dependent\FixtureA();
+        $dependentFixtureB = new Mock\Dependent\FixtureB();
+        $dependentFixtureC = new Mock\Dependent\FixtureC();
+        $fixtureB          = new Mock\Unassigned\FixtureB();
+
+        return array(
+            // Single
+            array(
+                array($dependentFixtureB),
+                array($dependentFixtureB),
+            ),
+            // Multi
+            array(
+                array(
+                    $dependentFixtureB,
+                    $dependentFixtureC,
+                ),
+                array(
+                    $dependentFixtureC,
+                    $dependentFixtureB,
+                )
+            ),
+            // Unassigned
+            array(
+                array($fixtureB),
+                array($fixtureB),
+            ),
+            // Mixed
+            array(
+                array(
+                    $dependentFixtureB,
+                    $dependentFixtureC,
+                    $fixtureB,
+                    $dependentFixtureA,
+                ),
+                array(
+                    $dependentFixtureC,
+                    $fixtureB,
+                    $dependentFixtureB,
+                    $dependentFixtureA,
+                ),
+            ),
         );
-
-        $this->assertTrue($this->calculator->accept($fixtureList));
-    }
-
-    public function testFailureAcceptFixture()
-    {
-        $fixtureList = array(
-            new Mock\FixtureB()
-        );
-
-        $this->assertFalse($this->calculator->accept($fixtureList));
-    }
-
-    public function testSuccessCalculateSingleFixture()
-    {
-        $fixtureB = new Mock\DependentFixtureB();
-
-        $fixtureList = array($fixtureB);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB);
-
-        $this->assertSame($correctList, $sortedList);
-    }
-
-    public function testSuccessCalculateSingleFixtureNotDependent()
-    {
-        $fixtureB = new Mock\FixtureB();
-
-        $fixtureList = array($fixtureB);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB);
-
-        $this->assertSame($correctList, $sortedList);
-    }
-
-    public function testSuccessCalculatorMultiFixture()
-    {
-        $fixtureB = new Mock\DependentFixtureB();
-        $fixtureC = new Mock\DependentFixtureC();
-
-        $fixtureList = array($fixtureC, $fixtureB);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB, $fixtureC);
-
-        $this->assertSame($correctList, $sortedList);
-    }
-
-    public function testSuccessCalculatorWithFixtureNotDependent()
-    {
-        $fixtureA = new Mock\DependentFixtureA();
-        $fixtureZ = new Mock\FixtureB();
-        $fixtureB = new Mock\DependentFixtureB();
-        $fixtureC = new Mock\DependentFixtureC();
-
-        $fixtureList = array($fixtureC, $fixtureZ, $fixtureB, $fixtureA);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB, $fixtureC, $fixtureZ, $fixtureA);
-
-        $this->assertSame($correctList, $sortedList);
     }
 }

@@ -18,29 +18,26 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock;
-
-use Doctrine\Fixture\Sorter\OrderedFixture;
+namespace Doctrine\Fixture\Loader;
 
 /**
- * OrderedFixture A.
+ * RecursiveDirectoryLoader loads a list of fixtures based on a directory and
+ * all its descendants.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class OrderedFixtureA implements OrderedFixture
+class RecursiveDirectoryLoader extends DirectoryLoader
 {
     /**
      * {@inheritdoc}
      */
-    public function getOrder()
+    protected function loadFromDirectory()
     {
-        return 2;
-    }
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($this->directory),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
-    {
+        return $this->loadFileList($iterator);
     }
 }

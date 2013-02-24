@@ -18,25 +18,17 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock;
+namespace Doctrine\Test\Mock\Unassigned;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Fixture\Fixture;
 
 /**
- * OrderedFixture B.
+ * Fixture A.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class OrderedFixtureB implements OrderedFixture
+class FixtureA implements Fixture
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 1;
-    }
-
     /**
      * {@inheritdoc}
      */

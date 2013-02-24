@@ -18,31 +18,32 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock;
-
-use Doctrine\Fixture\Sorter\DependentFixture;
+namespace Doctrine\Fixture\Loader;
 
 /**
- * DependentFixture C.
+ * GlobLoader loads a list of fixtures based on a glob.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class DependentFixtureC implements DependentFixture
+class GlobLoader extends DirectoryLoader
 {
     /**
-     * {@inheritdoc}
+     * Constructor.
+     *
+     * @param string $directory
      */
-    public function getDependencyList()
+    public function __construct($directory)
     {
-        return array(
-            __NAMESPACE__ . '\DependentFixtureB'
-        );
+        $this->directory = $directory;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function import()
+    protected function loadFromDirectory()
     {
+        $iterator = new \GlobIterator($this->directory);
+
+        return $this->loadFileList($iterator);
     }
 }

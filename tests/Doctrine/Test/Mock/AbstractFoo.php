@@ -20,19 +20,11 @@
 
 namespace Doctrine\Test\Mock;
 
-use Doctrine\Fixture\Fixture;
-
 /**
- * Fixture B.
+ * Abstract Foo, used for transient tests only.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements Fixture
+abstract class AbstractFoo
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
-    {
-    }
 }

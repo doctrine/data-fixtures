@@ -43,84 +43,89 @@ class OrderedCalculatorTest extends \PHPUnit_Framework_TestCase
         $this->calculator = new OrderedCalculator();
     }
 
-    public function testSuccessAcceptSingleFixture()
+    /**
+     * @dataProvider provideDataForAccept
+     */
+    public function testAccept($expected, $fixtureList)
     {
-        $fixtureList = array(
-            new Mock\OrderedFixtureB()
+        $this->assertEquals($expected, $this->calculator->accept($fixtureList));
+    }
+
+    public function provideDataForAccept()
+    {
+        $orderedFixtureA   = new Mock\Ordered\FixtureA();
+        $orderedFixtureB   = new Mock\Ordered\FixtureB();
+        $fixtureB          = new Mock\Unassigned\FixtureB();
+
+        return array(
+            // Single
+            array(true, array($orderedFixtureB)),
+            // Multi
+            array(true, array(
+                $orderedFixtureA,
+                $fixtureB,
+                $orderedFixtureB,
+            )),
+            // Unassigned only
+            array(false, array(
+                $fixtureB,
+            )),
         );
-
-        $this->assertTrue($this->calculator->accept($fixtureList));
     }
 
-    public function testSuccessAcceptMultiFixture()
+    /**
+     * @dataProvider provideDataForCalculate
+     */
+    public function testCalculate($correctList, $fixtureList)
     {
-        $fixtureList = array(
-            new Mock\OrderedFixtureA(),
-            new Mock\FixtureB(),
-            new Mock\OrderedFixtureB()
+        $this->assertSame($correctList, $this->calculator->calculate($fixtureList));
+    }
+
+    public function provideDataForCalculate()
+    {
+        $orderedFixtureA   = new Mock\Ordered\FixtureA();
+        $orderedFixtureB   = new Mock\Ordered\FixtureB();
+        $orderedFixtureC   = new Mock\Ordered\FixtureC();
+        $fixtureA          = new Mock\Unassigned\FixtureA();
+        $fixtureB          = new Mock\Unassigned\FixtureB();
+
+        return array(
+            // Single
+            array(
+                array($orderedFixtureB),
+                array($orderedFixtureB),
+            ),
+            // Multi
+            array(
+                array(
+                    $orderedFixtureB,
+                    $orderedFixtureC,
+                ),
+                array(
+                    $orderedFixtureB,
+                    $orderedFixtureC,
+                ),
+            ),
+            // Unassigned only
+            array(
+                array($fixtureB),
+                array($fixtureB),
+            ),
+            // Mixed
+            array(
+                array(
+                    $fixtureB,
+                    $orderedFixtureB,
+                    $orderedFixtureC,
+                    $orderedFixtureA,
+                ),
+                array(
+                    $fixtureB,
+                    $orderedFixtureA,
+                    $orderedFixtureB,
+                    $orderedFixtureC,
+                ),
+            ),
         );
-
-        $this->assertTrue($this->calculator->accept($fixtureList));
-    }
-
-    public function testFailureAcceptFixture()
-    {
-        $fixtureList = array(
-            new Mock\FixtureB()
-        );
-
-        $this->assertFalse($this->calculator->accept($fixtureList));
-    }
-
-    public function testSuccessCalculateSingleFixture()
-    {
-        $fixtureB = new Mock\OrderedFixtureB();
-
-        $fixtureList = array($fixtureB);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB);
-
-        $this->assertSame($correctList, $sortedList);
-    }
-
-    public function testSuccessCalculateSingleFixtureNotDependent()
-    {
-        $fixtureB = new Mock\FixtureB();
-
-        $fixtureList = array($fixtureB);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB);
-
-        $this->assertSame($correctList, $sortedList);
-    }
-
-    public function testSuccessCalculatorMultiFixture()
-    {
-        $fixtureB = new Mock\OrderedFixtureB();
-        $fixtureC = new Mock\OrderedFixtureC();
-
-        $fixtureList = array($fixtureC, $fixtureB);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureB, $fixtureC);
-
-        $this->assertSame($correctList, $sortedList);
-    }
-
-    public function testSuccessCalculatorWithFixtureNotDependent()
-    {
-        $fixtureA = new Mock\OrderedFixtureA();
-        $fixtureZ = new Mock\FixtureB();
-        $fixtureB = new Mock\OrderedFixtureB();
-        $fixtureC = new Mock\OrderedFixtureC();
-
-        $fixtureList = array($fixtureC, $fixtureZ, $fixtureB, $fixtureA);
-
-        $sortedList  = $this->calculator->calculate($fixtureList);
-        $correctList = array($fixtureZ, $fixtureB, $fixtureA, $fixtureC);
-
-        $this->assertSame($correctList, $sortedList);
     }
 }
