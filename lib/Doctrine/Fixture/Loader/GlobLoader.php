@@ -40,10 +40,8 @@ class GlobLoader extends DirectoryLoader
     /**
      * {@inheritdoc}
      */
-    protected function loadFromDirectory()
+    protected function loadFromFilesystem()
     {
-        $iterator = new \GlobIterator($this->directory);
-
-        return $this->loadFileList($iterator);
+        return new \GlobIterator($this->directory);
     }
 }

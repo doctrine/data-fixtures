@@ -63,7 +63,8 @@ class DirectoryLoader implements Loader
      */
     public function load()
     {
-        $fileList          = $this->loadFromDirectory();
+        $traversable       = $this->loadFromFilesystem();
+        $fileList          = $this->loadFromTraversable($traversable);
         $declaredClassList = get_declared_classes();
         $fixtureList       = array();
 
@@ -87,29 +88,27 @@ class DirectoryLoader implements Loader
     }
 
     /**
-     * Loads fixture files of loader directory.
+     * Loads fixture files from filesystem.
      *
-     * @return array
+     * @return \FilesystemIterator
      */
-    protected function loadFromDirectory()
+    protected function loadFromFilesystem()
     {
-        $iterator = new \FilesystemIterator($this->directory);
-
-        return $this->loadFileList($iterator);
+        return new \FilesystemIterator($this->directory);
     }
 
     /**
-     * Loads the file list using a given iterator.
+     * Loads the file list using a given traversable.
      *
-     * @param \Iterator $iterator
+     * @param \Traversable $traversable
      *
      * @return array
      */
-    protected function loadFileList(\Iterator $iterator)
+    private function loadFromTraversable(\Traversable $traversable)
     {
         $fileList = array();
 
-        foreach ($iterator as $fileInfo) {
+        foreach ($traversable as $fileInfo) {
             if ($fileInfo->getBasename('.php') === $fileInfo->getBasename()) {
                 continue;
             }

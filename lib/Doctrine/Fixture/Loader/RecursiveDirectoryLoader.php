@@ -31,13 +31,11 @@ class RecursiveDirectoryLoader extends DirectoryLoader
     /**
      * {@inheritdoc}
      */
-    protected function loadFromDirectory()
+    protected function loadFromFilesystem()
     {
-        $iterator = new \RecursiveIteratorIterator(
+        return new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($this->directory),
             \RecursiveIteratorIterator::LEAVES_ONLY
         );
-
-        return $this->loadFileList($iterator);
     }
 }
