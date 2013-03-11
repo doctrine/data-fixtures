@@ -18,36 +18,36 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
+namespace Doctrine\Test\Fixture;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Fixture\Configuration;
+use Doctrine\Fixture\Sorter\CalculatorFactory;
+use Doctrine\Common\EventManager;
 
 /**
- * Ordered Fixture B.
+ * Configuration tests.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    public function testEventManager()
     {
-        return 1;
+        $configuration = new Configuration();
+        $eventManager  = new EventManager();
+
+        $configuration->setEventManager($eventManager);
+
+        $this->assertEquals($eventManager, $configuration->getEventManager());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
+    public function testCalculatorFactory()
     {
-    }
+        $configuration     = new Configuration();
+        $calculatorFactory = new CalculatorFactory();
 
-    /**
-     * {@inheritdoc}
-     */
-    public function purge()
-    {
+        $configuration->setCalculatorFactory($calculatorFactory);
+
+        $this->assertEquals($calculatorFactory, $configuration->getCalculatorFactory());
     }
 }

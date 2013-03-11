@@ -18,62 +18,76 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Unassigned;
+namespace Doctrine\Fixture\Persistence;
 
 use Doctrine\Common\Persistence\ConnectionRegistry;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Fixture\Reference\ReferenceRepository;
-use Doctrine\Fixture\Fixture;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Fixture\Event\FixtureEvent;
+use Doctrine\Fixture\Event\ImportFixtureEventListener;
+use Doctrine\Fixture\Event\PurgeFixtureEventListener;
 
 /**
- * Fixture B.
+ * Connection Registry Event Subscriber.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements Fixture
+class ConnectionRegistryEventSubscriber implements
+    EventSubscriber,
+    ImportFixtureEventListener,
+    PurgeFixtureEventListener
 {
     /**
-     * {@inheritdoc}
+     * @var \Doctrine\Common\Persistence\ConnectionRegistry
+     */
+    private $registry;
+
+    /**
+     * Constructor.
      *
-     * {@internal Method implemented on purpose. Interface was not added to
-     *            test EventSubscriber runtime decision.}
+     * @param \Doctrine\Common\Persistence\ConnectionRegistry $registry
      */
-    public function setConnectionRegistry(ConnectionRegistry $registry)
+    public function __construct(ConnectionRegistry $registry)
     {
-
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * {@internal Method implemented on purpose. Interface was not added to
-     *            test EventSubscriber runtime decision.}
-     */
-    function setManagerRegistry(ManagerRegistry $registry)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * {@internal Method implemented on purpose. Interface was not added to
-     *            test EventSubscriber runtime decision.}
-     */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
-    {
+        $this->registry = $registry;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function import()
+    public function getSubscribedEvents()
     {
+        return array(
+            'purge',
+            'import',
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function purge()
+    public function purge(FixtureEvent $event)
     {
+        $fixture = $event->getFixture();
+
+        if ( ! ($fixture instanceof ConnectionRegistryFixture)) {
+            return;
+        }
+
+        $fixture->setConnectionRegistry($this->registry);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function import(FixtureEvent $event)
+    {
+        $fixture = $event->getFixture();
+
+        if ( ! ($fixture instanceof ConnectionRegistryFixture)) {
+            return;
+        }
+
+        $fixture->setConnectionRegistry($this->registry);
     }
 }
+

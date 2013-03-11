@@ -18,46 +18,65 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Unassigned;
+namespace Doctrine\Fixture;
 
-use Doctrine\Fixture\Persistence\ManagerRegistryFixture;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Fixture\Reference\ReferenceRepositoryFixture;
-use Doctrine\Fixture\Reference\ReferenceRepository;
-use Doctrine\Fixture\Fixture;
+use Doctrine\Fixture\Sorter\CalculatorFactory;
+use Doctrine\Common\EventManager;
 
 /**
- * Fixture A.
+ * Configuration class.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureA implements ManagerRegistryFixture, ReferenceRepositoryFixture, Fixture
+class Configuration
 {
     /**
-     * {@inheritdoc}
+     * @var \Doctrine\Common\EventManager
      */
-    function setManagerRegistry(ManagerRegistry $registry)
+    private $eventManager;
+
+    /**
+     * @var \Doctrine\Fixture\Sorter\CalculatorFactory
+     */
+    private $calculatorFactory;
+
+    /**
+     * Defines the event manager.
+     *
+     * @param \Doctrine\Common\EventManager $eventManager
+     */
+    public function setEventManager(EventManager $eventManager)
     {
+        $this->eventManager = $eventManager;
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the event manager.
+     *
+     * @return \Doctrine\Common\EventManager
      */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function getEventManager()
     {
+        return $this->eventManager;
     }
 
     /**
-     * {@inheritdoc}
+     * Defines the calculator factory.
+     *
+     * @param \Doctrine\Fixture\Sorter\CalculatorFactory $calculatorFactory
      */
-    public function import()
+    public function setCalculatorFactory(CalculatorFactory $calculatorFactory)
     {
+        $this->calculatorFactory = $calculatorFactory;
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the calculator factory.
+     *
+     * @return \Doctrine\Fixture\Sorter\CalculatorFactory
      */
-    public function purge()
+    public function getCalculatorFactory()
     {
+        return $this->calculatorFactory;
     }
 }

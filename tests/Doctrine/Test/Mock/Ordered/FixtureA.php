@@ -43,4 +43,11 @@ class FixtureA implements OrderedFixture
     public function import()
     {
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purge()
+    {
+    }
 }

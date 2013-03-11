@@ -24,8 +24,21 @@ namespace Doctrine\Fixture;
  * Contract required for any fixture.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface Fixture
 {
+    /**
+     * Imports the fixture into persistence storage.
+     *
+     * @return void
+     */
     function import();
+
+    /**
+     * Purges the fixture from persistence storage.
+     *
+     * @return void
+     */
+    function purge();
 }

@@ -18,36 +18,19 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
-
-use Doctrine\Fixture\Sorter\OrderedFixture;
+namespace Doctrine\Fixture\Reference;
 
 /**
- * Ordered Fixture B.
+ * Contract for Reference Repository fixtures.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+interface ReferenceRepositoryFixture
 {
     /**
-     * {@inheritdoc}
+     * Defines the Reference Repository.
+     *
+     * @param \Doctrine\Fixture\Reference\ReferenceRepository $referenceRepository
      */
-    public function getOrder()
-    {
-        return 1;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function purge()
-    {
-    }
+    function setReferenceRepository(ReferenceRepository $referenceRepository);
 }

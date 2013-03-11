@@ -18,46 +18,76 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Unassigned;
+namespace Doctrine\Fixture\Persistence;
 
-use Doctrine\Fixture\Persistence\ManagerRegistryFixture;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Fixture\Reference\ReferenceRepositoryFixture;
-use Doctrine\Fixture\Reference\ReferenceRepository;
-use Doctrine\Fixture\Fixture;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Fixture\Event\FixtureEvent;
+use Doctrine\Fixture\Event\ImportFixtureEventListener;
+use Doctrine\Fixture\Event\PurgeFixtureEventListener;
 
 /**
- * Fixture A.
+ * Object Manager Registry Event Subscriber.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureA implements ManagerRegistryFixture, ReferenceRepositoryFixture, Fixture
+class ManagerRegistryEventSubscriber implements
+    EventSubscriber,
+    ImportFixtureEventListener,
+    PurgeFixtureEventListener
 {
     /**
-     * {@inheritdoc}
+     * @var \Doctrine\Common\Persistence\ManagerRegistry
      */
-    function setManagerRegistry(ManagerRegistry $registry)
+    private $registry;
+
+    /**
+     * Constructor.
+     *
+     * @param \Doctrine\Common\Persistence\ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
     {
+        $this->registry = $registry;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function getSubscribedEvents()
     {
+        return array(
+            'purge',
+            'import',
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function import()
+    public function purge(FixtureEvent $event)
     {
+        $fixture = $event->getFixture();
+
+        if ( ! ($fixture instanceof ManagerRegistryFixture)) {
+            return;
+        }
+
+        $fixture->setManagerRegistry($this->registry);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function purge()
+    public function import(FixtureEvent $event)
     {
+        $fixture = $event->getFixture();
+
+        if ( ! ($fixture instanceof ManagerRegistryFixture)) {
+            return;
+        }
+
+        $fixture->setManagerRegistry($this->registry);
     }
 }
+

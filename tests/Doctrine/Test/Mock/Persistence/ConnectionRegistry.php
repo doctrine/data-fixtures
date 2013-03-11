@@ -18,36 +18,46 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
+namespace Doctrine\Test\Mock\Persistence;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Common\Persistence\ConnectionRegistry as BaseConnectionRegistry;
 
 /**
- * Ordered Fixture B.
+ * Mock for ConnectionRegistry
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+class ConnectionRegistry implements BaseConnectionRegistry
 {
     /**
      * {@inheritdoc}
      */
-    public function getOrder()
+    public function getConnection($name = null)
     {
-        return 1;
+
     }
 
     /**
      * {@inheritdoc}
      */
-    public function import()
+    public function getConnectionNames()
     {
+
     }
 
     /**
      * {@inheritdoc}
      */
-    public function purge()
+    public function getConnections()
     {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultConnectionName()
+    {
+
     }
 }

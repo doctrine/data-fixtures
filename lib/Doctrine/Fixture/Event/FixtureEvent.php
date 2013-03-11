@@ -18,36 +18,40 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
+namespace Doctrine\Fixture\Event;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Common\EventArgs;
+use Doctrine\Fixture\Fixture;
 
 /**
- * Ordered Fixture B.
+ * A generic Fixture event.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+class FixtureEvent extends EventArgs
 {
     /**
-     * {@inheritdoc}
+     * @var \Doctrine\Fixture\Fixture
      */
-    public function getOrder()
+    private $fixture;
+
+    /**
+     * Constructor.
+     *
+     * @param \Doctrine\Fixture\Fixture $fixture
+     */
+    public function __construct(Fixture $fixture)
     {
-        return 1;
+        $this->fixture = $fixture;
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieve the fixture associated to event.
+     *
+     * @return \Doctrine\Fixture\Fixture
      */
-    public function import()
+    public function getFixture()
     {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function purge()
-    {
+        return $this->fixture;
     }
 }

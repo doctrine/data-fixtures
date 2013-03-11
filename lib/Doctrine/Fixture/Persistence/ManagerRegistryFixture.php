@@ -18,36 +18,21 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
+namespace Doctrine\Fixture\Persistence;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * Ordered Fixture B.
+ * Contract for Object Manager Registry fixtures.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+interface ManagerRegistryFixture
 {
     /**
-     * {@inheritdoc}
+     * Defines the Object Manager Registry.
+     *
+     * @param \Doctrine\Common\Persistence\ManagerRegistry $registry
      */
-    public function getOrder()
-    {
-        return 1;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function purge()
-    {
-    }
+    function setManagerRegistry(ManagerRegistry $registry);
 }

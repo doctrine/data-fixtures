@@ -43,4 +43,11 @@ class FixtureB implements DependentFixture
     public function import()
     {
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purge()
+    {
+    }
 }

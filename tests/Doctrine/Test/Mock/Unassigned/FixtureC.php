@@ -20,6 +20,8 @@
 
 namespace Doctrine\Test\Mock\Unassigned;
 
+use Doctrine\Fixture\Persistence\ConnectionRegistryFixture;
+use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\Fixture\Fixture;
 
 /**
@@ -27,12 +29,27 @@ use Doctrine\Fixture\Fixture;
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureC implements Fixture
+class FixtureC implements ConnectionRegistryFixture, Fixture
 {
     /**
      * {@inheritdoc}
      */
+    public function setConnectionRegistry(ConnectionRegistry $registry)
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function import()
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purge()
     {
     }
 }

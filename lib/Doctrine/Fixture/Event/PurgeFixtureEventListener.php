@@ -18,36 +18,22 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
+namespace Doctrine\Fixture\Event;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Fixture\Event\FixtureEvent;
 
 /**
- * Ordered Fixture B.
+ * Purge FixtureEvent Listener contract.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+interface PurgeFixtureEventListener
 {
     /**
-     * {@inheritdoc}
+     * Handles a purge fixture event, dealing with fixture manipulation
+     * before actual purge execution.
+     *
+     * @param \Doctrine\Fixture\Event\FixtureEvent $event
      */
-    public function getOrder()
-    {
-        return 1;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function purge()
-    {
-    }
+    function purge(FixtureEvent $event);
 }

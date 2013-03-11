@@ -18,36 +18,21 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
+namespace Doctrine\Fixture\Persistence;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Common\Persistence\ConnectionRegistry;
 
 /**
- * Ordered Fixture B.
+ * Contract for Connection Registry fixtures.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+interface ConnectionRegistryFixture
 {
     /**
-     * {@inheritdoc}
+     * Defines the Connection Registry.
+     *
+     * @param \Doctrine\Common\Persistence\ConnectionRegistry $registry
      */
-    public function getOrder()
-    {
-        return 1;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function purge()
-    {
-    }
+    function setConnectionRegistry(ConnectionRegistry $registry);
 }

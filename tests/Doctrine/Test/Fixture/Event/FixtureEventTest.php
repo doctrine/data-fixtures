@@ -18,36 +18,23 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Ordered;
+namespace Doctrine\Test\Fixture\Event;
 
-use Doctrine\Fixture\Sorter\OrderedFixture;
+use Doctrine\Fixture\Event\FixtureEvent;
+use Doctrine\Test\Mock\Unassigned;
 
 /**
- * Ordered Fixture B.
+ * FixtureEvent tests.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureB implements OrderedFixture
+class FixtureEventTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    public function testEvent()
     {
-        return 1;
-    }
+        $fixtureA = new Unassigned\FixtureA();
+        $event    = new FixtureEvent($fixtureA);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function import()
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function purge()
-    {
+        $this->assertEquals($fixtureA, $event->getFixture());
     }
 }

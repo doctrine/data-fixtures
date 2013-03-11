@@ -18,46 +18,110 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Test\Mock\Unassigned;
+namespace Doctrine\Test\Mock\Persistence;
 
-use Doctrine\Fixture\Persistence\ManagerRegistryFixture;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Fixture\Reference\ReferenceRepositoryFixture;
-use Doctrine\Fixture\Reference\ReferenceRepository;
-use Doctrine\Fixture\Fixture;
+use Doctrine\Common\Persistence\ManagerRegistry as BaseManagerRegistry;
 
 /**
- * Fixture A.
+ * Mock for ManagerRegistry
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureA implements ManagerRegistryFixture, ReferenceRepositoryFixture, Fixture
+class ManagerRegistry implements BaseManagerRegistry
 {
     /**
      * {@inheritdoc}
      */
-    function setManagerRegistry(ManagerRegistry $registry)
+    public function getAliasNamespace($alias)
     {
+
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function getConnection($name = null)
     {
+
     }
 
     /**
      * {@inheritdoc}
      */
-    public function import()
+    public function getConnectionNames()
     {
+
     }
 
     /**
      * {@inheritdoc}
      */
-    public function purge()
+    public function getConnections()
     {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultConnectionName()
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultManagerName()
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getManager($name = null)
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getManagerForClass($class)
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getManagerNames()
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getManagers()
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRepository($persistentObject, $persistentManagerName = null)
+    {
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetManager($name = null)
+    {
+
     }
 }

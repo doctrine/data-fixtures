@@ -45,4 +45,11 @@ class FixtureC implements DependentFixture
     public function import()
     {
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purge()
+    {
+    }
 }
