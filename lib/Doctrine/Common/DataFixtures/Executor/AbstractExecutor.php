@@ -58,7 +58,7 @@ abstract class AbstractExecutor
     }
 
     /**
-     * Sets the Purger instance to use for this exector instance.
+     * Sets the Purger instance to use for this executor instance.
      *
      * @param Purger $purger
      */

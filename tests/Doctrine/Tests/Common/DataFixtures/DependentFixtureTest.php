@@ -147,7 +147,7 @@ class DependentFixtureTest extends BaseTest
     /**
      * @expectedException RuntimeException
      */
-    public function test_inCaseAFixtureHasAnUnexistenDependencyOrIfItWasntLoaded_throwsException()
+    public function test_inCaseAFixtureHasAnUnexistentDependencyOrIfItWasntLoaded_throwsException()
     {
         $loader = new Loader();
         $loader->addFixture(new FixtureWithUnexistentDependency);
