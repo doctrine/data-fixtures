@@ -24,9 +24,10 @@ use Doctrine\Fixture\Loader\Loader;
 use Doctrine\Fixture\Configuration;
 
 /**
- *
+ * Importer class, responsible to import fixtures into persistence.
  *
  * @author Guilherme Blanco <gblanco@nationalfibre.net>
+ * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 final class Importer
 {

@@ -24,6 +24,7 @@ namespace Doctrine\Fixture\Reference;
  * Contract for Reference Repository fixtures.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  */
 interface ReferenceRepositoryFixture
 {

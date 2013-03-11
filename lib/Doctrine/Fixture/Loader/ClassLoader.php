@@ -69,7 +69,13 @@ class ClassLoader implements Loader
      */
     public function removeClass($class)
     {
-        $this->classList = array_merge(array_diff($this->classList, array($class)));
+        $this->classList = array_filter(
+            $this->classList,
+            function ($classElement) use ($class)
+            {
+                return ($classElement !== $class);
+            }
+        );
     }
 
     /**
@@ -88,7 +94,9 @@ class ClassLoader implements Loader
                 continue;
             }
 
-            $fixtureList[] = new $class();
+            $fixtureList[] = is_string($class)
+                ? new $class()
+                : $class;
         }
 
         return $fixtureList;
