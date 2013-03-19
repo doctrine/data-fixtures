@@ -23,15 +23,15 @@ namespace Doctrine\Common\DataFixtures;
  * Grouped Fixture interface needs to be implemented
  * by fixtures, which only need to be loaded for a
  * specific group
- * 
+ *
  * @author Adam Prager <prager.adam87@gmail.com>
  */
 interface GroupedFixtureInterface
-{   
+{
     /**
      * Get the groups which should load this fixture
-     * 
+     *
      * @return array
-     */  
+     */
     function getGroups();
 }
