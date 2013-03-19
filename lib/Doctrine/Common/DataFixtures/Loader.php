@@ -56,6 +56,14 @@ class Loader
      * @var boolean
      */
     private $orderFixturesByDependencies = false;
+    
+    /**
+     * Determines which fixture groups to load
+     * Leave it empty to load all
+     *
+     * @var array
+     */
+    private $fixtureGroups = array();
 
     /**
      * The file extension of fixture files.
@@ -123,12 +131,17 @@ class Loader
      * Add a fixture object instance to the loader.
      *
      * @param FixtureInterface $fixture
+     * @return boolean
      */
     public function addFixture(FixtureInterface $fixture)
     {
         $fixtureClass = get_class($fixture);
+        
+        if (!$this->checkFixtureGroups($fixture)) {
+            return false;
+        }
 
-        if (!isset($this->fixtures[$fixtureClass])) {
+        if (!isset($this->fixtures[$fixtureClass])) {            
             if ($fixture instanceof OrderedFixtureInterface && $fixture instanceof DependentFixtureInterface) {
                 throw new \InvalidArgumentException(sprintf('Class "%s" can\'t implement "%s" and "%s" at the same time.', 
                     get_class($fixture),
@@ -139,12 +152,22 @@ class Loader
             } elseif ($fixture instanceof DependentFixtureInterface) {
                 $this->orderFixturesByDependencies = true;
                 foreach($fixture->getDependencies() as $class) {
-                    $this->addFixture(new $class);
+                    $dependencyFixture = new $class;
+                    
+                    if (!$this->checkFixtureGroups($dependencyFixture)) {
+                        throw new \InvalidArgumentException(sprintf('Class "%s" is depending on "%s", but the dependency class is not in any of the specified groups.', 
+                                get_class($fixture),
+                                get_class($dependencyFixture)));
+                    }
+                    
+                    $this->addFixture($dependencyFixture);
                 }
             }
-
+            
             $this->fixtures[$fixtureClass] = $fixture;
         }
+        
+        return true;
     }
 
     /**
@@ -333,5 +356,39 @@ class Loader
         }
 
         return $unsequencedClasses;
-    }           
+    }
+    
+    /**
+     * Sets the fixture groups to load
+     * 
+     * @param array $fixtureGroups The groups
+     */
+    public function setFixtureGroups(array $fixtureGroups = array())
+    {
+        $this->fixtureGroups = $fixtureGroups;
+    }
+    
+    /**
+     * Check if the fixture groups have been specified
+     * And if so, only load the fixtures belonging in at least one of the given groups
+     * 
+     * @param FixtureInterface $fixture
+     * @return boolean
+     */
+    private function checkFixtureGroups(FixtureInterface $fixture)
+    {
+        if (!empty($this->fixtureGroups)) {
+            if ($fixture instanceof GroupedFixtureInterface) {
+                $intersect = array_intersect($this->fixtureGroups, $fixture->getGroups());
+
+                if (empty($intersect)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }
