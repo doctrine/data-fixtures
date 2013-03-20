@@ -20,8 +20,9 @@
 
 namespace Doctrine\Fixture;
 
-use Doctrine\Fixture\Sorter\CalculatorFactory;
 use Doctrine\Common\EventManager;
+use Doctrine\Fixture\Filter\Filter;
+use Doctrine\Fixture\Sorter\CalculatorFactory;
 
 /**
  * Configuration class.
@@ -36,9 +37,34 @@ class Configuration
     private $eventManager;
 
     /**
+     * @var \Doctrine\Fixture\Filter\Filter
+     */
+    private $filter;
+
+    /**
      * @var \Doctrine\Fixture\Sorter\CalculatorFactory
      */
     private $calculatorFactory;
+
+    /**
+     * Defines the filter.
+     *
+     * @param \Doctrine\Fixture\Filter\Filter $filter
+     */
+    public function setFilter(Filter $filter)
+    {
+        $this->filter = $filter;
+    }
+
+    /**
+     * Retrieves the filter.
+     *
+     * @return \Doctrine\Fixture\Filter\Filter
+     */
+    public function getFilter()
+    {
+        return $this->filter;
+    }
 
     /**
      * Defines the event manager.

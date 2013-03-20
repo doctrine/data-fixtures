@@ -54,22 +54,48 @@ final class Importer
      */
     public function import(Loader $loader, $purge = false)
     {
-        $fixtureList = $this->getSortedFixtureList($loader->load());
+        $loadedFixtureList   = $loader->load();
+        $filteredFixtureList = $this->getFilteredFixtureList($loadedFixtureList);
+        $sortedFixturedList  = $this->getSortedFixtureList($filteredFixtureList);
 
         if ($purge) {
             // Purging needs to happen in reverse order of execution
-            $this->purgeFixtureList(array_reverse($fixtureList));
+            $this->purgeFixtureList(array_reverse($sortedFixturedList));
         }
 
-        $this->importFixtureList($fixtureList);
+        $this->importFixtureList($sortedFixturedList);
+    }
+
+    /**
+     * Filter the fixtures for execution.
+     *
+     * @param array<Doctrine\Fixture\Fixture> $fixtureList
+     *
+     * @return array<Doctrine\Fixture\Fixture>
+     */
+    private function getFilteredFixtureList(array $fixtureList)
+    {
+        $filter = $this->configuration->getFilter();
+
+        if ( ! $filter) {
+            return $fixtureList;
+        }
+
+        return array_filter(
+            $fixtureList,
+            function ($fixture) use ($filter)
+            {
+                return $filter->accept($fixture);
+            }
+        );
     }
 
     /**
      * Calculate the order for fixtures execution.
      *
-     * @param array $fixtureList
+     * @param array<Doctrine\Fixture\Fixture> $fixtureList
      *
-     * @return array
+     * @return array<Doctrine\Fixture\Fixture>
      */
     private function getSortedFixtureList(array $fixtureList)
     {
@@ -82,7 +108,7 @@ final class Importer
     /**
      * Purges the fixtures.
      *
-     * @param array $fixtureList
+     * @param array<Doctrine\Fixture\Fixture> $fixtureList
      *
      * @return void
      */
@@ -100,7 +126,7 @@ final class Importer
     /**
      * Imports the fixtures.
      *
-     * @param array $fixtureList
+     * @param array<Doctrine\Fixture\Fixture> $fixtureList
      *
      * @return void
      */

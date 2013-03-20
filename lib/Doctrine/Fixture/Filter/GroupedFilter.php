@@ -18,19 +18,51 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Fixture\Loader;
+namespace Doctrine\Fixture\Filter;
+
+use Doctrine\Fixture\Fixture;
 
 /**
- * Loader is the contract for any fixture loader.
+ * Grouped Filter allows you to restrict the fixtures to be loaded by matching
+ * against a set of provided allowed groups for execution.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface Loader
+class GroupedFilter implements Filter
 {
     /**
-     * Loads the fixtures.
-     *
-     * @return array<Doctrine\Fixture\Fixture>
+     * @var array<string>
      */
-    function load();
+    private $allowedGroupList;
+
+    /**
+     * @var boolean
+     */
+    private $onlyImplementors;
+
+    /**
+     * Constructor.
+     *
+     * @param array<string> $allowedGroupList
+     * @param boolean       $onlyImplementors
+     */
+    public function __construct(array $allowedGroupList, $onlyImplementors = false)
+    {
+        $this->allowedGroupList = $acceptedGroupList;
+        $this->onlyImplementors = $onlyImplementors;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function accept(Fixture $fixture)
+    {
+        if ( ! ($fixture instanceof GroupedFixture)) {
+            return ( ! $this->onlyImplementors);
+        }
+
+        $matchingGroupList = array_intersect($fixture->getGroupList(), $this->allowedGroupList);
+
+        return (count($matchingGroupList) === 0);
+    }
 }

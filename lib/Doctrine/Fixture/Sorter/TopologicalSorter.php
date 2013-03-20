@@ -142,7 +142,7 @@ class TopologicalSorter
      *
      * {@internal Highly performance-sensitive method.}
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      *
      * @param stdClass $definition
      */
@@ -152,12 +152,13 @@ class TopologicalSorter
 
         foreach ($definition->dependencyList as $dependency) {
             if ( ! isset($this->nodeList[$dependency])) {
-                $message = sprintf(
-                    'Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.',
-                    $dependency
+                throw new \RuntimeException(
+                    sprintf(
+                        'Fixture "%s" has a dependency of fixture "%s", but it not listed to be loaded.',
+                        get_class($definition->value),
+                        $dependency
+                    )
                 );
-
-                throw new \RuntimeException($message);
             }
 
             $childDefinition = $this->nodeList[$dependency];

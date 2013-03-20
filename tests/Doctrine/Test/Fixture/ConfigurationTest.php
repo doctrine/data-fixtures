@@ -20,9 +20,10 @@
 
 namespace Doctrine\Test\Fixture;
 
-use Doctrine\Fixture\Configuration;
-use Doctrine\Fixture\Sorter\CalculatorFactory;
 use Doctrine\Common\EventManager;
+use Doctrine\Fixture\Configuration;
+use Doctrine\Fixture\Filter\ChainFilter;
+use Doctrine\Fixture\Sorter\CalculatorFactory;
 
 /**
  * Configuration tests.
@@ -39,6 +40,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $configuration->setEventManager($eventManager);
 
         $this->assertEquals($eventManager, $configuration->getEventManager());
+    }
+
+    public function testFilter()
+    {
+        $configuration = new Configuration();
+        $filter        = new ChainFilter();
+
+        $configuration->setFilter($filter);
+
+        $this->assertEquals($filter, $configuration->getFilter());
     }
 
     public function testCalculatorFactory()

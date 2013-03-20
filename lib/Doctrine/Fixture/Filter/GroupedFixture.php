@@ -18,19 +18,24 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Fixture\Loader;
+namespace Doctrine\Fixture\Filter;
+
+use Doctrine\Fixture\Fixture;
 
 /**
- * Loader is the contract for any fixture loader.
+ * GroupedFixture provides the contract for fixtures that are meant to be
+ * executed in particular groups.
+ * An implementor of this interface requires to describe the specific groups
+ * that this fixture is a member to be loaded or ignored during the load stage.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface Loader
+interface GroupedFixture extends Fixture
 {
     /**
-     * Loads the fixtures.
+     * Return the fixture groups.
      *
-     * @return array<Doctrine\Fixture\Fixture>
+     * @return array
      */
-    function load();
+    function getGroupList();
 }

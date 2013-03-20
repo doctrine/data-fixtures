@@ -18,19 +18,23 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Fixture\Loader;
+namespace Doctrine\Fixture\Filter;
+
+use Doctrine\Fixture\Fixture;
 
 /**
- * Loader is the contract for any fixture loader.
+ * Filter is the contract for any fixture filter.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface Loader
+interface Filter
 {
     /**
-     * Loads the fixtures.
+     * Checks whether the fixture is acceptable.
      *
-     * @return array<Doctrine\Fixture\Fixture>
+     * @param \Doctrine\Fixture\Fixture $fixture
+     *
+     * @return boolean
      */
-    function load();
+    function accept(Fixture $fixture);
 }
