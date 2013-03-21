@@ -18,51 +18,36 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Fixture\Filter;
+namespace Doctrine\Test\Mock\Grouped;
 
-use Doctrine\Fixture\Fixture;
+use Doctrine\Fixture\Filter\GroupedFixture;
 
 /**
- * Grouped Filter allows you to restrict the fixtures to be loaded by matching
- * against a set of provided allowed groups for execution.
+ * Grouped Fixture A.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class GroupedFilter implements Filter
+class FixtureA implements GroupedFixture
 {
     /**
-     * @var array<string>
+     * {@inheritdoc}
      */
-    private $allowedGroupList;
-
-    /**
-     * @var boolean
-     */
-    private $onlyImplementors;
-
-    /**
-     * Constructor.
-     *
-     * @param array<string> $allowedGroupList
-     * @param boolean       $onlyImplementors
-     */
-    public function __construct(array $allowedGroupList, $onlyImplementors = false)
+    public function getGroupList()
     {
-        $this->allowedGroupList = $allowedGroupList;
-        $this->onlyImplementors = $onlyImplementors;
+        return array('test', 'another_test');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function accept(Fixture $fixture)
+    public function import()
     {
-        if ( ! ($fixture instanceof GroupedFixture)) {
-            return ( ! $this->onlyImplementors);
-        }
+    }
 
-        $matchingGroupList = array_intersect($fixture->getGroupList(), $this->allowedGroupList);
-
-        return ( ! empty($matchingGroupList));
+    /**
+     * {@inheritdoc}
+     */
+    public function purge()
+    {
     }
 }

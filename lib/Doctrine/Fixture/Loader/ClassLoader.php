@@ -83,14 +83,13 @@ class ClassLoader implements Loader
      */
     public function load()
     {
-        $classList   = array_unique($this->classList);
         $fixtureList = array();
 
-        foreach ($classList as $class) {
+        foreach ($this->classList as $class) {
             $reflectionClass = new \ReflectionClass($class);
 
-            // Check if class is transient
-            if ($this->isTransient($reflectionClass)) {
+            // Check if class is transient or duplicate
+            if ($this->isTransient($reflectionClass) || $this->isDuplicate($reflectionClass, $fixtureList)) {
                 continue;
             }
 
@@ -116,5 +115,24 @@ class ClassLoader implements Loader
         }
 
         return ( ! $reflectionClass->implementsInterface('Doctrine\Fixture\Fixture'));
+    }
+
+    /**
+     * Checks if class is duplicate in loading list.
+     *
+     * @param \ReflectionClass $reflectionClass
+     * @param array            $fixtureList
+     *
+     * @return boolean
+     */
+    private function isDuplicate(\ReflectionClass $reflectionClass, array $fixtureList)
+    {
+        foreach ($fixtureList as $class) {
+            if ($reflectionClass->name === get_class($class)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

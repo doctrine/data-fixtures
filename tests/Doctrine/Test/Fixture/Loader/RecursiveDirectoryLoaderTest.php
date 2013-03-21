@@ -60,7 +60,7 @@ class RecursiveDirectoryLoaderTest extends \PHPUnit_Framework_TestCase
             // No fixture files
             array(0, __DIR__),
             // Branch folder
-            array(9, realpath(__DIR__ . '/../../Mock')),
+            array(12, realpath(__DIR__ . '/../../Mock')),
             // Leaf folder
             array(3, realpath(__DIR__ . '/../../Mock/Unassigned')),
         );

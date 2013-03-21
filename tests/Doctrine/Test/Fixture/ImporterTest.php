@@ -24,6 +24,7 @@ use Doctrine\Fixture\Importer;
 use Doctrine\Fixture\Configuration;
 use Doctrine\Fixture\Sorter\CalculatorFactory;
 use Doctrine\Fixture\Loader\ClassLoader;
+use Doctrine\Fixture\Filter\GroupedFilter;
 use Doctrine\Common\EventManager;
 
 /**
@@ -61,15 +62,7 @@ class ImporterTest extends \PHPUnit_Framework_TestCase
      */
     public function testImport($purge, $callsImport, $callsPurge)
     {
-        $mockFixture = $this->getMockBuilder('Doctrine\Test\Mock\Unassigned\FixtureA')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mockFixture->expects($callsImport)
-                 ->method('import');
-
-        $mockFixture->expects($callsPurge)
-                 ->method('purge');
+        $mockFixture = $this->getMockedFixture('Doctrine\Test\Mock\Unassigned\FixtureA', $callsImport, $callsPurge);
 
         $loader = new ClassLoader(array($mockFixture));
 
@@ -82,5 +75,59 @@ class ImporterTest extends \PHPUnit_Framework_TestCase
             array(false, $this->once(), $this->never()),
             array(true, $this->once(), $this->once()),
         );
+    }
+
+    /**
+     * @dataProvider provideDataForFilteredImport
+     */
+    public function testFilteredImport($onlyImplementors, $callsUnassignedImport)
+    {
+        $this->configuration->setFilter(new GroupedFilter(array('test'), $onlyImplementors));
+
+        $mockUnassignedFixtureA = $this->getMockedFixture(
+            'Doctrine\Test\Mock\Unassigned\FixtureB',
+            $callsUnassignedImport,
+            $this->never()
+        );
+        $mockGroupedFixtureA    = $this->getMockedFixture(
+            'Doctrine\Test\Mock\Grouped\FixtureA',
+            $this->once(),
+            $this->never()
+        );
+
+        $mockGroupedFixtureA
+            ->expects($this->once())
+            ->method('getGroupList')
+            ->will($this->returnValue(array('test')));
+
+        $loader = new ClassLoader(array(
+            $mockUnassignedFixtureA,
+            $mockGroupedFixtureA
+        ));
+
+        $this->importer->import($loader, false);
+    }
+
+    public function provideDataForFilteredImport()
+    {
+        return array(
+            array(true, $this->never()),
+            array(false, $this->once()),
+        );
+    }
+
+    private function getMockedFixture($className, $callsImport, $callsPurge)
+    {
+        $mockFixture = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mockFixture->expects($callsImport)
+                 ->method('import');
+
+        $mockFixture->expects($callsPurge)
+                 ->method('purge');
+
+        return $mockFixture;
     }
 }
