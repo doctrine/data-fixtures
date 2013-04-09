@@ -24,13 +24,16 @@ use Doctrine\Fixture\Loader\Loader;
 use Doctrine\Fixture\Configuration;
 
 /**
- * Importer class, responsible to import fixtures into persistence.
+ * Executor class, responsible to import/purge fixtures.
  *
  * @author Guilherme Blanco <gblanco@nationalfibre.net>
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-final class Importer
+final class Executor
 {
+    const PURGE  = 1;
+    const IMPORT = 2;
+
     /**
      * @var \Doctrine\Fixture\Configuration
      */
@@ -47,23 +50,25 @@ final class Importer
     }
 
     /**
-     * Imports fixtures.
+     * Execute importing process.
      *
      * @param \Doctrine\Fixture\Loader\Loader $loader
-     * @param boolean                         $purge
+     * @param integer                         $flags
      */
-    public function import(Loader $loader, $purge = false)
+    public function execute(Loader $loader, $flags = self::IMPORT)
     {
         $loadedFixtureList   = $loader->load();
         $filteredFixtureList = $this->getFilteredFixtureList($loadedFixtureList);
         $sortedFixturedList  = $this->getSortedFixtureList($filteredFixtureList);
 
-        if ($purge) {
+        if ($flags & self::PURGE) {
             // Purging needs to happen in reverse order of execution
             $this->purgeFixtureList(array_reverse($sortedFixturedList));
         }
 
-        $this->importFixtureList($sortedFixturedList);
+        if ($flags & self::IMPORT) {
+            $this->importFixtureList($sortedFixturedList);
+        }
     }
 
     /**

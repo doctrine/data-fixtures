@@ -2,12 +2,18 @@
     "name": "doctrine/data-fixtures",
     "type": "library",
     "description": "Data Fixtures for all Doctrine tools",
-    "keywords": ["database", "fixture"],
+    "keywords": ["Database", "Fixture", "Persistence"],
     "homepage": "http://www.doctrine-project.org",
     "license": "MIT",
     "authors": [
-        {"name": "Jonathan Wage", "email": "jonwage@gmail.com"},
-        {"name": "Guilherme Blanco", "email": "guilhermeblanco@hotmail.com"}
+        {
+            "name": "Jonathan Wage",
+            "email": "jonwage@gmail.com"
+        },
+        {
+            "name": "Guilherme Blanco",
+            "email": "guilhermeblanco@hotmail.com"
+        }
     ],
     "minimum-stability": "dev",
     "require": {

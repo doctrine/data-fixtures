@@ -20,7 +20,7 @@
 
 namespace Doctrine\Test\Fixture;
 
-use Doctrine\Fixture\Importer;
+use Doctrine\Fixture\Executor;
 use Doctrine\Fixture\Configuration;
 use Doctrine\Fixture\Sorter\CalculatorFactory;
 use Doctrine\Fixture\Loader\ClassLoader;
@@ -28,11 +28,11 @@ use Doctrine\Fixture\Filter\GroupedFilter;
 use Doctrine\Common\EventManager;
 
 /**
- * Importer tests.
+ * Executor tests.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class ImporterTest extends \PHPUnit_Framework_TestCase
+class ExecutorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Doctrine\Fixture\Configuration
@@ -40,9 +40,9 @@ class ImporterTest extends \PHPUnit_Framework_TestCase
     private $configuration;
 
     /**
-     * @var \Doctrine\Fixture\Importer
+     * @var \Doctrine\Fixture\Executor
      */
-    private $importer;
+    private $executor;
 
     /**
      * {@inheritdoc}
@@ -54,33 +54,34 @@ class ImporterTest extends \PHPUnit_Framework_TestCase
         $this->configuration->setEventManager(new EventManager());
         $this->configuration->setCalculatorFactory(new CalculatorFactory());
 
-        $this->importer = new Importer($this->configuration);
+        $this->executor = new Executor($this->configuration);
     }
 
     /**
-     * @dataProvider provideDataForImport
+     * @dataProvider provideDataForExecute
      */
-    public function testImport($purge, $callsImport, $callsPurge)
+    public function testExecute($flags, $callsImport, $callsPurge)
     {
         $mockFixture = $this->getMockedFixture('Doctrine\Test\Mock\Unassigned\FixtureA', $callsImport, $callsPurge);
 
         $loader = new ClassLoader(array($mockFixture));
 
-        $this->importer->import($loader, $purge);
+        $this->executor->execute($loader, $flags);
     }
 
-    public function provideDataForImport()
+    public function provideDataForExecute()
     {
         return array(
-            array(false, $this->once(), $this->never()),
-            array(true, $this->once(), $this->once()),
+            array(Executor::IMPORT, $this->once(), $this->never()),
+            array(Executor::PURGE, $this->never(), $this->once()),
+            array(Executor::IMPORT | Executor::PURGE, $this->once(), $this->once()),
         );
     }
 
     /**
-     * @dataProvider provideDataForFilteredImport
+     * @dataProvider provideDataForFilteredExecute
      */
-    public function testFilteredImport($onlyImplementors, $callsUnassignedImport)
+    public function testFilteredExecute($onlyImplementors, $callsUnassignedImport)
     {
         $this->configuration->setFilter(new GroupedFilter(array('test'), $onlyImplementors));
 
@@ -105,10 +106,10 @@ class ImporterTest extends \PHPUnit_Framework_TestCase
             $mockGroupedFixtureA
         ));
 
-        $this->importer->import($loader, false);
+        $this->executor->execute($loader, Executor::IMPORT);
     }
 
-    public function provideDataForFilteredImport()
+    public function provideDataForFilteredExecute()
     {
         return array(
             array(true, $this->never()),
