@@ -24,6 +24,7 @@ use Doctrine\Fixture\Executor;
 use Doctrine\Fixture\Configuration;
 use Doctrine\Fixture\Sorter\CalculatorFactory;
 use Doctrine\Fixture\Loader\ClassLoader;
+use Doctrine\Fixture\Filter\ChainFilter;
 use Doctrine\Fixture\Filter\GroupedFilter;
 use Doctrine\Common\EventManager;
 
@@ -65,8 +66,9 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         $mockFixture = $this->getMockedFixture('Doctrine\Test\Mock\Unassigned\FixtureA', $callsImport, $callsPurge);
 
         $loader = new ClassLoader(array($mockFixture));
+        $filter = new ChainFilter();
 
-        $this->executor->execute($loader, $flags);
+        $this->executor->execute($loader, $filter, $flags);
     }
 
     public function provideDataForExecute()
@@ -83,8 +85,6 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
      */
     public function testFilteredExecute($onlyImplementors, $callsUnassignedImport)
     {
-        $this->configuration->setFilter(new GroupedFilter(array('test'), $onlyImplementors));
-
         $mockUnassignedFixtureA = $this->getMockedFixture(
             'Doctrine\Test\Mock\Unassigned\FixtureB',
             $callsUnassignedImport,
@@ -105,8 +105,12 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             $mockUnassignedFixtureA,
             $mockGroupedFixtureA
         ));
+        $filter = new GroupedFilter(
+            array('test'),
+            $onlyImplementors
+        );
 
-        $this->executor->execute($loader, Executor::IMPORT);
+        $this->executor->execute($loader, $filter, Executor::IMPORT);
     }
 
     public function provideDataForFilteredExecute()

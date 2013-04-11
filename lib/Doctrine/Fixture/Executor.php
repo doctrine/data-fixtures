@@ -20,6 +20,7 @@
 
 namespace Doctrine\Fixture;
 
+use Doctrine\Fixture\Filter\Filter;
 use Doctrine\Fixture\Loader\Loader;
 use Doctrine\Fixture\Configuration;
 
@@ -53,59 +54,42 @@ final class Executor
      * Execute importing process.
      *
      * @param \Doctrine\Fixture\Loader\Loader $loader
+     * @param \Doctrine\Fixture\Filter\Filter $filter
      * @param integer                         $flags
      */
-    public function execute(Loader $loader, $flags = self::IMPORT)
+    public function execute(Loader $loader, Filter $filter, $flags = self::IMPORT)
     {
-        $loadedFixtureList   = $loader->load();
-        $filteredFixtureList = $this->getFilteredFixtureList($loadedFixtureList);
-        $sortedFixturedList  = $this->getSortedFixtureList($filteredFixtureList);
+        $fixtureList = $this->getFixtureList($loader, $filter);
 
         if ($flags & self::PURGE) {
             // Purging needs to happen in reverse order of execution
-            $this->purgeFixtureList(array_reverse($sortedFixturedList));
+            $this->purgeFixtureList(array_reverse($fixtureList));
         }
 
         if ($flags & self::IMPORT) {
-            $this->importFixtureList($sortedFixturedList);
+            $this->importFixtureList($fixtureList);
         }
     }
 
     /**
-     * Filter the fixtures for execution.
+     * Filter and calculate the order of fixtures for execution.
      *
-     * @param array<Doctrine\Fixture\Fixture> $fixtureList
+     * @param \Doctrine\Fixture\Loader\Loader $loader
+     * @param \Doctrine\Fixture\Filter\Filter $filter
      *
      * @return array<Doctrine\Fixture\Fixture>
      */
-    private function getFilteredFixtureList(array $fixtureList)
+    private function getFixtureList(Loader $loader, Filter $filter)
     {
-        $filter = $this->configuration->getFilter();
-
-        if ( ! $filter) {
-            return $fixtureList;
-        }
-
-        return array_filter(
-            $fixtureList,
-            function ($fixture) use ($filter)
-            {
+        $calculatorFactory = $this->configuration->getCalculatorFactory();
+        $fixtureList       = array_filter(
+            $loader->load(),
+            function ($fixture) use ($filter) {
                 return $filter->accept($fixture);
             }
         );
-    }
 
-    /**
-     * Calculate the order for fixtures execution.
-     *
-     * @param array<Doctrine\Fixture\Fixture> $fixtureList
-     *
-     * @return array<Doctrine\Fixture\Fixture>
-     */
-    private function getSortedFixtureList(array $fixtureList)
-    {
-        $calculatorFactory = $this->configuration->getCalculatorFactory();
-        $calculator        = $calculatorFactory->getCalculator($fixtureList);
+        $calculator = $calculatorFactory->getCalculator($fixtureList);
 
         return $calculator->calculate($fixtureList);
     }

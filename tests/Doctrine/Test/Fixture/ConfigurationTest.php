@@ -42,16 +42,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($eventManager, $configuration->getEventManager());
     }
 
-    public function testFilter()
-    {
-        $configuration = new Configuration();
-        $filter        = new ChainFilter();
-
-        $configuration->setFilter($filter);
-
-        $this->assertEquals($filter, $configuration->getFilter());
-    }
-
     public function testCalculatorFactory()
     {
         $configuration     = new Configuration();
