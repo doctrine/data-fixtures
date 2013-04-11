@@ -72,7 +72,7 @@ class PHPCRPurger implements PurgerInterface
     public function purge()
     {
         $session = $this->dm->getPhpcrSession();
-        NodeHelper::deleteAllNodes($session);
+        NodeHelper::purgeWorkspace($session);
         $session->save();
     }
 }
