@@ -20,10 +20,8 @@
 
 namespace Doctrine\Fixture\Event;
 
-use Doctrine\Fixture\Event\FixtureEvent;
-
 /**
- * Purge FixtureEvent Listener contract.
+ * Purge Fixture Event Listener contract.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */

@@ -21,17 +21,17 @@
 namespace Doctrine\Fixture\Event;
 
 /**
- * Import Fixture Event Listener contract.
+ * Bulk Import Fixture Event Listener contract.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface ImportFixtureEventListener
+interface BulkImportFixtureEventListener
 {
     /**
-     * Handles an import fixture event, dealing with fixture manipulation
-     * before actual import execution.
+     * Handles a bulk import fixture event, dealing with fixture list
+     * manipulation before actual import execution.
      *
-     * @param \Doctrine\Fixture\Event\FixtureEvent $event
+     * @param \Doctrine\Fixture\Event\BulkFixtureEvent $event
      */
-    function import(FixtureEvent $event);
+    function bulkImport(BulkFixtureEvent $event);
 }

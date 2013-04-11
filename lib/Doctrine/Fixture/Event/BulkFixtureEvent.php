@@ -20,18 +20,54 @@
 
 namespace Doctrine\Fixture\Event;
 
+use Doctrine\Common\EventArgs;
+use Doctrine\Fixture\Configuration;
+
 /**
- * Import Fixture Event Listener contract.
+ * A generic Bulk Fixture event.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface ImportFixtureEventListener
+class BulkFixtureEvent extends EventArgs
 {
     /**
-     * Handles an import fixture event, dealing with fixture manipulation
-     * before actual import execution.
-     *
-     * @param \Doctrine\Fixture\Event\FixtureEvent $event
+     * @var \Doctrine\Fixture\Configuration
      */
-    function import(FixtureEvent $event);
+    private $configuration;
+
+    /**
+     * @var array<Doctrine\Fixture\Fixture>
+     */
+    private $fixtureList;
+
+    /**
+     * Constructor.
+     *
+     * @param array<Doctrine\Fixture\Fixture> $fixtureList
+     */
+    public function __construct(Configuration $configuration, array $fixtureList)
+    {
+        $this->configuration = $configuration;
+        $this->fixtureList   = $fixtureList;
+    }
+
+    /**
+     * Retrieve the Configuration.
+     *
+     * @return \Doctrine\Fixture\Configuration
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
+
+    /**
+     * Retrieve the fixture associated to event.
+     *
+     * @return array<Doctrine\Fixture\Fixture>
+     */
+    public function getFixtureList()
+    {
+        return $this->fixtureList;
+    }
 }

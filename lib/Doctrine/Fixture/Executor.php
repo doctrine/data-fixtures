@@ -48,6 +48,11 @@ final class Executor
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
+
+        // Adding default bulk executor
+        $eventManager = $this->configuration->getEventManager();
+
+        $eventManager->addEventSubscriber(new Executor\BulkExecutorEventSubscriber());
     }
 
     /**
@@ -59,15 +64,20 @@ final class Executor
      */
     public function execute(Loader $loader, Filter $filter, $flags = self::IMPORT)
     {
-        $fixtureList = $this->getFixtureList($loader, $filter);
+        $eventManager = $this->configuration->getEventManager();
+        $fixtureList  = $this->getFixtureList($loader, $filter);
 
         if ($flags & self::PURGE) {
             // Purging needs to happen in reverse order of execution
-            $this->purgeFixtureList(array_reverse($fixtureList));
+            $event = new Event\BulkFixtureEvent($this->configuration, array_reverse($fixtureList));
+
+            $eventManager->dispatchEvent('bulkPurge', $event);
         }
 
         if ($flags & self::IMPORT) {
-            $this->importFixtureList($fixtureList);
+            $event = new Event\BulkFixtureEvent($this->configuration, $fixtureList);
+
+            $eventManager->dispatchEvent('bulkImport', $event);
         }
     }
 
@@ -92,41 +102,5 @@ final class Executor
         $calculator = $calculatorFactory->getCalculator($fixtureList);
 
         return $calculator->calculate($fixtureList);
-    }
-
-    /**
-     * Purges the fixtures.
-     *
-     * @param array<Doctrine\Fixture\Fixture> $fixtureList
-     *
-     * @return void
-     */
-    private function purgeFixtureList(array $fixtureList)
-    {
-        $eventManager = $this->configuration->getEventManager();
-
-        foreach ($fixtureList as $fixture) {
-            $eventManager->dispatchEvent('purge', new Event\FixtureEvent($fixture));
-
-            $fixture->purge();
-        }
-    }
-
-    /**
-     * Imports the fixtures.
-     *
-     * @param array<Doctrine\Fixture\Fixture> $fixtureList
-     *
-     * @return void
-     */
-    private function importFixtureList(array $fixtureList)
-    {
-        $eventManager = $this->configuration->getEventManager();
-
-        foreach ($fixtureList as $fixture) {
-            $eventManager->dispatchEvent('import', new Event\FixtureEvent($fixture));
-
-            $fixture->import();
-        }
     }
 }
