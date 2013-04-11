@@ -18,22 +18,26 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Fixture\Event;
+namespace Doctrine\Test\Fixture\Event;
+
+use Doctrine\Fixture\Configuration;
+use Doctrine\Fixture\Event\BulkFixtureEvent;
+use Doctrine\Test\Mock\Unassigned;
 
 /**
- * Bulk Import Fixture Event Listener contract.
+ * BulkFixtureEvent tests.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface BulkImportFixtureEventListener
+class BulkFixtureEventTest extends \PHPUnit_Framework_TestCase
 {
-    const BULK_IMPORT = 'bulkImport';
+    public function testEvent()
+    {
+        $configuration = new Configuration();
+        $fixtureA      = new Unassigned\FixtureA();
+        $event         = new BulkFixtureEvent($configuration, array($fixtureA));
 
-    /**
-     * Handles a bulk import fixture event, dealing with fixture list
-     * manipulation before actual import execution.
-     *
-     * @param \Doctrine\Fixture\Event\BulkFixtureEvent $event
-     */
-    function bulkImport(BulkFixtureEvent $event);
+        $this->assertEquals($configuration, $event->getConfiguration());
+        $this->assertEquals(array($fixtureA), $event->getFixtureList());
+    }
 }

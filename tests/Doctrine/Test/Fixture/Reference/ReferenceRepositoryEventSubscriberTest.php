@@ -23,6 +23,8 @@ namespace Doctrine\Test\Fixture\Reference;
 use Doctrine\Fixture\Reference\DoctrineCacheReferenceRepository;
 use Doctrine\Fixture\Reference\ReferenceRepositoryEventSubscriber;
 use Doctrine\Fixture\Event\FixtureEvent;
+use Doctrine\Fixture\Event\ImportFixtureEventListener;
+use Doctrine\Fixture\Event\PurgeFixtureEventListener;
 use Doctrine\Common\Cache\ArrayCache;
 
 /**
@@ -53,12 +55,10 @@ class ReferenceRepositoryEventSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedEvents()
     {
-        $expected = array(
-            'purge',
-            'import'
-        );
+        $subscribedEventList = $this->subscriber->getSubscribedEvents();
 
-        $this->assertEquals($expected, $this->subscriber->getSubscribedEvents());
+        $this->assertContains(ImportFixtureEventListener::IMPORT, $subscribedEventList);
+        $this->assertContains(PurgeFixtureEventListener::PURGE, $subscribedEventList);
     }
 
     public function testImport()

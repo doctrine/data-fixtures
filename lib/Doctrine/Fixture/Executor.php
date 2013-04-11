@@ -20,9 +20,12 @@
 
 namespace Doctrine\Fixture;
 
+use Doctrine\Fixture\Configuration;
+use Doctrine\Fixture\Event\BulkFixtureEvent;
+use Doctrine\Fixture\Event\BulkImportFixtureEventListener;
+use Doctrine\Fixture\Event\BulkPurgeFixtureEventListener;
 use Doctrine\Fixture\Filter\Filter;
 use Doctrine\Fixture\Loader\Loader;
-use Doctrine\Fixture\Configuration;
 
 /**
  * Executor class, responsible to import/purge fixtures.
@@ -69,15 +72,15 @@ final class Executor
 
         if ($flags & self::PURGE) {
             // Purging needs to happen in reverse order of execution
-            $event = new Event\BulkFixtureEvent($this->configuration, array_reverse($fixtureList));
+            $event = new BulkFixtureEvent($this->configuration, array_reverse($fixtureList));
 
-            $eventManager->dispatchEvent('bulkPurge', $event);
+            $eventManager->dispatchEvent(BulkPurgeFixtureEventListener::BULK_PURGE, $event);
         }
 
         if ($flags & self::IMPORT) {
-            $event = new Event\BulkFixtureEvent($this->configuration, $fixtureList);
+            $event = new BulkFixtureEvent($this->configuration, $fixtureList);
 
-            $eventManager->dispatchEvent('bulkImport', $event);
+            $eventManager->dispatchEvent(BulkImportFixtureEventListener::BULK_IMPORT, $event);
         }
     }
 

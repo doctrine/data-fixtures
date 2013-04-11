@@ -22,6 +22,8 @@ namespace Doctrine\Test\Fixture\Persistence;
 
 use Doctrine\Fixture\Persistence\ConnectionRegistryEventSubscriber;
 use Doctrine\Fixture\Event\FixtureEvent;
+use Doctrine\Fixture\Event\ImportFixtureEventListener;
+use Doctrine\Fixture\Event\PurgeFixtureEventListener;
 use Doctrine\Test\Mock\Persistence\ConnectionRegistry;
 
 /**
@@ -52,12 +54,10 @@ class ConnectionRegistryEventSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedEvents()
     {
-        $expected = array(
-            'purge',
-            'import'
-        );
+        $subscribedEventList = $this->subscriber->getSubscribedEvents();
 
-        $this->assertEquals($expected, $this->subscriber->getSubscribedEvents());
+        $this->assertContains(ImportFixtureEventListener::IMPORT, $subscribedEventList);
+        $this->assertContains(PurgeFixtureEventListener::PURGE, $subscribedEventList);
     }
 
     public function testImport()
@@ -117,5 +117,4 @@ class ConnectionRegistryEventSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->subscriber->purge($event);
     }
-
 }

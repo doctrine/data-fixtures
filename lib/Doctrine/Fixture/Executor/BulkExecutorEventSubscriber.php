@@ -25,6 +25,8 @@ use Doctrine\Fixture\Event\FixtureEvent;
 use Doctrine\Fixture\Event\BulkFixtureEvent;
 use Doctrine\Fixture\Event\BulkImportFixtureEventListener;
 use Doctrine\Fixture\Event\BulkPurgeFixtureEventListener;
+use Doctrine\Fixture\Event\ImportFixtureEventListener;
+use Doctrine\Fixture\Event\PurgeFixtureEventListener;
 
 /**
  * Bulk Executor Event Subscriber.
@@ -42,8 +44,8 @@ class BulkExecutorEventSubscriber implements
     public function getSubscribedEvents()
     {
         return array(
-            'bulkPurge',
-            'bulkImport',
+            BulkImportFixtureEventListener::BULK_IMPORT,
+            BulkPurgeFixtureEventListener::BULK_PURGE,
         );
     }
 
@@ -55,7 +57,7 @@ class BulkExecutorEventSubscriber implements
         $eventManager = $event->getConfiguration()->getEventManager();
 
         foreach ($event->getFixtureList() as $fixture) {
-            $eventManager->dispatchEvent('purge', new FixtureEvent($fixture));
+            $eventManager->dispatchEvent(PurgeFixtureEventListener::PURGE, new FixtureEvent($fixture));
 
             $fixture->purge();
         }
@@ -69,7 +71,7 @@ class BulkExecutorEventSubscriber implements
         $eventManager = $event->getConfiguration()->getEventManager();
 
         foreach ($event->getFixtureList() as $fixture) {
-            $eventManager->dispatchEvent('import', new FixtureEvent($fixture));
+            $eventManager->dispatchEvent(ImportFixtureEventListener::IMPORT, new FixtureEvent($fixture));
 
             $fixture->import();
         }

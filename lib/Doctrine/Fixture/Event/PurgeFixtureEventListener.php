@@ -27,6 +27,8 @@ namespace Doctrine\Fixture\Event;
  */
 interface PurgeFixtureEventListener
 {
+    const PURGE = 'purge';
+
     /**
      * Handles a purge fixture event, dealing with fixture manipulation
      * before actual purge execution.

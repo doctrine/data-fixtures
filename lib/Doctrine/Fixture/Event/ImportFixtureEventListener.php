@@ -27,6 +27,8 @@ namespace Doctrine\Fixture\Event;
  */
 interface ImportFixtureEventListener
 {
+    const IMPORT = 'import';
+
     /**
      * Handles an import fixture event, dealing with fixture manipulation
      * before actual import execution.

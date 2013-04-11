@@ -27,6 +27,8 @@ namespace Doctrine\Fixture\Event;
  */
 interface BulkPurgeFixtureEventListener
 {
+    const BULK_PURGE = 'bulkPurge';
+
     /**
      * Handles a bulk purge fixture event, dealing with fixture list
      * manipulation before actual purge execution.

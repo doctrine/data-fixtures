@@ -56,8 +56,8 @@ class ReferenceRepositoryEventSubscriber implements
     public function getSubscribedEvents()
     {
         return array(
-            'purge',
-            'import',
+            ImportFixtureEventListener::IMPORT,
+            PurgeFixtureEventListener::PURGE,
         );
     }
 
