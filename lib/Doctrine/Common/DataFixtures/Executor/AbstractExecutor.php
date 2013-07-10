@@ -61,7 +61,7 @@ abstract class AbstractExecutor
     /**
      * Sets the Purger instance to use for this executor instance.
      *
-     * @param Purger $purger
+     * @param PurgerInterface $purger
      */
     public function setPurger(PurgerInterface $purger)
     {
