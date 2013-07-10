@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
 
 /**
  * Abstract fixture executor.
@@ -62,7 +63,7 @@ abstract class AbstractExecutor
      *
      * @param Purger $purger
      */
-    public function setPurger(Purger $purger)
+    public function setPurger(PurgerInterface $purger)
     {
         $this->purger = $purger;
     }
