@@ -69,20 +69,50 @@ class Loader
      *
      * @param string $dir Directory to find fixture classes in.
      * @return array $fixtures Array of loaded fixture object instances
+     *
+     * @throws \InvalidArgumentException
      */
     public function loadFromDirectory($dir)
     {
         if (!is_dir($dir)) {
-            throw new \InvalidArgumentException(sprintf('"%s" does not exist', $dir));
+            throw new \InvalidArgumentException(sprintf('"%s" directory does not exist', $dir));
         }
-
-        $fixtures = array();
-        $includedFiles = array();
 
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($dir),
             \RecursiveIteratorIterator::LEAVES_ONLY
         );
+
+        return $this->load($iterator);
+    }
+
+    /**
+     * Find fixtures classes in a given file and load them.
+     *
+     * @param string $file File to find fixtures in.
+     * @return array $fixtures Array of loaded fixture object instances
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function loadFromFile($file)
+    {
+        if (!is_file($file)) {
+            throw new \InvalidArgumentException(sprintf('"%s" file does not exist', $file));
+        }
+
+        $iterator = new \ArrayIterator(array(new \SplFileInfo($file)));
+
+        return $this->load($iterator);
+    }
+
+    /**
+     * @param \Traversable $iterator
+     * @return array $fixtures Array of loaded fixture object instances
+     */
+    private function load(\Traversable $iterator)
+    {
+        $fixtures = array();
+        $includedFiles = array();
 
         foreach ($iterator as $file) {
             if (($fileName = $file->getBasename($this->fileExtension)) == $file->getBasename()) {
