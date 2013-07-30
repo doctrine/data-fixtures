@@ -68,6 +68,9 @@ class Loader
      * Find fixtures classes in a given directory and load them.
      *
      * @param string $dir Directory to find fixture classes in.
+     *
+     * @throws \InvalidArgumentException
+     *
      * @return array $fixtures Array of loaded fixture object instances
      */
     public function loadFromDirectory($dir)
@@ -92,19 +95,24 @@ class Loader
             require_once $sourceFile;
             $includedFiles[] = $sourceFile;
         }
-        $declared = get_declared_classes();
-        
-        foreach ($declared as $className) {
-            $reflClass = new \ReflectionClass($className);
-            $sourceFile = $reflClass->getFileName();
-            
-            if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
-                $fixture = new $className;
-                $fixtures[] = $fixture;
-                $this->addFixture($fixture);
-            }
-        }
-        return $fixtures;
+
+        return $this->loadFixturesFromIncludedFiles($includedFiles);
+    }
+
+    /**
+     * Find fixtures classes in a given file and load them.
+     *
+     * @param $file
+     *
+     * @return array
+     */
+    public function loadFromFile($file)
+    {
+        $sourceFile = realpath($file);
+        require_once $sourceFile;
+        $includedFiles[] = $sourceFile;
+
+        return $this->loadFixturesFromIncludedFiles($includedFiles);
     }
 
     /**
@@ -209,11 +217,11 @@ class Loader
             return 0;
         });
     }
-    
-    
+
+
     /**
      * Orders fixtures by dependencies
-     * 
+     *
      * @return void
      */
     private function orderFixturesByDependencies()
@@ -333,5 +341,29 @@ class Loader
         }
 
         return $unsequencedClasses;
-    }           
+    }
+
+    /**
+     * Load the fixtures from included files
+     *
+     * @param array $includedFiles
+     *
+     * @return array
+     */
+    private function loadFixturesFromIncludedFiles(array $includedFiles)
+    {
+        $declared = get_declared_classes();
+
+        foreach ($declared as $className) {
+            $reflClass = new \ReflectionClass($className);
+            $sourceFile = $reflClass->getFileName();
+
+            if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
+                $fixture = new $className;
+                $fixtures[] = $fixture;
+                $this->addFixture($fixture);
+            }
+        }
+        return $fixtures;
+    }
 }
