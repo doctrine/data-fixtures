@@ -139,10 +139,13 @@ class ReferenceRepository
      *
      * @param string $name
      * @return object
+     * @throws BadMethodCallException - if requested reference does not exist
      */
     public function getReference($name)
     {
         $reference = $this->references[$name];
+        if (is_null($reference))
+            throw new \BadMethodCallException("Reference to: ({$name}) does not exist, use method hasReference in order to check for existance");
         $meta = $this->manager->getClassMetadata(get_class($reference));
         $uow = $this->manager->getUnitOfWork();
         if (!$uow->isInIdentityMap($reference) && isset($this->identities[$name])) {
