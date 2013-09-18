@@ -18,29 +18,52 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Fixture\Command\Orm;
+namespace Doctrine\Fixture\Console;
 
 use Doctrine\Fixture\Executor;
-use Doctrine\Fixture\Command\ManagerRegistryCommand;
+use Doctrine\Fixture\Filter\GroupedFilter;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Command to purge the data fixtures using the Doctrine ORM
+ * Base class for data fixture commands.
  *
  * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
  */
-class Purge extends ManagerRegistryCommand
+class Command extends \Symfony\Component\Console\Command\Command
 {
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this
-            ->setExecutionFlags(Executor::PURGE)
-            ->setName('orm:fixtures:purge')
-            ->setDescription('Purge data fixtures from your database.')
-            ->addOption('group', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Groups to load data fixtures');
+        /** @var $helper DataFixtureHelper */
+        $helper        = $this->getHelper('data-fixtures');
+        $configuration = $helper->getConfiguration();
+        $loader        = $helper->getLoader();
+        $filter        = $helper->getFilter();
+        $flags         = $helper->getExecutionFlags();
+
+        $this->updateFilter($input);
+
+        $executor = new Executor($configuration);
+        $executor->execute($loader, $filter, $flags);
+    }
+
+    /**
+     * Update filter configuration based on provided input.
+     *
+     * @param InputInterface $input
+     */
+    protected function updateFilter(InputInterface $input)
+    {
+        /** @var $helper DataFixtureHelper */
+        $helper = $this->getHelper('data-fixtures');
+        $filter = $helper->getFilter();
+
+        if (($groupList = $input->getOption('group')) !== null) {
+            $filter->addFilter(new GroupedFilter($groupList, true));
+        }
     }
 }
