@@ -48,27 +48,19 @@ class DataFixtureHelper extends Helper
     protected $configuration;
 
     /**
-     * @var integer
-     */
-    protected $executionFlags;
-
-    /**
      * Class constructor
      *
      * @param Configuration $configuration
      * @param Loader $loader
-     * @param integer $executionFlags
      * @param ChainFilter $filter
      */
     public function __construct(
         Configuration $configuration,
         Loader $loader,
-        $executionFlags = 0,
         ChainFilter $filter = null
     ) {
         $this->configuration = $configuration;
         $this->loader = $loader;
-        $this->executionFlags = $executionFlags;
         $this->filter = $filter ?: new ChainFilter();
     }
 
@@ -90,16 +82,6 @@ class DataFixtureHelper extends Helper
     public function getFilter()
     {
         return $this->filter;
-    }
-
-    /**
-     * Configures the flags that should be used on the execution.
-     *
-     * @return integer
-     */
-    public function getExecutionFlags()
-    {
-        return $this->executionFlags;
     }
 
     /**

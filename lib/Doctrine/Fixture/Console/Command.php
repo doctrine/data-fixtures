@@ -36,14 +36,27 @@ class Command extends \Symfony\Component\Console\Command\Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function configure()
+    {
+        $this
+            ->setName('doctrine:fixtures:execute')
+            ->setDescription('Import data fixtures to your database.')
+            ->addOption('group', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Groups to load data fixtures')
+            ->addOption('import', null, InputOption::VALUE_NONE, 'Import data fixtures')
+            ->addOption('purge', null, InputOption::VALUE_NONE, 'Purge existing data fixtures');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var $helper DataFixtureHelper */
         $helper        = $this->getHelper('data-fixtures');
         $configuration = $helper->getConfiguration();
         $loader        = $helper->getLoader();
         $filter        = $helper->getFilter();
-        $flags         = $helper->getExecutionFlags();
+        $flags         = $this->createFlags($input);
 
         $this->updateFilter($input);
 
@@ -65,5 +78,27 @@ class Command extends \Symfony\Component\Console\Command\Command
         if (($groupList = $input->getOption('group')) !== null) {
             $filter->addFilter(new GroupedFilter($groupList, true));
         }
+    }
+
+    /**
+     * Create execution flags.
+     *
+     * @param InputInterface $input
+     *
+     * @return integer
+     */
+    protected function createFlags(InputInterface $input)
+    {
+        $flags = 0;
+
+        if ($input->getOption('import')) {
+            $flags |= Executor::IMPORT;
+        }
+
+        if ($input->getOption('purge')) {
+            $flags |= Executor::PURGE;
+        }
+
+        return $flags;
     }
 }
