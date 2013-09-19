@@ -207,7 +207,7 @@ and a calculator factory (that will calculate the fixtures execution order).
 
 If your fixtures implements the ``Doctrine\Fixture\Persistence\ManagerRegistryFixture``
 or ``Doctrine\Fixture\Persistence\ConnectionRegistryFixture`` interfaces, you should register the
-respective subscribers as event listeners:
+respective event subscribers:
 
 ```php
 use Doctrine\Common\EventManager;
@@ -219,7 +219,7 @@ $configuration = new Configuration();
 $configuration->setEventManager(new EventManager());
 $configuration->setCalculatorFactory(new CalculatorFactory());
 
-$configuration->getEventManager()->addEventListener(
+$configuration->getEventManager()->addEventSubscriber(
     new ManagerRegistryEventSubscriber(/* Your ManagerRegistry should be passed here */);
 );
 ```
