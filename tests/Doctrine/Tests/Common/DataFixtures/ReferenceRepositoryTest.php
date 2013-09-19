@@ -132,4 +132,17 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $referenceRepository->getReference('admin'));
         $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $referenceRepository->getReference('duplicate'));
     }
+    
+    public function testReferenceNotSet()
+    {
+        $em = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ReferenceRepository($em);
+        
+        try{
+            $referenceRepository->getReference('ThisNameDoesNotExist');
+        } catch (\InvalidArgumentException $e) {
+            return;
+        }
+        $this->fail('Expected \'InvalidArgumentException\' to be raised.');
+    }
 }
