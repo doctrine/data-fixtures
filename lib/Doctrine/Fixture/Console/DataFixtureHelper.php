@@ -20,13 +20,11 @@
 
 namespace Doctrine\Fixture\Console;
 
-use Doctrine\Fixture\Executor;
 use Doctrine\Fixture\Configuration;
 use Doctrine\Fixture\Filter\ChainFilter;
 use Doctrine\Fixture\Loader\Loader;
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+
 /**
  * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
  */
