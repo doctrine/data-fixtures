@@ -123,6 +123,9 @@ class Loader
      * Add a fixture object instance to the loader.
      *
      * @param FixtureInterface $fixture
+     *
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function addFixture(FixtureInterface $fixture)
     {
@@ -130,16 +133,32 @@ class Loader
 
         if (!isset($this->fixtures[$fixtureClass])) {
             if ($fixture instanceof OrderedFixtureInterface && $fixture instanceof DependentFixtureInterface) {
-                throw new \InvalidArgumentException(sprintf('Class "%s" can\'t implement "%s" and "%s" at the same time.', 
-                    get_class($fixture),
+                throw new \InvalidArgumentException(sprintf('Class "%s" can\'t implement "%s" and "%s" at the same time.',
+                    $fixtureClass,
                     'OrderedFixtureInterface',
                     'DependentFixtureInterface'));
-            } elseif ($fixture instanceof OrderedFixtureInterface) {
+            }
+
+            if ($fixture instanceof OrderedFixtureInterface) {
                 $this->orderFixturesByNumber = true;
-            } elseif ($fixture instanceof DependentFixtureInterface) {
+            }
+
+            if ($fixture instanceof DependentFixtureInterface) {
                 $this->orderFixturesByDependencies = true;
                 foreach($fixture->getDependencies() as $class) {
-                    $this->addFixture(new $class);
+                    if (!class_exists($class)) {
+                        throw new \RuntimeException(
+                            sprintf(
+                                'Dependent fixture class "%s" for fixture "%s" could not be found.',
+                                $class,
+                                $fixtureClass
+                            )
+                        );
+                    }
+
+                    if (isset($this->fixtures[$fixtureClass]) && !isset($this->fixtures[$class])) {
+                        $this->addFixture(new $class);
+                    }
                 }
             }
 
@@ -333,5 +352,5 @@ class Loader
         }
 
         return $unsequencedClasses;
-    }           
+    }
 }

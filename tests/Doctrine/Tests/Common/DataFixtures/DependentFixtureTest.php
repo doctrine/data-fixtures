@@ -96,7 +96,7 @@ class DependentFixtureTest extends BaseTest
 
 
     /**
-     * @expectedException Doctrine\Common\DataFixtures\Exception\CircularReferenceException
+     * @expectedException \Doctrine\Common\DataFixtures\Exception\CircularReferenceException
      */
     public function test_orderFixturesByDependencies_circularReferencesMakeMethodThrowCircularReferenceException()
     {
@@ -110,7 +110,7 @@ class DependentFixtureTest extends BaseTest
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function test_orderFixturesByDependencies_fixturesCantHaveItselfAsParent()
     {
@@ -145,7 +145,7 @@ class DependentFixtureTest extends BaseTest
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function test_inCaseAFixtureHasAnUnexistentDependencyOrIfItWasntLoaded_throwsException()
     {

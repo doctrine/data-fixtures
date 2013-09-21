@@ -12,7 +12,14 @@
 >
     <testsuites>
         <testsuite name="Doctrine Data Fixtures Test Suite">
-            <directory>./tests/Doctrine/</directory>
+            <directory suffix="Test.php">./tests/Doctrine/</directory>
         </testsuite>
     </testsuites>
+
+    <!-- Coverage filter -->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./lib</directory>
+        </whitelist>
+    </filter>
 </phpunit>
