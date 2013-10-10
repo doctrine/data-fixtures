@@ -90,7 +90,7 @@ final class Executor
      * @param \Doctrine\Fixture\Loader\Loader $loader
      * @param \Doctrine\Fixture\Filter\Filter $filter
      *
-     * @return array<Doctrine\Fixture\Fixture>
+     * @return array<\Doctrine\Fixture\Fixture>
      */
     private function getFixtureList(Loader $loader, Filter $filter)
     {

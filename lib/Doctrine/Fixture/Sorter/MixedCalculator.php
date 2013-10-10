@@ -71,15 +71,15 @@ class MixedCalculator implements Calculator
 
         foreach ($fixtureList as $fixture) {
             switch (true) {
-                case $this->isOrdered($fixture):
-                    $prioritySorter->insert($fixture, $fixture->getOrder());
-                    break;
-
                 case $this->isDependent($fixture):
                     $fixtureHash = get_class($fixture);
 
                     $topologicalSorter->addNode($fixtureHash, $fixture);
                     $topologicalSorter->setDependencyList($fixtureHash, $fixture->getDependencyList());
+                    break;
+
+                case $this->isOrdered($fixture):
+                    $prioritySorter->insert($fixture, $fixture->getOrder());
                     break;
 
                 default:

@@ -144,7 +144,7 @@ class TopologicalSorter
      *
      * @throws \RuntimeException
      *
-     * @param stdClass $definition
+     * @param \stdClass $definition
      */
     private function visit($definition)
     {

@@ -48,7 +48,7 @@ class PrioritySorter extends \SplPriorityQueue
      *
      * {@internal Highly performance-sensitive method.}
      *
-     * @return array<Doctrine\Fixture\Fixture>
+     * @return array<\Doctrine\Fixture\Fixture>
      */
     public function sort()
     {

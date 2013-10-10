@@ -35,7 +35,7 @@ interface Calculator
      * {@internal Any implementor algorithm should not exceed O(n) for
      *            performance reasons.}
      *
-     * @param array<Doctrine\Fixture\Fixture> $fixtureList
+     * @param array<\Doctrine\Fixture\Fixture> $fixtureList
      *
      * @return boolean
      */
@@ -45,9 +45,9 @@ interface Calculator
      * Processes the reordering a given list of fixtures and returns the
      * reordered list.
      *
-     * @param array<Doctrine\Fixture\Fixture> $fixtureList
+     * @param array<\Doctrine\Fixture\Fixture> $fixtureList
      *
-     * @return array<Doctrine\Fixture\Fixture>
+     * @return array<\Doctrine\Fixture\Fixture>
      */
     function calculate(array $fixtureList);
 }
