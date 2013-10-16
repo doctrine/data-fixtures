@@ -70,14 +70,23 @@ class ReferenceRepository
      * @param object $reference Reference object
      * @param object $uow       Unit of work
      *
-     * @return mixed
+     * @return array
      */
     protected function getIdentifier($reference, $uow)
     {
+        // In case Reference is not yet managed in UnitOfWork
+        if ( ! $uow->isInIdentityMap($reference)) {
+            $class = $this->manager->getClassMetadata(get_class($reference));
+
+            return $class->getIdentifierValues($reference);
+        }
+
+        // Dealing with ORM UnitOfWork
         if (method_exists($uow, 'getEntityIdentifier')) {
             return $uow->getEntityIdentifier($reference);
         }
 
+        // ODM UnitOfWork
         return $uow->getDocumentIdentifier($reference);
     }
 
