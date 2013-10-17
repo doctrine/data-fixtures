@@ -35,6 +35,7 @@ Here is a simple example of an hypotetical fixture responsible to create a file.
 
 ```php
 <?php
+
 namespace MyDataFixtures;
 
 use Doctrine\Fixture\Fixture;
@@ -132,10 +133,10 @@ this manual.
 
 DependentFixture provides the contract for fixtures that are interdependent. 
 This means implementors of this interface can define other fixtures that they 
-depend on during import/purge process. It enforces the implementation of a 
-method called `getDependencyList` which requires the return to be an array of 
-fully qualified class names of required fixtures in order for the implemented 
-one to fully work.
+depend on during import/purge process. The interface `Doctrine\Fixture\Sorter\DependentFixture` 
+enforces the implementation of a method called `getDependencyList` which 
+requires the return to be an array of fully qualified class names of required 
+fixtures in order for the implemented one to fully work.
 
 ```php
 <?php
@@ -156,10 +157,16 @@ class CompanyData implements DependentFixture
         // Do your purge tasks for CompanyData
     }
     
+    /**
+     * Returns a list of fixture classes (fully qualified class names) on which
+     * implementing class dependends on.
+     *
+     * @return array<string>
+     */
     public function getDependencyList()
     {
         return array(
-            'MyDataFixtures\UserData' // You must use the full qualified name
+            'MyDataFixtures\UserData',
         );
     }
 } 
@@ -189,7 +196,58 @@ class UserData implements DependentFixture
 
 ### OrderedFixture
 
-TBD
+Ordered fixtures followa sequential order starting from `1`. The sorter for 
+this type of ordering is behind the scenes a `SplPriorityQueue` instance, so 
+multiple fixtures pointing to same order position will be treated as first 
+come, first served (FIFO).
+To implement a numeric based priority, you have to consume `Doctrine\Fixture\Sorter\OrderedFixture` 
+which forces the method `getOrder` to be implemented.
+
+```php
+<?php
+
+namespace MyDataFixtures;
+
+use Doctrine\Fixture\Sorter\OrderedFixture;
+
+class UserData implements OrderedFixture
+{
+    public function import()
+    {
+        // Do your import tasks for UserData
+    }
+    
+    public function purge()
+    {
+        // Do your purge tasks for UserData
+    }
+    
+    public function getOrder()
+    {
+        return 1;
+    }
+}
+
+class CompanyData implements OrderedFixture
+{
+    public function import()
+    {
+        // Do your import tasks for CompanyData
+    }
+    
+    public function purge()
+    {
+        // Do your purge tasks for CompanyData
+    }
+    
+    public function getOrder()
+    {
+        return 2;
+    }
+} 
+
+?>
+```
 
 ## Filter related fixtures
 
