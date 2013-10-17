@@ -58,6 +58,10 @@ class Configuration
      */
     public function getEventManager()
     {
+        if ( ! $this->eventManager) {
+            $this->eventManager = new EventManager();
+        }
+
         return $this->eventManager;
     }
 
@@ -78,6 +82,10 @@ class Configuration
      */
     public function getCalculatorFactory()
     {
+        if ( ! $this->calculatorFactory) {
+            $this->calculatorFactory = new CalculatorFactory();
+        }
+
         return $this->calculatorFactory;
     }
 }
