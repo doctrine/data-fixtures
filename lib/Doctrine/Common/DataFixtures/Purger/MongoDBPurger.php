@@ -70,5 +70,6 @@ class MongoDBPurger implements PurgerInterface
                 $this->dm->getDocumentCollection($metadata->name)->drop();
             }
         }
+        $this->dm->getSchemaManager()->ensureIndexes();
     }
 }
