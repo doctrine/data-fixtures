@@ -65,6 +65,18 @@ class Loader
     private $fileExtension = '.php';
 
     /**
+     * Tags for this loader
+     *
+     * @var array
+     */
+    private $tags;
+
+    public function __construct($tags = array())
+    {
+        $this->tags = $tags;
+    }
+
+    /**
      * Find fixtures classes in a given directory and load them.
      *
      * @param string $dir Directory to find fixture classes in.
@@ -100,8 +112,9 @@ class Loader
             
             if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
                 $fixture = new $className;
-                $fixtures[] = $fixture;
-                $this->addFixture($fixture);
+                if ($this->addFixture($fixture)) {
+                    $fixtures[] = $fixture;
+                }
             }
         }
         return $fixtures;
@@ -123,12 +136,17 @@ class Loader
      * Add a fixture object instance to the loader.
      *
      * @param FixtureInterface $fixture
+     * @return bool true on successful add, false instead
      */
     public function addFixture(FixtureInterface $fixture)
     {
         $fixtureClass = get_class($fixture);
 
         if (!isset($this->fixtures[$fixtureClass])) {
+            if ($fixture instanceof TaggedFixtureInterface && !$this->isProperlyTagged($fixture)) {
+                return false;
+            }
+
             if ($fixture instanceof OrderedFixtureInterface && $fixture instanceof DependentFixtureInterface) {
                 throw new \InvalidArgumentException(sprintf('Class "%s" can\'t implement "%s" and "%s" at the same time.', 
                     get_class($fixture),
@@ -144,7 +162,11 @@ class Loader
             }
 
             $this->fixtures[$fixtureClass] = $fixture;
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -183,7 +205,14 @@ class Loader
         if ($rc->isAbstract()) return true;
 
         $interfaces = class_implements($className);
-        return in_array('Doctrine\Common\DataFixtures\FixtureInterface', $interfaces) ? false : true;
+        return !in_array('Doctrine\Common\DataFixtures\FixtureInterface', $interfaces);
+    }
+
+    protected function isProperlyTagged(FixtureInterface $fixture)
+    {
+        return empty($this->tags) || (
+            $fixture instanceof TaggedFixtureInterface &&
+            array_intersect($fixture->getTags(), $this->tags) != array());
     }
 
     /**
