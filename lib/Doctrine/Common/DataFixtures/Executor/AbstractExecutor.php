@@ -5,6 +5,7 @@ namespace Doctrine\Common\DataFixtures\Executor;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Common\DataFixtures\TaggedFixtureInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
@@ -111,6 +112,9 @@ abstract class AbstractExecutor
             $prefix = '';
             if ($fixture instanceof OrderedFixtureInterface) {
                 $prefix = sprintf('[%d] ',$fixture->getOrder());
+            }
+            if ($fixture instanceof TaggedFixtureInterface) {
+                $prefix = sprintf('%s(%s) ',$prefix,implode(',', $fixture->getTags()));
             }
             $this->log('loading ' . $prefix . get_class($fixture));
         }
