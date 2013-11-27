@@ -67,8 +67,13 @@ class MongoDBPurger implements PurgerInterface
         $metadatas = $this->dm->getMetadataFactory()->getAllMetadata();
         foreach ($metadatas as $metadata) {
             if ( ! $metadata->isMappedSuperclass) {
-                $this->dm->getDocumentCollection($metadata->name)->drop();
+                $this->purgeCollection($metadata->name);
             }
         }
+    }
+    
+    public function purgeCollection($name)
+    {
+        $this->dm->getDocumentCollection($name)->drop();
     }
 }
