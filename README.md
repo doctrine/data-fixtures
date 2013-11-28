@@ -432,7 +432,6 @@ class ContributorData implements ReferenceRepositoryFixture
     public function import()
     {
         $contributor = new User();
-
         $contributor->setName('Guilherme Blanco');
 
         $this->referenceRepository->add('gblanco', $contributor);
@@ -472,7 +471,6 @@ class ProjectData implements ReferenceRepositoryFixture, DependentFixture
     public function import()
     {
         $project = new Project();
-
         $project->setName('Doctrine Data Fixtures');
         $project->addContributor($this->referenceRepository->get('gblanco'));
 
@@ -507,8 +505,8 @@ use Doctrine\Fixture\Configuration;
 use Doctrine\Fixture\Reference\DoctrineCacheReferenceRepository;
 use Doctrine\Fixture\Reference\ReferenceRepositoryEventSubscriber;
 
-$configuration       = new Configuration();
-$eventManager        = $configuration->getEventManager();
+$configuration = new Configuration();
+$eventManager  = $configuration->getEventManager();
 
 $eventManager->addEventSubscriber(
     new ReferenceRepositoryEventSubscriber(
@@ -525,7 +523,81 @@ $eventManager->addEventSubscriber(
 
 ## Custom reference repository
 
-TBD
+Doctrine data fixtures library already comes with Doctrine cache provider 
+support natively, but it may not be enough on very specific situations.
+In this circunstance, you are required to implement your own custom reference
+repository, and we are here to help you on this task.
+
+Reference repository support has an interface that defines the contract for any
+possible specialization: `Doctrine\Fixture\Reference\ReferenceRepository`. Its
+API is very straight forward and simple, so simple that our showcase will be a
+stripped version (comments removed) of Doctrine cache provider implementation.
+
+```php
+<?php
+
+namespace MyReferenceRepositoryImpl;
+
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Fixture\Reference\ReferenceRepository;
+
+class DoctrineCacheReferenceRepository implements ReferenceRepository
+{
+    /**
+     * @var \Doctrine\Common\Cache\Cache
+     */
+    private $cache;
+
+    /**
+     * Constructor.
+     *
+     * @param \Doctrine\Common\Cache\Cache $cache
+     */
+    public function __construct(Cache $cache)
+    {
+        $this->cache = $cache;
+    }
+
+    /**
+     * @api \Doctrine\Fixture\Reference\ReferenceRepository
+     */
+    public function add($key, $value)
+    {
+        $this->cache->save($key, $value);
+    }
+
+    /**
+     * @api \Doctrine\Fixture\Reference\ReferenceRepository
+     */
+    public function get($key)
+    {
+        return $this->cache->fetch($key);
+    }
+
+    /**
+     * @api \Doctrine\Fixture\Reference\ReferenceRepository
+     */
+    public function has($key)
+    {
+        return $this->cache->contains($key);
+    }
+
+    /**
+     * @api \Doctrine\Fixture\Reference\ReferenceRepository
+     */
+    public function remove($key)
+    {
+        $this->cache->delete($key);
+    }
+}
+
+?>
+```
+
+Because the `ReferenceRepository` is a well defined contract, the related event
+subscriber `Doctrine\Fixture\Reference\ReferenceRepositoryEventSubscriber` 
+relies on an implementation of `Doctrine\Fixture\Reference\ReferenceRepository`
+and it will normally operate without any problem.
 
 # Creating loaders
 
