@@ -20,13 +20,15 @@
 
 namespace Doctrine\Fixture\Reference;
 
+use Doctrine\Fixture\Fixture;
+
 /**
  * Contract for Reference Repository fixtures.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  */
-interface ReferenceRepositoryFixture
+interface ReferenceRepositoryFixture extends Fixture
 {
     /**
      * Defines the Reference Repository.

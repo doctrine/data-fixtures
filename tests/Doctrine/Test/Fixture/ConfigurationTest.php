@@ -51,4 +51,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($calculatorFactory, $configuration->getCalculatorFactory());
     }
+
+    public function testDefaultEventManagerCreation()
+    {
+        $configuration = new Configuration();
+        
+        $this->assertInstanceOf('Doctrine\Common\EventManager', $configuration->getEventManager());
+    }
+
+    public function testDefaultCalculatorFactoryCreation()
+    {
+        $configuration = new Configuration();
+        
+        $this->assertInstanceOf('Doctrine\Fixture\Sorter\CalculatorFactory', $configuration->getCalculatorFactory());
+    }
 }

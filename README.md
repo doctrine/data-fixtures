@@ -4,6 +4,7 @@
 
 This library aims to provide a simple way to manage and execute the loading 
 and/or purging of data fixtures for the Doctrine ORM or ODM. 
+
 It is build around events, which provides a powerful extension point to add any 
 new extra support for 3rd party libraries without touching the core functionality.
 
@@ -31,6 +32,7 @@ Writing a data fixtures consists in two steps to be implemented:
 
 To enforce that both of these methods are properly implemented, Doctrine 
 Fixtures library provides a contract (interface) that you can follow: `Doctrine\Fixture\Fixture`.
+
 Here is a simple example of an hypotetical fixture responsible to create a file.
 
 ```php
@@ -71,6 +73,7 @@ desired fixtures are included into a fixture executor. An executor is a
 piece of functionality responsible to execute fixtures according to desired 
 needs. As an example, you may want to purge and import a specific fixture or 
 even purely purge a set of fixtures.
+
 Here is an example on how to create a fixture executor that imports our first 
 fixture.
 
@@ -200,6 +203,7 @@ Ordered fixtures followa sequential order starting from `1`. The sorter for
 this type of ordering is behind the scenes a `SplPriorityQueue` instance, so 
 multiple fixtures pointing to same order position will be treated as first 
 come, first served (FIFO).
+
 To implement a numeric based priority, you have to consume `Doctrine\Fixture\Sorter\OrderedFixture` 
 which forces the method `getOrder` to be implemented.
 
@@ -251,21 +255,144 @@ class CompanyData implements OrderedFixture
 
 ## Filter related fixtures
 
-TBD
+Testing an application may become a huge headache when the time needed to 
+create testing fixtures increases. It is also valid when the amount of fixtures
+to be loaded increases. The ability to filter to only load a subset of your 
+entire fixture set is a very good way to reduce load time.
+
+Doctrine data fixtures library implements support for filtering fixtures during
+importing and purging time.
 
 ### GroupedFixture
 
-TBD
+Grouped fixtures allows you to create group names for fixtures that need to
+participate of importing or purging as a unique block. A given fixture can be
+part of multiple groups. You can also import or purge multiple groups as 
+detailed in GroupedFilter section of this document.
+
+To add named group support, you have to implement the interface `Doctrine\Fixture\Filter\GroupedFixture` 
+which enforces method `getGroupList` to be implemented.
+
+```php
+<?php
+
+namespace MyDataFixtures;
+
+use Doctrine\Fixture\Filter\GroupedFixture;
+
+class CountryData implements GroupedFixture
+{
+    public function getGroupList()
+    {
+        return array(
+            'geo', 
+            'geolocation',
+        );
+    }
+
+    public function import()
+    {
+        // Do your import tasks for CountryData
+    }
+
+    public function purge()
+    {
+        // Do your purge tasks for CountryData
+    }
+}
+
+?>
+```
 
 ## Persistence related fixtures
 
 ### ConnectionRegistryFixture
 
-TBD
+Most of the times, fixtures need to communicate with a RDBMS storage, more 
+specifically, a Doctrine DBAL connection. These connections are referenced 
+through a Registry available in `Doctrine\Common\Persistence\ConnectionRegistry`.
+
+A `Doctrine\Fixture\Persistence\ConnectionRegistryFixture` implementor 
+proactively receives a `ConnectionRegistry` when used in conjunction with a 
+`Doctrine\Fixture\Persistence\ConnectionRegistryEventSubscriber`.
+
+Implementing a `ConnectionRegistryFixture` rerquires the interface contract 
+to be implemented.
+
+```php
+<?php
+
+namespace MyDataFixtures;
+
+use Doctrine\Common\Persistence\ConnectionRegistry;
+use Doctrine\Fixture\Persistence\ConnectionRegistryFixture;
+
+class CompanyData implements ConnectionRegistryFixture
+{
+    /**
+     * @var \Doctrine\Common\Persistence\ConnectionRegistry
+     */
+    private $connectionRegistry;
+
+    function setConnectionRegistry(ConnectionRegistry $registry)
+    {
+        $this->connectionRegistry = $registry;
+    }
+
+    public function import()
+    {
+        // Do your import tasks for CompanyData
+    }
+    
+    public function purge()
+    {
+        // Do your purge tasks for CompanyData
+    }
+}
+
+?>
+```
 
 ### ManagerRegistryFixture
 
-TBD
+Fixtures that relies on Doctrine ORM have the ability to inject the `ManagerRegistry`
+through `Doctrine\Fixture\Persistence\ManagerRegistryEventSubscriber` event 
+subscriber. To take advantage of this event subscriber, fixture that is 
+interested to have this injection needs to implement the `Doctrine\Fixture\Persistence\ManagerRegistryFixture`.
+
+```php
+<?php
+
+namespace MyDataFixtures;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Fixture\Persistence\ManagerRegistryFixture;
+
+class UserData implements ManagerRegistryFixture
+{
+    /**
+     * @var \Doctrine\Common\Persistence\ManagerRegistry
+     */
+    private $managerRegistry;
+
+    function setManagerRegistry(ManagerRegistry $registry)
+    {
+        $this->managerRegistry = $registry;
+    }
+
+    public function import()
+    {
+        // Do your import tasks for UserData
+    }
+    
+    public function purge()
+    {
+        // Do your purge tasks for UserData
+    }
+}
+
+?>
+```
 
 # Handling references
 

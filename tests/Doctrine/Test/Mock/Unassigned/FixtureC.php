@@ -22,14 +22,13 @@ namespace Doctrine\Test\Mock\Unassigned;
 
 use Doctrine\Fixture\Persistence\ConnectionRegistryFixture;
 use Doctrine\Common\Persistence\ConnectionRegistry;
-use Doctrine\Fixture\Fixture;
 
 /**
  * Fixture C.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureC implements ConnectionRegistryFixture, Fixture
+class FixtureC implements ConnectionRegistryFixture
 {
     /**
      * {@inheritdoc}

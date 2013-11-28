@@ -24,14 +24,13 @@ use Doctrine\Fixture\Persistence\ManagerRegistryFixture;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Fixture\Reference\ReferenceRepositoryFixture;
 use Doctrine\Fixture\Reference\ReferenceRepository;
-use Doctrine\Fixture\Fixture;
 
 /**
  * Fixture A.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class FixtureA implements ManagerRegistryFixture, ReferenceRepositoryFixture, Fixture
+class FixtureA implements ManagerRegistryFixture, ReferenceRepositoryFixture
 {
     /**
      * {@inheritdoc}

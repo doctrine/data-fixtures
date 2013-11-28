@@ -42,17 +42,12 @@ class MixedCalculator implements Calculator
         $containsOrdered   = false;
 
         foreach ($fixtureList as $fixture) {
-            switch (true) {
-                case $this->isDependent($fixture):
-                    $containsDependent = true;
-                    break;
+            if ($this->isDependent($fixture)) {
+                $containsDependent = true;
+            }
 
-                case $this->isOrdered($fixture):
-                    $containsOrdered = true;
-                    break;
-
-                default:
-                    // Do nothing
+            if ($this->isOrdered($fixture)) {
+                $containsOrdered = true;
             }
         }
 
@@ -70,20 +65,18 @@ class MixedCalculator implements Calculator
         $topologicalSorter = new TopologicalSorter();
 
         foreach ($fixtureList as $fixture) {
-            switch (true) {
-                case $this->isDependent($fixture):
-                    $fixtureHash = get_class($fixture);
+            if ($this->isOrdered($fixture)) {
+                $prioritySorter->insert($fixture, $fixture->getOrder());
+            
+                continue;
+            }
+            
+            $fixtureHash = get_class($fixture);
 
-                    $topologicalSorter->addNode($fixtureHash, $fixture);
-                    $topologicalSorter->setDependencyList($fixtureHash, $fixture->getDependencyList());
-                    break;
+            $topologicalSorter->addNode($fixtureHash, $fixture);
 
-                case $this->isOrdered($fixture):
-                    $prioritySorter->insert($fixture, $fixture->getOrder());
-                    break;
-
-                default:
-                    $topologicalSorter->addNode(get_class($fixture), $fixture);
+            if ($this->isDependent($fixture)) {
+                $topologicalSorter->setDependencyList($fixtureHash, $fixture->getDependencyList());
             }
         }
 

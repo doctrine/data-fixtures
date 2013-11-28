@@ -21,13 +21,14 @@
 namespace Doctrine\Fixture\Persistence;
 
 use Doctrine\Common\Persistence\ConnectionRegistry;
+use Doctrine\Fixture\Fixture;
 
 /**
  * Contract for Connection Registry fixtures.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface ConnectionRegistryFixture
+interface ConnectionRegistryFixture extends Fixture
 {
     /**
      * Defines the Connection Registry.

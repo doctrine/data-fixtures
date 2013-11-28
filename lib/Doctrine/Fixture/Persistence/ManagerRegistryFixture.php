@@ -21,13 +21,14 @@
 namespace Doctrine\Fixture\Persistence;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Fixture\Fixture;
 
 /**
  * Contract for Object Manager Registry fixtures.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-interface ManagerRegistryFixture
+interface ManagerRegistryFixture extends Fixture
 {
     /**
      * Defines the Object Manager Registry.
