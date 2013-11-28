@@ -334,7 +334,7 @@ class CompanyData implements ConnectionRegistryFixture
      */
     private $connectionRegistry;
 
-    function setConnectionRegistry(ConnectionRegistry $registry)
+    public function setConnectionRegistry(ConnectionRegistry $registry)
     {
         $this->connectionRegistry = $registry;
     }
@@ -375,7 +375,7 @@ class UserData implements ManagerRegistryFixture
      */
     private $managerRegistry;
 
-    function setManagerRegistry(ManagerRegistry $registry)
+    public function setManagerRegistry(ManagerRegistry $registry)
     {
         $this->managerRegistry = $registry;
     }
@@ -396,9 +396,132 @@ class UserData implements ManagerRegistryFixture
 
 # Handling references
 
+An enterprise application does not consist purely of a single fixture. There 
+may be many fixtures that may be interdependent and references another and 
+these  references can be a database reference, a cache entry or even a file.
+Doctrine data fixtures helps you relating these things together through a 
+concept called reference repository.
+
+## Implementing a ReferenceRepositoryFixture
+
+To benefit from the straight access to a `Doctrine\Fixture\Reference\ReferenceRepository`,
+it is required to implement the contract defined by `Doctrine\Fixture\Reference\ReferenceRepositoryFixture` 
+interface. Example:
+
+```php
+<?php
+
+namespace MyDataFixtures;
+
+use Doctrine\Fixture\Sorter\DependentFixture;
+use Doctrine\Fixture\Reference\ReferenceRepository;
+use Doctrine\Fixture\Reference\ReferenceRepositoryFixture;
+
+class ContributorData implements ReferenceRepositoryFixture
+{
+    /**
+     * @var \Doctrine\Fixture\Reference\ReferenceRepository
+     */
+    private $referenceRepository;
+
+    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    {
+        $this->referenceRepository = $referenceRepository;
+    }
+
+    public function import()
+    {
+        $contributor = new User();
+
+        $contributor->setName('Guilherme Blanco');
+
+        $this->referenceRepository->add('gblanco', $contributor);
+    }
+    
+    public function purge()
+    {
+        $this->referenceRepository->remove('gblanco');
+    }
+}
+
+/**
+ * NOTE: Important to note that ReferenceRepositories should be carefully
+ * throught. In this simple example we depend on another Fixture to properly
+ * load project data (contributor data). This means that not only we implement 
+ * the ReferenceRepositoryFixture, but we also implement the DependentFixture.
+ */
+class ProjectData implements ReferenceRepositoryFixture, DependentFixture
+{
+    /**
+     * @var \Doctrine\Fixture\Reference\ReferenceRepository
+     */
+    private $referenceRepository;
+
+    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    {
+        $this->referenceRepository = $referenceRepository;
+    }
+
+    public function getDependencyList()
+    {
+        return array(
+            __NAMESPACE__ . '\ContributorData',
+        );
+    }
+
+    public function import()
+    {
+        $project = new Project();
+
+        $project->setName('Doctrine Data Fixtures');
+        $project->addContributor($this->referenceRepository->get('gblanco'));
+
+        $this->referenceRepository->add('data-fixtures', $project);
+    }
+    
+    public function purge()
+    {
+        $this->referenceRepository->remove('data-fixtures');
+    }
+}
+
+?>
+```
+
+
 ## DoctrineCacheReferenceRepository
 
-TBD
+Now that we know from consumer's perspective how to benefit from a Reference
+Repository, it is now time to understand how to enable support in Executor.
+
+By default, this library allows you to contains proxy references using a
+Doctrine cache provider, but you have the ability to implement your own if
+needed. To create and assign a reference repository using a Doctrine cache
+provider is done through this piece of code:
+
+```php
+<?php
+
+use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Fixture\Configuration;
+use Doctrine\Fixture\Reference\DoctrineCacheReferenceRepository;
+use Doctrine\Fixture\Reference\ReferenceRepositoryEventSubscriber;
+
+$configuration       = new Configuration();
+$eventManager        = $configuration->getEventManager();
+
+$eventManager->addEventSubscriber(
+    new ReferenceRepositoryEventSubscriber(
+        new DoctrineCacheReferenceRepository(
+            new ApcCache()
+        )
+    )
+);
+
+// Create your executor, loader, filter here ...
+
+?>
+```
 
 ## Custom reference repository
 
