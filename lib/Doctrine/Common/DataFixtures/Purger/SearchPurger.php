@@ -68,7 +68,7 @@ class SearchPurger implements PurgerInterface
     {
         $metadatas = $this->sm->getMetadataFactory()->getAllMetadata();
         foreach ($metadatas as $metadata) {
-            $this->sm->getClient()->removeAll($metadata->index, $metadata->type);
+            $this->sm->getClient()->removeAll($metadata);
         }
     }
 }
