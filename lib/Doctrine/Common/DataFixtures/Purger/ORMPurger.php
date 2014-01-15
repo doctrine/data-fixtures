@@ -19,6 +19,7 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Internal\CommitOrderCalculator;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -127,12 +128,20 @@ class ORMPurger implements PurgerInterface
             $orderedTables[] = $class->getQuotedTableName($platform);
         }
 
+        if ($platform instanceof MySqlPlatform) {
+            $this->setForeignKeyChecks(false);
+        }
+
         foreach($orderedTables as $tbl) {
             if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                 $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
             } else {
                 $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
             }
+        }
+
+        if ($platform instanceof MySqlPlatform) {
+            $this->setForeignKeyChecks(true);
         }
     }
 
@@ -195,5 +204,19 @@ class ORMPurger implements PurgerInterface
         }
 
         return $associationTables;
+    }
+
+    /**
+     * Enable/disable foreign key checks on the MySQL platform
+     *
+     * @param bool $bool
+     */
+    private function setForeignKeyChecks($bool)
+    {
+        if ($this->purgeMode !== self::PURGE_MODE_TRUNCATE) {
+            return;
+        }
+
+        $this->em->getConnection()->query(sprintf('SET FOREIGN_KEY_CHECKS=%s', (int) $bool));
     }
 }
