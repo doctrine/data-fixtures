@@ -75,7 +75,7 @@ class ReferenceRepository
     protected function getIdentifier($reference, $uow)
     {
         // In case Reference is not yet managed in UnitOfWork
-        if ( ! $uow->isInIdentityMap($reference)) {
+        if (!$uow->isInIdentityMap($reference)) {
             $class = $this->manager->getClassMetadata(get_class($reference));
 
             return $class->getIdentifierValues($reference);
