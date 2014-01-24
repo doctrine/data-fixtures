@@ -4,53 +4,65 @@ This extension aims to provide a simple way to manage and execute the loading of
 for the Doctrine ORM or ODM. You can write fixture classes by implementing the
 Doctrine\Common\DataFixtures\FixtureInterface interface:
 
-    namespace MyDataFixtures;
+```php
+namespace MyDataFixtures;
 
-    use Doctrine\Common\Persistence\ObjectManager;
-    use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 
-    class LoadUserData implements FixtureInterface
+class LoadUserData implements FixtureInterface
+{
+    public function load(ObjectManager $manager)
     {
-        public function load(ObjectManager $manager)
-        {
-            $user = new User();
-            $user->setUsername('jwage');
-            $user->setPassword('test');
+        $user = new User();
+        $user->setUsername('jwage');
+        $user->setPassword('test');
 
-            $manager->persist($user);
-            $manager->flush();
-        }
+        $manager->persist($user);
+        $manager->flush();
     }
+}
+```
 
 Now you can begin adding the fixtures to a loader instance:
 
-    use Doctrine\Common\DataFixtures\Loader;
-    use MyDataFixtures\LoadUserData;
+```php
+use Doctrine\Common\DataFixtures\Loader;
+use MyDataFixtures\LoadUserData;
 
-    $loader = new Loader();
-    $loader->addFixture(new LoadUserData);
+$loader = new Loader();
+$loader->addFixture(new LoadUserData);
+```
 
 You can load a set of fixtures from a directory as well:
 
-    $loader->loadFromDirectory('/path/to/MyDataFixtures');
+```php
+$loader->loadFromDirectory('/path/to/MyDataFixtures');
+```
 
 You can get the added fixtures using the getFixtures() method:
 
-    $fixtures = $loader->getFixtures();
+```php
+$fixtures = $loader->getFixtures();
+```
 
 Now you can easily execute the fixtures:
 
-    use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-    use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+```php
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 
-    $purger = new ORMPurger();
-    $executor = new ORMExecutor($em, $purger);
-    $executor->execute($loader->getFixtures());
+$purger = new ORMPurger();
+$executor = new ORMExecutor($em, $purger);
+$executor->execute($loader->getFixtures());
+```
 
 If you want to append the fixtures instead of purging before loading then pass true
 to the 2nd argument of execute:
 
-    $executor->execute($loader->getFixtures(), true);
+```php
+$executor->execute($loader->getFixtures(), true);
+```
 
 ## Sharing objects between fixtures
 
@@ -58,55 +70,59 @@ In case if fixture objects have relations to other fixtures, it is now possible
 to easily add a reference to that object by name and later reference it to form
 a relation. Here is an example fixtures for **Role** and **User** relation
 
-    namespace MyDataFixtures;
+```php
+namespace MyDataFixtures;
 
-    use Doctrine\Common\DataFixtures\AbstractFixture;
-    use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
 
-    class LoadUserRoleData extends AbstractFixture
+class LoadUserRoleData extends AbstractFixture
+{
+    public function load(ObjectManager $manager)
     {
-        public function load(ObjectManager $manager)
-        {
-            $adminRole = new Role();
-            $adminRole->setName('admin');
+        $adminRole = new Role();
+        $adminRole->setName('admin');
 
-            $anonymousRole = new Role;
-            $anonymousRole->setName('anonymous');
+        $anonymousRole = new Role;
+        $anonymousRole->setName('anonymous');
 
-            $manager->persist($adminRole);
-            $manager->persist($anonymousRole);
-            $manager->flush();
+        $manager->persist($adminRole);
+        $manager->persist($anonymousRole);
+        $manager->flush();
 
-            // store reference to admin role for User relation to Role
-            $this->addReference('admin-role', $adminRole);
-        }
+        // store reference to admin role for User relation to Role
+        $this->addReference('admin-role', $adminRole);
     }
+}
+```
 
 And the **User** data loading fixture:
 
-    namespace MyDataFixtures;
+```php
+namespace MyDataFixtures;
 
-    use Doctrine\Common\DataFixtures\AbstractFixture;
-    use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
 
-    class LoadUserData extends AbstractFixture
+class LoadUserData extends AbstractFixture
+{
+    public function load(ObjectManager $manager)
     {
-        public function load(ObjectManager $manager)
-        {
-            $user = new User();
-            $user->setUsername('jwage');
-            $user->setPassword('test');
-            $user->setRole(
-                $this->getReference('admin-role') // load the stored reference
-            );
+        $user = new User();
+        $user->setUsername('jwage');
+        $user->setPassword('test');
+        $user->setRole(
+            $this->getReference('admin-role') // load the stored reference
+        );
 
-            $manager->persist($user);
-            $manager->flush();
+        $manager->persist($user);
+        $manager->flush();
 
-            // store reference of admin-user for other Fixtures
-            $this->addReference('admin-user', $user);
-        }
+        // store reference of admin-user for other Fixtures
+        $this->addReference('admin-user', $user);
     }
+}
+```
 
 ## Fixture ordering
 **Notice** that the fixture loading order is important! To handle it manually
@@ -116,49 +132,53 @@ implement one of the following interfaces:
 
 Set the order manually:
 
-    namespace MyDataFixtures;
+```php
+namespace MyDataFixtures;
 
-    use Doctrine\Common\DataFixtures\AbstractFixture;
-    use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-    use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
-    class MyFixture extends AbstractFixture implements OrderedFixtureInterface
+class MyFixture extends AbstractFixture implements OrderedFixtureInterface
+{
+    public function load(ObjectManager $manager)
+    {}
+
+    public function getOrder()
     {
-        public function load(ObjectManager $manager)
-        {}
-
-        public function getOrder()
-        {
-            return 10; // number in which order to load fixtures
-        }
+        return 10; // number in which order to load fixtures
     }
+}
+```
 
 ### DependentFixtureInterface
 
 Provide an array of fixture class names:
 
-    namespace MyDataFixtures;
+```php
+namespace MyDataFixtures;
 
-    use Doctrine\Common\DataFixtures\AbstractFixture;
-    use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-    use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
-    class MyFixture extends AbstractFixture implements DependentFixtureInterface
+class MyFixture extends AbstractFixture implements DependentFixtureInterface
+{
+    public function load(ObjectManager $manager)
+    {}
+
+    public function getDependencies()
     {
-        public function load(ObjectManager $manager)
-        {}
-
-        public function getDependencies()
-        {
-            return array('MyDataFixtures\MyOtherFixture'); // fixture classes fixture is dependent on
-        }
+        return array('MyDataFixtures\MyOtherFixture'); // fixture classes fixture is dependent on
     }
+}
 
-    class MyOtherFixture extends AbstractFixture
-    {
-        public function load(ObjectManager $manager)
-        {}
-    }
+class MyOtherFixture extends AbstractFixture
+{
+    public function load(ObjectManager $manager)
+    {}
+}
+```
 
 **Notice** the ordering is relevant to Loader class.
 
