@@ -141,6 +141,7 @@ abstract class AbstractExecutor
      *
      * @param array $fixtures Array of fixtures to execute.
      * @param boolean $append Whether to append the data fixtures or purge the database before loading.
+     * @param boolean $single_transaction Whether to use a single transaction when loading fixtures
      */
-    abstract public function execute(array $fixtures, $append = false);
+    abstract public function execute(array $fixtures, $append = false, $single_transaction = true);
 }
