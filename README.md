@@ -33,7 +33,7 @@ Writing a data fixtures consists in two steps to be implemented:
 To enforce that both of these methods are properly implemented, Doctrine 
 Fixtures library provides a contract (interface) that you can follow: `Doctrine\Fixture\Fixture`.
 
-Here is a simple example of an hypotetical fixture responsible to create a file.
+Here is a simple example of an hypothetical fixture responsible to create a file.
 
 ```php
 <?php
@@ -135,7 +135,7 @@ this manual.
 ### DependentFixture
 
 DependentFixture provides the contract for fixtures that are interdependent. 
-This means implementors of this interface can define other fixtures that they 
+This means implementers of this interface can define other fixtures that they
 depend on during import/purge process. The interface `Doctrine\Fixture\Sorter\DependentFixture` 
 enforces the implementation of a method called `getDependencyList` which 
 requires the return to be an array of fully qualified class names of required 
@@ -162,7 +162,7 @@ class CompanyData implements DependentFixture
     
     /**
      * Returns a list of fixture classes (fully qualified class names) on which
-     * implementing class dependends on.
+     * implementing class depends on.
      *
      * @return array<string>
      */
@@ -199,7 +199,7 @@ class UserData implements DependentFixture
 
 ### OrderedFixture
 
-Ordered fixtures followa sequential order starting from `1`. The sorter for 
+Ordered fixtures follow a sequential order starting from `1`. The sorter for
 this type of ordering is behind the scenes a `SplPriorityQueue` instance, so 
 multiple fixtures pointing to same order position will be treated as first 
 come, first served (FIFO).
@@ -312,11 +312,11 @@ Most of the times, fixtures need to communicate with a RDBMS storage, more
 specifically, a Doctrine DBAL connection. These connections are referenced 
 through a Registry available in `Doctrine\Common\Persistence\ConnectionRegistry`.
 
-A `Doctrine\Fixture\Persistence\ConnectionRegistryFixture` implementor 
+A `Doctrine\Fixture\Persistence\ConnectionRegistryFixture` implementer
 proactively receives a `ConnectionRegistry` when used in conjunction with a 
 `Doctrine\Fixture\Persistence\ConnectionRegistryEventSubscriber`.
 
-Implementing a `ConnectionRegistryFixture` rerquires the interface contract 
+Implementing a `ConnectionRegistryFixture` requires the interface contract
 to be implemented.
 
 ```php
@@ -445,7 +445,7 @@ class ContributorData implements ReferenceRepositoryFixture
 
 /**
  * NOTE: Important to note that ReferenceRepositories should be carefully
- * throught. In this simple example we depend on another Fixture to properly
+ * thought. In this simple example we depend on another Fixture to properly
  * load project data (contributor data). This means that not only we implement 
  * the ReferenceRepositoryFixture, but we also implement the DependentFixture.
  */
@@ -525,7 +525,7 @@ $eventManager->addEventSubscriber(
 
 Doctrine data fixtures library already comes with Doctrine cache provider 
 support natively, but it may not be enough on very specific situations.
-In this circunstance, you are required to implement your own custom reference
+In this circumstance, you are required to implement your own custom reference
 repository, and we are here to help you on this task.
 
 Reference repository support has an interface that defines the contract for any
