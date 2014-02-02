@@ -60,7 +60,7 @@ class DirectoryLoaderTest extends \PHPUnit_Framework_TestCase
             // No fixture files
             array(0, __DIR__),
             // Branch folder
-            array(0, realpath(__DIR__ . '/../../Mock')),
+            array(1, realpath(__DIR__ . '/../../Mock')),
             // Leaf folder
             array(3, realpath(__DIR__ . '/../../Mock/Unassigned')),
         );

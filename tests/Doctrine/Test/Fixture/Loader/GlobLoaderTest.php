@@ -49,8 +49,10 @@ class GlobLoaderTest extends \PHPUnit_Framework_TestCase
     public function provideDataForLoad()
     {
         return array(
+            // No fixture files
+            array(0, __DIR__),
             // Branch folder
-            array(0, realpath(__DIR__ . '/../../Mock') . '/*.php'),
+            array(1, realpath(__DIR__ . '/../../Mock') . '/*.php'),
             // Leaf folder
             array(3, realpath(__DIR__ . '/../../Mock/Unassigned') . '/*.php'),
         );

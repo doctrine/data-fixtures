@@ -20,12 +20,14 @@
 
 namespace Doctrine\Test\Mock;
 
+use Doctrine\Fixture\Fixture;
+
 /**
  * Node.
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class Node
+class Node implements Fixture
 {
     /**
      * @var mixed
@@ -37,8 +39,26 @@ class Node
      *
      * @param mixed $value
      */
-    public function __construct($value)
+    public function __construct($value = 0)
     {
         $this->value = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function import()
+    {
+        // Do nothing
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
+    public function purge()
+    {
+        // Do nothing
     }
 }
