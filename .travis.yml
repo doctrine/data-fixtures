@@ -9,3 +9,7 @@ php:
 before_script: composer --dev --prefer-source install
 
 script: ./vendor/bin/phpunit
+
+matrix:
+  allow_failures:
+    - php: hhvm
