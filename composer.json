@@ -10,10 +10,10 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "doctrine/common": ">=2.2,<2.5-dev"
+        "doctrine/common": "~2.2"
     },
     "require-dev": {
-        "doctrine/orm": ">=2.2,<2.5-dev"
+        "doctrine/orm": "~2.2"
     },
     "suggest": {
         "doctrine/orm": "For loading ORM fixtures",
