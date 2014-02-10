@@ -601,9 +601,68 @@ and it will normally operate without any problem.
 
 # Creating loaders
 
+A loader is responsible to elect which files are going to be loaded as part of
+purging or importing execution.
+In previous examples simple/single loaders were used to demonstrate how to
+consume Data Fixtures library. By default, this library comes with many other
+types of loaders.
+
 ## ChainLoader
 
-TBD
+Chain loader is used when multiple combinations of loaders are required as part
+of any execution. Chain would group these loaders together returning to you a
+unique combination of Fixtures after all of them are instantiated correctly.
+Here is a simple example of a ChainLoader being used together with two class
+loaders.
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\ChainLoader;
+use Doctrine\Fixture\Loader\ClassLoader;
+
+$classLoaderA = new ClassLoader(array('Doctrine\Test\Mock\Unassigned\FixtureA'));
+$classLoaderB = new ClassLoader(array('Doctrine\Test\Mock\Unassigned\FixtureB'));
+
+$loader = new ChainLoader(array(
+    $classLoaderA,
+    $classLoaderB,
+));
+
+// Returns: array(Doctrine\Test\Mock\Unassigned\FixtureA, Doctrine\Test\Mock\Unassigned\FixtureB)
+$fixtureList = $loader->load();
+
+?>
+```
+
+Also, ChainLoader provides a nice API to add/remove loaders this its list:
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\ChainLoader;
+use Doctrine\Fixture\Loader\ClassLoader;
+
+$classLoaderA = new ClassLoader(array('Doctrine\Test\Mock\Unassigned\FixtureA'));
+$classLoaderB = new ClassLoader(array('Doctrine\Test\Mock\Unassigned\FixtureB'));
+
+$loader = new ChainLoader(array(
+    $classLoaderA,
+    $classLoaderB,
+));
+
+$loaderList = $loader->getLoaderList(); // returns array($classLoaderA, $classLoaderB)
+
+$loader->removeLoader($classLoaderA);
+
+$loaderList = $loader->getLoaderList(); // returns array($classLoaderB)
+
+$loader->addLoader($classLoaderA);
+
+$loaderList = $loader->getLoaderList(); // returns array($classLoaderB, $classLoaderA)
+
+?>
+```
 
 ## ClassLoader
 
