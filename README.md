@@ -603,6 +603,8 @@ and it will normally operate without any problem.
 
 A loader is responsible to elect which files are going to be loaded as part of
 purging or importing execution.
+Loader API provides you a single method to load and make fixtures available
+immediately, called `load()`.
 In previous examples simple/single loaders were used to demonstrate how to
 consume Data Fixtures library. By default, this library comes with many other
 types of loaders.
@@ -666,23 +668,234 @@ $loaderList = $loader->getLoaderList(); // returns array($classLoaderB, $classLo
 
 ## ClassLoader
 
-TBD
+Previously we used ClassLoader in examples, but this loader supports a single 
+specific loader for a given class relying on its autoloader to be properly
+imported/executed. ClassLoader accepts a list of classes in constructor for 
+loading.
+
+For sanity, here is a simplistic example of a ClassLoader being created:
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\ClassLoader;
+
+$classLoaderA = new ClassLoader(array('Doctrine\Test\Mock\Unassigned\FixtureA'));
+
+?>
+```
 
 ## DirectoryLoader
 
-TBD
+It is normal that a set of fixtures sit in a directory. Implementing multiple
+ClassLoaders or similar would be a huge effort, so natively we offer support to
+load fixtures by a given directory.
+
+NOTE: For recursive directory loading, please refer to RecursiveDirectoryLoader 
+section.
+
+Example:
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\DirectoryLoader;
+
+$directoryLoader = new DirectoryLoader('/path/to/fixtures/directory');
+
+$fixtureList = $directoryLoader->load();
+
+?>
+```
 
 ## GlobLoader
 
-TBD
+Similar to DirectoryLoader, GlobLoader loads a set of files based on a glob 
+expression. For more information about glob, ([read the PHP manual](http://php.net/GlobIterator)).
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\GlobLoader;
+
+$globLoader = new GlobLoader('/some/directory/*Fixture.php');
+
+?>
+```
 
 ## RecursiveDirectoryLoader
 
-TBD
+DirectoryLoader is only able to load files on a single depth. 
+RecursiveDirectoryLoader is a specialized version of DirectoryLoader, 
+traversing a directory tree starting from provided path and loading all files 
+it finds. This is very useful when used together with namespaces and PSR-0 or 
+PSR-4.
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\RecursiveDirectoryLoader;
+
+$directoryLoader = new RecursiveDirectoryLoader('/path/to/fixtures/directory');
+
+$fixtureList = $directoryLoader->load();
+
+?>
+```
 
 ## Custom loaders
 
-TBD
+Doctrine data fixtures provides by default a handful of loaders natively.
+Depending on your needs, it may not be enough. By implementing the `Loader`
+interface, you are able to plugin your custom loader implementation and still
+benefit from the data fixtures library easily.
+
+In our example here, let's assume we need to traverse recursively a directory
+and find all files that ends with `Fixture.php`. You may understand this 
+example as a RecursiveDirectoryLoader + GlobLoader like implementation, but
+instead of considering a glob, we will accept a regular expression. 
+We should also consider that it must be a valid Fixture to be loaded, and we 
+also want to validate against this criteria.
+To achieve our goal, we will accept 2 arguments in our loader constructor: 
+directory and pattern. 
+
+Here is our loader's code:
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\Loader;
+
+class RecursiveFilterableDirectoryLoader implements Loader
+{
+    /**
+     * @var string
+     */
+    protected $directory;
+
+    /**
+     * @var string
+     */
+    protected $pattern;
+
+    /**
+     * Constructor.
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @param string $directory
+     * @param string $pattern
+     */
+    public function __construct($directory, $pattern)
+    {
+        if ( ! is_dir($directory)) {
+            throw new \InvalidArgumentException(sprintf('"%s" does not exist', $directory));
+        }
+
+        $this->directory = $directory;
+        $this->pattern   = $pattern;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load()
+    {
+        $traversable       = $this->loadFromFilesystem();
+        $fileList          = $this->loadFromTraversable($traversable);
+        $declaredClassList = get_declared_classes();
+        $fixtureList       = array();
+
+        foreach ($declaredClassList as $class) {
+            $reflectionClass = new \ReflectionClass($class);
+
+            // Check if class was declared during this loader
+            if ( ! in_array($reflectionClass->getFileName(), $fileList)) {
+                continue;
+            }
+
+            // Check if class is transient
+            if ($this->isTransient($reflectionClass)) {
+                continue;
+            }
+
+            $fixtureList[] = new $class();
+        }
+
+        return $fixtureList;
+    }
+
+    /**
+     * Loads fixture files from filesystem matching a regex pattern.
+     *
+     * @return \FilesystemIterator
+     */
+    protected function loadFromFilesystem()
+    {
+        $directoryIterator = new \RecursiveDirectoryIterator($this->directory);
+        $recursiveIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::LEAVES_ONLY);
+
+        return new RegexIterator($recursiveIterator, $this->pattern, RegexIterator::GET_MATCH);
+    }
+
+    /**
+     * Loads the file list using a given traversable.
+     *
+     * @param \Traversable $traversable
+     *
+     * @return array
+     */
+    private function loadFromTraversable(\Traversable $traversable)
+    {
+        $fileList = array();
+
+        foreach ($traversable as $fileInfo) {
+            if ($fileInfo->getBasename('.php') === $fileInfo->getBasename()) {
+                continue;
+            }
+
+            $fileRealPath = $fileInfo->getRealPath();
+
+            require_once $fileRealPath;
+
+            $fileList[] = $fileRealPath;
+        }
+
+        return $fileList;
+    }
+
+    /**
+     * Checks if class is transient.
+     *
+     * @param \ReflectionClass $reflectionClass
+     *
+     * @return boolean
+     */
+    private function isTransient(\ReflectionClass $reflectionClass)
+    {
+        if ($reflectionClass->isAbstract()) {
+            return true;
+        }
+
+        return ( ! $reflectionClass->implementsInterface('Doctrine\Fixture\Fixture'));
+    }
+}
+
+?>
+```
+
+Now, to consume our newly created code, we should do:
+
+```php
+<?php
+
+$myCustomLoader = new RecursiveFilterableDirectoryLoader(
+    '/path/to/fixtures/directory', 
+    '/(.*)Fixture\.php$/'
+);
+
+?>
+```
 
 # Creating filters
 
