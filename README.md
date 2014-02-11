@@ -899,17 +899,173 @@ $myCustomLoader = new RecursiveFilterableDirectoryLoader(
 
 # Creating filters
 
+Doctrine data fixtures 1.0 had a limitation on selectively importing/purging 
+fixtures. Starting from version 2.0, you are now able to filter the list of
+classes to be executed. This is done by using a concept called filter.
+
+Because this is a dangerous territory, Doctrine data fixtures library is only
+able to bring basic support for filtering. It is up to you provide how you
+want to filter. To simplify most common cases, this library offers a default
+implementation that should be sufficient in normal cases, using a name based
+filter, and also a way to chain multiple filters together.
+
 ## ChainFilter
 
-TBD
+ChainFilter offers the ability to add multiple filters at the same time for 
+execution.
+
+Example:
+
+```php
+<?php
+
+use Doctrine\Fixture\Filter\ChainFilter;
+use Doctrine\Fixture\Filter\GroupedFilter;
+
+use Doctrine\Fixture\Loader\ClassLoader;
+
+$groupedFilterA = new GroupedFilter(array('A'));
+$groupedFilterB = new GroupedFilter(array('B'));
+
+$chainFilter = new ChainFilter(array(
+    $groupedFilterA,
+    $groupedFilterB,
+));
+
+$classLoaderA = new ClassLoader(array('Doctrine\Test\Mock\Unassigned\FixtureA'));
+$fixtureList  = $classLoaderA->load();
+
+$chainFilter->accept($fixtureList[0]); // Returns boolean
+
+
+$filterList = $chainFilter->getFilterList(); // returns array($groupedFilterA, $groupedFilterB)
+
+$chainFilter->removeLoader($groupedFilterA);
+
+$filterList = $chainFilter->getFilterList(); // returns array($groupedFilterB)
+
+$chainFilter->addLoader($groupedFilterA);
+
+$filterList = $chainFilter->getFilterList(); // returns array($groupedFilterB, $groupedFilterA)
+
+?>
+```
 
 ## GroupedFilter
 
-TBD
+In previous example, we demonstrated how to create a GroupedFilter.
+This filter defines a restriction to load specific fixtures that matches a
+contract implementation `GroupedFixture` and also a key matching.
+
+Let's suppose we have 2 fixtures:
+
+```php
+<?php
+
+use Doctrine\Fixture\Fixture;
+use Doctrine\Fixture\Filter\GroupedFixture;
+
+class FixtureA implements Fixture, GroupedFixture
+{
+    public function getGroupList()
+    {
+        return array('A', 'other_keyword');
+    }
+
+    public function import() { /* ... */}
+
+    public function purge() { /* ... */ }
+}
+
+class FixtureB implements Fixture
+{
+    public function import() { /* ... */}
+
+    public function purge() { /* ... */ }
+}
+
+?>
+```
+
+Let's assume we have this initialization piece:
+
+```php
+<?php
+
+use Doctrine\Fixture\Loader\ChainLoader;
+use Doctrine\Fixture\Configuration;
+use Doctrine\Fixture\Executor;
+
+$classLoader = new ClassLoader(array(
+    'FixtureA',
+    'FixtureB',
+));
+
+$executor = new Executor(new Configuration());
+
+?>
+```
+
+GroupedFilter requires a fixture to implement GroupedFixture to check for
+matching filter, unless a configuration tells the opposite. Let's consider
+two possibilities:
+
+```php
+<?php
+
+use Doctrine\Fixture\Executor;
+use Doctrine\Fixture\Filter\GroupedFilter;
+
+$filter = new GroupedFilter(array('A'));
+
+$executor->execute($classLoader, $filter, Executor::IMPORT); // would load FixtureA and FixtureB
+
+?>
+```
+
+Assuming only implementors should be considered, GroupedFilter accepts a second
+argument called `onlyImplementors`. This means that fixtures that does not 
+implement GroupedFixture interface would then be dicarded. Example:
+
+```php
+<?php
+
+use Doctrine\Fixture\Executor;
+use Doctrine\Fixture\Filter\GroupedFilter;
+
+$filter = new GroupedFilter(array('A'), true);
+
+$executor->execute($classLoader, $filter, Executor::IMPORT); // would load FixtureA only
+
+?>
+```
 
 ## Custom filters
 
-TBD
+It is easily possible to create your own filter. All it is required is to
+implement the Filter API. Here it is:
+
+```php
+<?php
+
+interface Filter
+{
+    /**
+     * Checks whether the fixture is acceptable.
+     *
+     * @param \Doctrine\Fixture\Fixture $fixture
+     *
+     * @return boolean
+     */
+    function accept(Fixture $fixture);
+}
+
+?>
+```
+
+By implementing your own filter support, it easily supports fine grained 
+solutions for your personal projects. A simple example is to create
+personalized interfaces mimic-ing same support defined in GroupedFilter.
 
 # Mastering event system
 
