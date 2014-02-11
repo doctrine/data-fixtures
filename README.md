@@ -1069,25 +1069,68 @@ personalized interfaces mimic-ing same support defined in GroupedFilter.
 
 # Mastering event system
 
+Doctrine data fixtures library heavily relies on Doctrine's event system to
+leverage fixtures execution. It is possible to define your own event system
+instance through configuration, by injecting this dependency using the setter
+method.
+
 ## Executor events
+
+Executor triggers 2 events while executing operations over fixtures: 
+* `\Doctrine\Fixture\Event\BulkImportFixtureEventListener::BULK_IMPORT` (bulkImport) 
+* `\Doctrine\Fixture\Event\BulkPurgeFixtureEventListener::BULK_PURGE` (bulkPurge).
+These events are trigger by attaching an event subscriber 
+(BulkExecutorEventSubscriber)  to event manager during executor's creation.
 
 ### Bulk Import
 
-TBD
+BulkImport event triggering provides an instance of `BulkFixtureEvent`, which
+provides you access to both Configuration and the already loaded and filtered 
+Fixture list.
+You are able to implement your own bulkImport listener by implementing the
+interface `BulkImportFixtureEventListener`.
 
 ### Bulk Purge
 
-TBD
+BulkPurge event triggering provides an instance of `BulkFixtureEvent`, which
+provides you access to both Configuration and the already loaded and filtered 
+Fixture list.
+You are able to implement your own bulkPurge listener by implementing the
+interface `BulkPurgeFixtureEventListener`.
 
 ## BulkExecutor events
 
+Default BulkExecutorEventSubscriber implementation triggers specific events for
+each fixture depending on the action being executed:
+* `\Doctrine\Fixture\Event\ImportFixtureEventListener::IMPORT` (import)
+* `\Doctrine\Fixture\Event\PurgeFixtureEventListener::PURGE` (purge)
+This is achieved by iterating through the list of fixtures to be executed 
+calling the event between each execution.
+Basically, this is the logic applied (exemplifying using purge execution):
+
+```php
+$eventManager = $event->getConfiguration()->getEventManager();
+
+foreach ($event->getFixtureList() as $fixture) {
+    $eventManager->dispatchEvent(PurgeFixtureEventListener::PURGE, new FixtureEvent($fixture));
+
+    $fixture->purge();
+}
+```
+
 ### Import
 
-TBD
+Import event triggering provides an instance of `FixtureEvent`, which provides 
+you access to Fixture being imported.
+You are able to implement your own Import listener by implementing the
+interface `ImportFixtureEventListener`.
 
 ### Purge
 
-TBD
+Purge event triggering provides an instance of `FixtureEvent`, which provides 
+you access to Fixture being purged.
+You are able to implement your own Purge listener by implementing the
+interface `PurgeFixtureEventListener`.
 
 # Creating persisters
 
