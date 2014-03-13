@@ -119,8 +119,11 @@ class ORMPurger implements PurgerInterface
         for ($i = count($commitOrder) - 1; $i >= 0; --$i) {
             $class = $commitOrder[$i];
 
-            if (($class->isInheritanceTypeSingleTable() && $class->name != $class->rootEntityName)
-                || $class->isMappedSuperclass) {
+            if (
+                ($class->isInheritanceTypeSingleTable() && $class->name != $class->rootEntityName) ||
+                (isset($class->isEmbeddedClass) && $class->isEmbeddedClass) ||
+                $class->isMappedSuperclass
+            ) {
                 continue;
             }
 
