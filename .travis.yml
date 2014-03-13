@@ -13,4 +13,4 @@ matrix:
 
 before_script: composer --dev --prefer-source install
 
-script: ./vendor/bin/phpunit -v
+script: phpunit -v
