@@ -1134,15 +1134,137 @@ interface `PurgeFixtureEventListener`.
 
 # Creating persisters
 
+Creating a persistence support is simply a matter of creating an 
+`Doctrine\Common\EventSubscriber` listening to both Import and Export events
+and injecting your own persistence dependency if a given fixture implements a 
+required contract.
+
 ## Existing persisters
 
-TBD
+Doctrine Fixtures library leverages some persisters already implemented and
+ready to be used.
+
+### ConnectionRegistry
+
+Provides support for `Doctrine\Common\Persistence\ConnectionRegistry` instances.
+Example of instantiation:
+
+```php
+<?php
+
+use App\Persistence\ConnectionRegistryImplementation; /* implements Doctrine\Common\Persistence\ConnectionRegistry */
+use Doctrine\Fixture\Configuration;
+use Doctrine\Fixture\Persistence\ConnectionRegistryEventSubscriber;
+
+$configuration = new Configuration();
+$eventManager  = $configuration->getEventManager();
+
+$eventManager->addEventSubscriber(
+    new ConnectionRegistryEventSubscriber(
+        new ConnectionRegistryImplementation(/* ... */)
+    )
+);
+
+?>
+```
+
+### ManagerRegistry
+
+Provides support for `Doctrine\Common\Persistence\ManagerRegistry` instances.
+See ConnectionRegistry example on how to instantiate.
 
 ## Custom persisters
 
-TBD
+As previously exposed, creating a persistence support is basically an 
+`Doctrine\Common\EventSubscriber` listening to both Import and Export events
+and injecting your own persistence dependency if a given fixture implements a 
+required contract.
+Here is a simple example of a persister that adds support for 
+`Doctrine\Common\Persistence\ConnectionRegistry`:
+
+```php
+<?php
+
+namespace Doctrine\Fixture\Persistence;
+
+use Doctrine\Common\Persistence\ConnectionRegistry;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Fixture\Event\FixtureEvent;
+use Doctrine\Fixture\Event\ImportFixtureEventListener;
+use Doctrine\Fixture\Event\PurgeFixtureEventListener;
+
+/**
+ * Connection Registry Event Subscriber.
+ *
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ */
+class ConnectionRegistryEventSubscriber implements
+    EventSubscriber,
+    ImportFixtureEventListener,
+    PurgeFixtureEventListener
+{
+    /**
+     * @var \Doctrine\Common\Persistence\ConnectionRegistry
+     */
+    private $registry;
+
+    /**
+     * Constructor.
+     *
+     * @param \Doctrine\Common\Persistence\ConnectionRegistry $registry
+     */
+    public function __construct(ConnectionRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribedEvents()
+    {
+        return array(
+            ImportFixtureEventListener::IMPORT,
+            PurgeFixtureEventListener::PURGE,
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purge(FixtureEvent $event)
+    {
+        $fixture = $event->getFixture();
+
+        if ( ! ($fixture instanceof ConnectionRegistryFixture)) {
+            return;
+        }
+
+        $fixture->setConnectionRegistry($this->registry);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function import(FixtureEvent $event)
+    {
+        $fixture = $event->getFixture();
+
+        if ( ! ($fixture instanceof ConnectionRegistryFixture)) {
+            return;
+        }
+
+        $fixture->setConnectionRegistry($this->registry);
+    }
+}
+
+?>
+```
 
 # Creating sorters
+
+First of all, if you really need this, you are either a regular Doctrine 
+contributor or probably do not know what you are really doing. =)
 
 ## Existing sorters
 
