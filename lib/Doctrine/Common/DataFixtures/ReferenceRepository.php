@@ -98,12 +98,28 @@ class ReferenceRepository
      * @param string $name
      * @param object $reference
      */
-    public function setReference($name, $reference)
+    public function setReference($name, object $reference)
     {
         $this->references[$name] = $reference;
         // in case if reference is set after flush, store its identity
         $uow = $this->manager->getUnitOfWork();
         if ($uow->isInIdentityMap($reference)) {
+            $this->identities[$name] = $this->getIdentifier($reference, $uow);
+        }
+    }
+
+    /**
+     * Convenience function to set multiple references at once.
+     *
+     * @param string $name
+     * @param object[] $references
+     */
+    public function setReferences($name, array $references) {
+        $this->references[$name] = $references;
+
+        // in case if reference is set after flush, store its identity
+        $uow = $this->manager->getUnitOfWork();
+        foreach ($references as $reference) {
             $this->identities[$name] = $this->getIdentifier($reference, $uow);
         }
     }
@@ -129,17 +145,53 @@ class ReferenceRepository
      * after $object is flushed
      *
      * @param string $name
-     * @param object $object - managed object
+     * @param object $reference - managed object
      * @throws BadMethodCallException - if repository already has
      *      a reference by $name
      * @return void
      */
-    public function addReference($name, $object)
+    public function addReference($name, object $reference)
     {
         if (isset($this->references[$name])) {
             throw new \BadMethodCallException("Reference to: ({$name}) already exists, use method setReference in order to override it");
         }
-        $this->setReference($name, $object);
+        $this->setReference($name, $reference);
+    }
+
+    /**
+     * Convenience function to add multiple references at once.
+     *
+     * @param string $name
+     * @param object[] $references managed objects
+     * @throws BadMethodCallException - if repository already has
+     *      a reference by $name
+     */
+    public function addReferences($name, array $references) {
+        if (isset($this->references[$name])) {
+            throw new \BadMethodCallException("Reference to: ({$name}) already exists, use method setReference in order to override it");
+        }
+        $this->setReferences($name, $references);
+    }
+
+    /**
+     * Gets a reference.
+     *
+     * @param string $name
+     * @return mixed object or array of objects
+     */
+    public function getReference($name)
+    {
+        $references = $this->references[$name];
+
+        if (! is_array($references)) {
+            return $this->_loadReference($name, $references);
+        }
+
+        $return = [];
+        foreach ($references as $reference) {
+            $return[] = $this->_loadReference($name, $reference);
+        }
+        return $return;
     }
 
     /**
@@ -149,9 +201,7 @@ class ReferenceRepository
      * @param string $name
      * @return object
      */
-    public function getReference($name)
-    {
-        $reference = $this->references[$name];
+    private function _loadReference($name, $reference) {
         $meta = $this->manager->getClassMetadata(get_class($reference));
         $uow = $this->manager->getUnitOfWork();
         if (!$uow->isInIdentityMap($reference) && isset($this->identities[$name])) {
