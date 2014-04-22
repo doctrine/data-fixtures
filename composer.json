@@ -23,6 +23,9 @@
     "autoload": {
         "psr-0": { "Doctrine\\Common\\DataFixtures": "lib/" }
     },
+    "autoload-dev": {
+        "psr-0": { "Doctrine\\Tests": "tests/" }
+    }
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
