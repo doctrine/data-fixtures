@@ -98,7 +98,7 @@ class ReferenceRepository
      * @param string $name
      * @param object $reference
      */
-    public function setReference($name, object $reference)
+    public function setReference($name, $reference)
     {
         $this->references[$name] = $reference;
         // in case if reference is set after flush, store its identity
@@ -150,7 +150,7 @@ class ReferenceRepository
      *      a reference by $name
      * @return void
      */
-    public function addReference($name, object $reference)
+    public function addReference($name, $reference)
     {
         if (isset($this->references[$name])) {
             throw new \BadMethodCallException("Reference to: ({$name}) already exists, use method setReference in order to override it");
