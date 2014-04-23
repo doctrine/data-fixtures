@@ -187,7 +187,7 @@ class ReferenceRepository
             return $this->_loadReference($name, $references);
         }
 
-        $return = [];
+        $return = array();
         foreach ($references as $reference) {
             $return[] = $this->_loadReference($name, $reference);
         }
