@@ -139,7 +139,7 @@ class ORMPurger implements PurgerInterface
         }
     }
 
-    private function getCommitOrder(EntityManager $em, array $classes)
+    protected function getCommitOrder(EntityManager $em, array $classes)
     {
         $calc = new CommitOrderCalculator;
 
@@ -185,7 +185,7 @@ class ORMPurger implements PurgerInterface
         return $calc->getCommitOrder();
     }
 
-    private function getAssociationTables(array $classes)
+    protected function getAssociationTables(array $classes)
     {
         $associationTables = array();
 
