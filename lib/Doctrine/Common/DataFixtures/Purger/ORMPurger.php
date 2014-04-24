@@ -35,14 +35,14 @@ class ORMPurger implements PurgerInterface
     const PURGE_MODE_TRUNCATE = 2;
 
     /** EntityManager instance used for persistence. */
-    private $em;
+    protected $em;
 
     /**
      * If the purge should be done through DELETE or TRUNCATE statements
      *
      * @var int
      */
-    private $purgeMode = self::PURGE_MODE_DELETE;
+    protected $purgeMode = self::PURGE_MODE_DELETE;
 
     /**
      * Construct new purger instance.
@@ -139,7 +139,7 @@ class ORMPurger implements PurgerInterface
         }
     }
 
-    private function getCommitOrder(EntityManager $em, array $classes)
+    protected function getCommitOrder(EntityManager $em, array $classes)
     {
         $calc = new CommitOrderCalculator;
 
@@ -185,7 +185,7 @@ class ORMPurger implements PurgerInterface
         return $calc->getCommitOrder();
     }
 
-    private function getAssociationTables(array $classes)
+    protected function getAssociationTables(array $classes)
     {
         $associationTables = array();
 

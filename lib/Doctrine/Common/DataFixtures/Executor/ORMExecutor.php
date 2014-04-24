@@ -20,7 +20,7 @@
 namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 
@@ -36,7 +36,7 @@ class ORMExecutor extends AbstractExecutor
      *
      * @param EntityManager $em EntityManager instance used for persistence.
      */
-    public function __construct(EntityManager $em, ORMPurger $purger = null)
+    public function __construct(EntityManager $em, PurgerInterface $purger = null)
     {
         $this->em = $em;
         if ($purger !== null) {
