@@ -99,7 +99,7 @@ class ORMPurger implements PurgerInterface
     public function purge()
     {
         $classes = array();
-        $metadatas = $this->em->getMetadataFactory()->getAllMetadata();
+        $metadatas = $this->getAllMetadata();
 
         foreach ($metadatas as $metadata) {
             if ( ! $metadata->isMappedSuperclass) {
@@ -137,6 +137,16 @@ class ORMPurger implements PurgerInterface
                 $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
             }
         }
+    }
+
+    /**
+     * Retrieve an array of all the metadata the EntityManager knows about
+     *
+     * @return array
+     */
+    protected function getAllMetadata()
+    {
+        return $this->em->getMetadataFactory()->getAllMetadata();
     }
 
     private function getCommitOrder(EntityManager $em, array $classes)
