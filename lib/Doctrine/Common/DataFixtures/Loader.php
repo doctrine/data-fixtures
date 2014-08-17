@@ -19,7 +19,6 @@
 
 namespace Doctrine\Common\DataFixtures;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 
 /**
