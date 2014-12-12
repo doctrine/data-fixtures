@@ -50,6 +50,26 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
         $executor->execute(array($fixture), true);
     }
 
+    public function testExecuteMultipleFixturesWithNoPurge()
+    {
+        $dm       = $this->getDocumentManager();
+        $executor = new PHPCRExecutor($dm);
+        $fixture1 = $this->getMockFixture();
+        $fixture2 = $this->getMockFixture();
+
+        $fixture1->expects($this->once())->method('load')->with($dm);
+        $fixture2->expects($this->once())->method('load')->with($dm);
+        $dm
+            ->expects($this->once())
+            ->method('transactional')
+            ->with($this->isType('callable'))
+            ->will($this->returnCallback(function ($callback) use ($dm) {
+                return $callback($dm);
+            }));
+
+        $executor->execute(array($fixture1, $fixture2), true);
+    }
+
     /**
      * @return \Doctrine\Common\DataFixtures\Purger\PHPCRPurger|\PHPUnit_Framework_MockObject_MockObject
      */
