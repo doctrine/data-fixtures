@@ -110,6 +110,25 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
         $executor->execute(array($fixture), true);
     }
 
+    public function testFailedTransactionalStopsPurgingAndFixtureLoading()
+    {
+        $dm        = $this->getDocumentManager();
+        $purger    = $this->getPurger();
+        $executor  = new PHPCRExecutor($dm, $purger);
+        $fixture   = $this->getMockFixture();
+        $exception = new Exception();
+
+        $fixture->expects($this->never())->method('load');
+        $dm->expects($this->once())->method('transactional')->will($this->throwException($exception));
+        $purger->expects($this->never())->method('purge');
+
+        try {
+            $executor->execute(array($fixture), true);
+        } catch (\Exception $caughtException) {
+            $this->assertSame($exception, $caughtException);
+        }
+    }
+
     /**
      * @return \Doctrine\Common\DataFixtures\Purger\PHPCRPurger|\PHPUnit_Framework_MockObject_MockObject
      */
