@@ -90,6 +90,26 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
         $executor->execute(array($fixture), false);
     }
 
+    public function testExecuteFixtureWithoutPurge()
+    {
+        $dm       = $this->getDocumentManager();
+        $purger   = $this->getPurger();
+        $executor = new PHPCRExecutor($dm, $purger);
+        $fixture  = $this->getMockFixture();
+
+        $fixture->expects($this->once())->method('load')->with($dm);
+        $dm
+            ->expects($this->once())
+            ->method('transactional')
+            ->with($this->isType('callable'))
+            ->will($this->returnCallback(function ($callback) use ($dm) {
+                return $callback($dm);
+            }));
+        $purger->expects($this->never())->method('purge');
+
+        $executor->execute(array($fixture), true);
+    }
+
     /**
      * @return \Doctrine\Common\DataFixtures\Purger\PHPCRPurger|\PHPUnit_Framework_MockObject_MockObject
      */
