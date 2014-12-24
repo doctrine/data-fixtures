@@ -19,7 +19,7 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\CommitOrderCalculator;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
@@ -34,7 +34,7 @@ class ORMPurger implements PurgerInterface
     const PURGE_MODE_DELETE = 1;
     const PURGE_MODE_TRUNCATE = 2;
 
-    /** EntityManager instance used for persistence. */
+    /** EntityManagerInterface instance used for persistence. */
     private $em;
 
     /**
@@ -47,9 +47,9 @@ class ORMPurger implements PurgerInterface
     /**
      * Construct new purger instance.
      *
-     * @param EntityManager $em EntityManager instance used for persistence.
+     * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
      */
-    public function __construct(EntityManager $em = null)
+    public function __construct(EntityManagerInterface $em = null)
     {
         $this->em = $em;
     }
@@ -76,19 +76,19 @@ class ORMPurger implements PurgerInterface
     }
 
     /**
-     * Set the EntityManager instance this purger instance should use.
+     * Set the EntityManagerInterface instance this purger instance should use.
      *
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      */
-    public function setEntityManager(EntityManager $em)
+    public function setEntityManager(EntityManagerInterface $em)
     {
       $this->em = $em;
     }
 
     /**
-     * Retrieve the EntityManager instance this purger instance is using.
+     * Retrieve the EntityManagerInterface instance this purger instance is using.
      *
-     * @return \Doctrine\ORM\EntityManager
+     * @return \Doctrine\ORM\EntityManagerInterface
      */
     public function getObjectManager()
     {
@@ -136,7 +136,7 @@ class ORMPurger implements PurgerInterface
         }
     }
 
-    private function getCommitOrder(EntityManager $em, array $classes)
+    private function getCommitOrder(EntityManagerInterface $em, array $classes)
     {
         $calc = new CommitOrderCalculator;
 
