@@ -19,7 +19,7 @@
 
 namespace Doctrine\Common\DataFixtures\Executor;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
@@ -34,9 +34,9 @@ class ORMExecutor extends AbstractExecutor
     /**
      * Construct new fixtures loader instance.
      *
-     * @param EntityManager $em EntityManager instance used for persistence.
+     * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
      */
-    public function __construct(EntityManager $em, ORMPurger $purger = null)
+    public function __construct(EntityManagerInterface $em, ORMPurger $purger = null)
     {
         $this->em = $em;
         if ($purger !== null) {
@@ -49,9 +49,9 @@ class ORMExecutor extends AbstractExecutor
     }
 
     /**
-     * Retrieve the EntityManager instance this executor instance is using.
+     * Retrieve the EntityManagerInterface instance this executor instance is using.
      *
-     * @return \Doctrine\ORM\EntityManager
+     * @return \Doctrine\ORM\EntityManagerInterface
      */
     public function getObjectManager()
     {
@@ -75,7 +75,7 @@ class ORMExecutor extends AbstractExecutor
     public function execute(array $fixtures, $append = false)
     {
         $executor = $this;
-        $this->em->transactional(function(EntityManager $em) use ($executor, $fixtures, $append) {
+        $this->em->transactional(function(EntityManagerInterface $em) use ($executor, $fixtures, $append) {
             if ($append === false) {
                 $executor->purge();
             }
