@@ -34,6 +34,24 @@ class User
      */
     private $role;
 
+    /**
+     * @ManyToMany(targetEntity="Doctrine\Tests\Common\DataFixtures\TestEntity\User", inversedBy="authors")
+     * @JoinTable(name="author_reader", schema="readers",
+     *      joinColumns={@JoinColumn(name="author_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="reader_id", referencedColumnName="id")}
+     * )
+     *
+     * @var User[]
+     */
+    private $readers;
+
+    /**
+     * @ManyToMany(targetEntity="Doctrine\Tests\Common\DataFixtures\TestEntity\User", mappedBy="readers")
+     *
+     * @var User[]
+     */
+    private $authors;
+
     public function setId($id)
     {
         $this->id = $id;
@@ -72,5 +90,43 @@ class User
     public function getRole()
     {
         return $this->role;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getReaders()
+    {
+        return $this->readers;
+    }
+
+    /**
+     * @param User[] $readers
+     * @return User
+     */
+    public function setReaders($readers)
+    {
+        $this->readers = $readers;
+
+        return $this;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getAuthors()
+    {
+        return $this->authors;
+    }
+
+    /**
+     * @param User[] $authors
+     * @return User
+     */
+    public function setAuthors($authors)
+    {
+        $this->authors = $authors;
+
+        return $this;
     }
 }
