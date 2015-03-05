@@ -103,7 +103,7 @@ class ORMPurger implements PurgerInterface
         $metadatas = $this->em->getMetadataFactory()->getAllMetadata();
 
         foreach ($metadatas as $metadata) {
-            if (! $metadata->isMappedSuperclass && ! $metadata->isEmbeddedClass) {
+            if (! $metadata->isMappedSuperclass && ! (isset($metadata->isEmbeddedClass) && $metadata->isEmbeddedClass)) {
                 $classes[] = $metadata;
             }
         }
