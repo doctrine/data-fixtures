@@ -37,6 +37,9 @@ class LoaderTest extends BaseTest
 
         $this->assertCount(3, $loader->getFixtures());
 
+        $loader->loadFromFile(__DIR__.'/TestFixtures/MyFixture1.php');
+        $this->assertCount(4, $loader->getFixtures());
+
         $loader->loadFromDirectory(__DIR__.'/TestFixtures');
         $this->assertCount(7, $loader->getFixtures());
         $this->assertTrue($loader->isTransient('TestFixtures\NotAFixture'));
