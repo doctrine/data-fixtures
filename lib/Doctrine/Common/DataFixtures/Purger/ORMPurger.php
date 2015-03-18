@@ -127,7 +127,8 @@ class ORMPurger implements PurgerInterface
                 continue;
             }
 
-            $orderedTables[] = $class->getQuotedTableName($platform);
+            $name = $class->getQuotedTableName($platform);
+            $orderedTables[$name] = $name;
         }
 
         foreach($orderedTables as $tbl) {
@@ -192,7 +193,7 @@ class ORMPurger implements PurgerInterface
         foreach ($classes as $class) {
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide'] && $assoc['type'] == ClassMetadata::MANY_TO_MANY) {
-                    $associationTables[] = $assoc['joinTable']['name'];
+                    $associationTables[$assoc['joinTable']['name']] = $assoc['joinTable']['name'];
                 }
             }
         }
