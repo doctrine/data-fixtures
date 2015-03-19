@@ -119,18 +119,12 @@ class Loader
         }
 
         require_once $sourceFile;
-        $includedFiles[] = $sourceFile;
 
         $declared = get_declared_classes();
 
         foreach ($declared as $className) {
-            $reflClass = new \ReflectionClass($className);
-            $sourceFile = $reflClass->getFileName();
-
             if ( ! $this->isTransient($className)) {
-                $fixture = new $className;
-                $fixtures[] = $fixture;
-                $this->addFixture($fixture);
+                $this->addFixture(new $className);
             }
         }
     }
