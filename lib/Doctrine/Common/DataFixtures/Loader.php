@@ -106,6 +106,36 @@ class Loader
         return $fixtures;
     }
 
+
+    /**
+     * Load ficture from file
+     *
+     * @param $sourceFile
+     */
+    public function loadFromFile($sourceFile)
+    {
+        if ( ! is_file($sourceFile)) {
+            throw new \InvalidArgumentException(sprintf('"%s" does not exist', $sourceFile));
+        }
+
+        require_once $sourceFile;
+        $includedFiles[] = $sourceFile;
+
+        $declared = get_declared_classes();
+
+        foreach ($declared as $className) {
+            $reflClass = new \ReflectionClass($className);
+            $sourceFile = $reflClass->getFileName();
+
+            if ( ! $this->isTransient($className)) {
+                $fixture = new $className;
+                $fixtures[] = $fixture;
+                $this->addFixture($fixture);
+            }
+        }
+    }
+
+
     /**
      * Has fixture?
      *
