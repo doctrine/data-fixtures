@@ -115,7 +115,7 @@ class Loader
      */
     public function hasFixture($fixture)
     {
-        return isset($this->fixtures[get_class($fixture)]);
+        return isset($this->fixtures[$this->hashFixture($fixture)]);
     }
 
     /**
@@ -125,9 +125,9 @@ class Loader
      */
     public function addFixture(FixtureInterface $fixture)
     {
-        $fixtureClass = get_class($fixture);
+        $fixtureHash = this->hashFixture($fixture);
 
-        if (!isset($this->fixtures[$fixtureClass])) {
+        if (!isset($this->fixtures[$fixtureHash])) {
             if ($fixture instanceof OrderedFixtureInterface && $fixture instanceof DependentFixtureInterface) {
                 throw new \InvalidArgumentException(sprintf('Class "%s" can\'t implement "%s" and "%s" at the same time.', 
                     get_class($fixture),
@@ -142,8 +142,19 @@ class Loader
                 }
             }
 
-            $this->fixtures[$fixtureClass] = $fixture;
+            $this->fixtures[$fixtureHash] = $fixture;
         }
+    }
+    
+    /**
+     * Returns a unique hash for a fixture
+     * 
+     * fixtures with the same hash cannot be added more than once
+     * @return string
+     */
+    protected function hashFixture(FixtureInterface $fixture) 
+    {
+        return get_class($fixture);
     }
 
     /**
