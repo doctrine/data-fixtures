@@ -98,6 +98,30 @@ class Loader
         return $this->loadFromIterator($iterator);
     }
 
+
+    /**
+     * Load ficture from file
+     *
+     * @param $sourceFile
+     */
+    public function loadFromFile($sourceFile)
+    {
+        if ( ! is_file($sourceFile)) {
+            throw new \InvalidArgumentException(sprintf('"%s" does not exist', $sourceFile));
+        }
+
+        require_once $sourceFile;
+
+        $declared = get_declared_classes();
+
+        foreach ($declared as $className) {
+            if ( ! $this->isTransient($className)) {
+                $this->addFixture(new $className);
+            }
+        }
+    }
+
+
     /**
      * Has fixture?
      *
