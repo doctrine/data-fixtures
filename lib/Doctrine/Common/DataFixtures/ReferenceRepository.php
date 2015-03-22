@@ -148,9 +148,15 @@ class ReferenceRepository
      *
      * @param string $name
      * @return object
+     *
+     * @throws \InvalidArgumentException If reference name can't be found.
      */
     public function getReference($name)
     {
+        if (!$this->hasReference($name)) {
+            throw new \InvalidArgumentException('Undefined reference ' . $name);   
+        }
+
         $reference = $this->references[$name];
         $meta = $this->manager->getClassMetadata(get_class($reference));
         $uow = $this->manager->getUnitOfWork();
