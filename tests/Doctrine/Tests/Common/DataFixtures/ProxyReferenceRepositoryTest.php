@@ -113,7 +113,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
 
         $ref = $proxyReferenceRepository->getReference('admin-role');
 
-        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
+        $this->assertNotInstanceOf('Doctrine\ORM\Proxy\Proxy', $ref);
 
         // now test reference reconstruction from identity
         $em->clear();
