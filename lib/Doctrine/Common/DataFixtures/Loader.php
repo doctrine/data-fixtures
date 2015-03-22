@@ -125,16 +125,20 @@ class Loader
                     get_class($fixture),
                     'OrderedFixtureInterface',
                     'DependentFixtureInterface'));
-            } elseif ($fixture instanceof OrderedFixtureInterface) {
+            }
+
+            $this->fixtures[$fixtureClass] = $fixture;
+
+            if ($fixture instanceof OrderedFixtureInterface) {
                 $this->orderFixturesByNumber = true;
             } elseif ($fixture instanceof DependentFixtureInterface) {
                 $this->orderFixturesByDependencies = true;
                 foreach($fixture->getDependencies() as $class) {
-                    $this->addFixture(new $class);
+                    if (class_exists($class)) {
+                        $this->addFixture(new $class);
+                    }
                 }
             }
-
-            $this->fixtures[$fixtureClass] = $fixture;
         }
     }
 
