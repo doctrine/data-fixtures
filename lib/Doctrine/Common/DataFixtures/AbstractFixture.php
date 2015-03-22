@@ -44,7 +44,16 @@ abstract class AbstractFixture implements SharedFixtureInterface
     {
         $this->referenceRepository = $referenceRepository;
     }
-    
+
+    /**
+     * Get the reference repository
+     *
+     * @return ReferenceRepository
+     */           
+    public function getReferenceRepository() {
+        return $this->referenceRepository;
+    }
+
     /**
      * Set the reference entry identified by $name
      * and referenced to managed $object. If $name
