@@ -147,10 +147,15 @@ class ReferenceRepository
      * named by $name
      *
      * @param string $name
+     * @throws OutOfBoundsException - if repository does not exist
      * @return object
      */
     public function getReference($name)
     {
+        if (!$this->hasReference($name)) {
+            throw new \OutOfBoundsException("Reference to: ({$name}) does not exist");
+        }
+
         $reference = $this->references[$name];
         $meta = $this->manager->getClassMetadata(get_class($reference));
         $uow = $this->manager->getUnitOfWork();
