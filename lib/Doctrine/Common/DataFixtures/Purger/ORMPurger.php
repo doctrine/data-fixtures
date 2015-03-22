@@ -192,7 +192,11 @@ class ORMPurger implements PurgerInterface
         foreach ($classes as $class) {
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide'] && $assoc['type'] == ClassMetadata::MANY_TO_MANY) {
-                    $associationTables[] = $assoc['joinTable']['name'];
+                    if (isset($assoc['joinTable']['schema']) && null !== $assoc['joinTable']['schema']) {
+                        $associationTables[] = $assoc['joinTable']['schema'] . '.' . $assoc['joinTable']['name'];
+                    } else {
+                        $associationTables[] = $assoc['joinTable']['name'];
+                    }
                 }
             }
         }
