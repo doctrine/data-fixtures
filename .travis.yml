@@ -1,5 +1,11 @@
 language: php
 
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 php:
   - 5.3
   - 5.4
@@ -7,10 +13,6 @@ php:
   - 5.6
   - hhvm
 
-matrix:
-  allow_failures:
-    - php: hhvm
-
-before_script: composer --dev --prefer-source install
+install: composer install
 
 script: phpunit -v
