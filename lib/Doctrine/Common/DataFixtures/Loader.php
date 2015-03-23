@@ -322,7 +322,7 @@ class Loader
         }
 
         foreach ($classes as $class) {
-            if ($sequences[$class] === -1) {
+            if (array_key_exists($class, $sequences) && ($sequences[$class] === -1)) {
                 $unsequencedClasses[] = $class;
             }
         }
