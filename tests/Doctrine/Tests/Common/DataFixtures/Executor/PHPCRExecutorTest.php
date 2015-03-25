@@ -142,6 +142,8 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
      */
     private function getDocumentManager()
     {
+        $this->loadDocumentManagerClass();
+
         return $this->getMock(
             'Doctrine\ODM\PHPCR\DocumentManager',
             array(
@@ -161,5 +163,40 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
     private function getMockFixture()
     {
         return $this->getMock('Doctrine\Common\DataFixtures\FixtureInterface', array(), array(), '', false);
+    }
+
+    /**
+     * Ensures that the {@see \Doctrine\ODM\PHPCR\DocumentManager} class exists
+     */
+    private function loadDocumentManagerClass()
+    {
+
+        if (class_exists('Doctrine\ODM\PHPCR\DocumentManager')) {
+            return;
+        }
+
+        // hold my beer while I do some mocking
+        eval(
+        <<<'PHP'
+namespace Doctrine\ODM\PHPCR;
+
+class DocumentManager implements \Doctrine\Common\Persistence\ObjectManager
+{
+    public function find($className, $id) {}
+    public function persist($object) {}
+    public function remove($object) {}
+    public function merge($object) {}
+    public function clear($objectName = null) {}
+    public function detach($object) {}
+    public function refresh($object) {}
+    public function flush() {}
+    public function getRepository($className) {}
+    public function getClassMetadata($className) {}
+    public function getMetadataFactory() {}
+    public function initializeObject($obj) {}
+    public function contains($object) {}
+}
+PHP
+        );
     }
 }
