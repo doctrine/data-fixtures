@@ -18,5 +18,4 @@
  * <http://www.doctrine-project.org>.
  */
 
-$loader = require_once __DIR__ . "/../vendor/autoload.php";
-$loader->add('Doctrine\\Tests\\', __DIR__);
+require_once __DIR__ . "/../vendor/autoload.php";

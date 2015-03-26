@@ -28,7 +28,7 @@ use Doctrine\Common\DataFixtures\Loader;
  */
 class LoaderTest extends BaseTest
 {
-    public function testLoader()
+    public function testLoadFromDirectory()
     {
         $loader = new Loader();
         $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface'), array(), array(), 'Mock1');
@@ -39,6 +39,25 @@ class LoaderTest extends BaseTest
 
         $loader->loadFromDirectory(__DIR__.'/TestFixtures');
         $this->assertCount(7, $loader->getFixtures());
+        $this->assertTrue($loader->isTransient('TestFixtures\NotAFixture'));
+        $this->assertFalse($loader->isTransient('TestFixtures\MyFixture1'));
+    }
+
+    public function testLoadFromFile()
+    {
+        $loader = new Loader();
+        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface'), array(), array(), 'Mock1');
+        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface', array(), array(), 'Mock2'));
+        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface', array(), array(), 'Mock3'));
+
+        $this->assertCount(3, $loader->getFixtures());
+
+        $loader->loadFromFile(__DIR__.'/TestFixtures/MyFixture1.php');
+        $this->assertCount(4, $loader->getFixtures());
+        $loader->loadFromFile(__DIR__.'/TestFixtures/NotAFixture.php');
+        $this->assertCount(4, $loader->getFixtures());
+        $loader->loadFromFile(__DIR__.'/TestFixtures/MyFixture2.php');
+        $this->assertCount(5, $loader->getFixtures());
         $this->assertTrue($loader->isTransient('TestFixtures\NotAFixture'));
         $this->assertFalse($loader->isTransient('TestFixtures\MyFixture1'));
     }

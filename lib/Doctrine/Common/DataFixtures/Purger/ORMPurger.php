@@ -22,6 +22,7 @@ namespace Doctrine\Common\DataFixtures\Purger;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\CommitOrderCalculator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
@@ -102,18 +103,18 @@ class ORMPurger implements PurgerInterface
         $metadatas = $this->em->getMetadataFactory()->getAllMetadata();
 
         foreach ($metadatas as $metadata) {
-            if ( ! $metadata->isMappedSuperclass) {
+            if (! $metadata->isMappedSuperclass && ! (isset($metadata->isEmbeddedClass) && $metadata->isEmbeddedClass)) {
                 $classes[] = $metadata;
             }
         }
 
         $commitOrder = $this->getCommitOrder($this->em, $classes);
 
-        // Drop association tables first
-        $orderedTables = $this->getAssociationTables($commitOrder);
-
         // Get platform parameters
         $platform = $this->em->getConnection()->getDatabasePlatform();
+
+        // Drop association tables first
+        $orderedTables = $this->getAssociationTables($commitOrder, $platform);
 
         // Drop tables in reverse commit order
         for ($i = count($commitOrder) - 1; $i >= 0; --$i) {
@@ -185,14 +186,23 @@ class ORMPurger implements PurgerInterface
         return $calc->getCommitOrder();
     }
 
-    private function getAssociationTables(array $classes)
+    /**
+     * @param array $classes
+     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
+     * @return array
+     */
+    private function getAssociationTables(array $classes, AbstractPlatform $platform)
     {
         $associationTables = array();
 
         foreach ($classes as $class) {
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide'] && $assoc['type'] == ClassMetadata::MANY_TO_MANY) {
-                    $associationTables[] = $assoc['joinTable']['name'];
+                    if (isset($assoc['joinTable']['schema'])) {
+                        $associationTables[] = $assoc['joinTable']['schema'] . '.' . $class->getQuotedJoinTableName($assoc, $platform);
+                    } else {
+                        $associationTables[] = $class->getQuotedJoinTableName($assoc, $platform);
+                    }
                 }
             }
         }
