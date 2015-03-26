@@ -64,8 +64,11 @@ class ProxyReferenceRepository extends ReferenceRepository
         $simpleReferences = array();
 
         foreach ($this->getReferences() as $name => $reference) {
-            $className = $this->getRealClass(get_class($reference));
+            if ($reference === null) {
+                continue;
+            }
 
+            $className = $this->getRealClass(get_class($reference));
             $simpleReferences[$name] = array($className, $this->getIdentifier($reference, $unitOfWork));
         }
 

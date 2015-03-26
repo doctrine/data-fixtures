@@ -1,7 +1,5 @@
 # Doctrine Data Fixtures Extension
 
-[![Build Status](https://travis-ci.org/doctrine/data-fixtures.png)](https://travis-ci.org/doctrine/data-fixtures)
-
 This extension aims to provide a simple way to manage and execute the loading of data fixtures
 for the Doctrine ORM or ODM. You can write fixture classes by implementing the
 Doctrine\Common\DataFixtures\FixtureInterface interface:
@@ -41,10 +39,6 @@ You can load a set of fixtures from a directory as well:
 ```php
 $loader->loadFromDirectory('/path/to/MyDataFixtures');
 ```
-
-Or you can load a set of fixtures from a file:
-
-    $loader->loadFromFile('/path/to/MyDataFixtures/MyFixture1.php');
 
 You can get the added fixtures using the getFixtures() method:
 
