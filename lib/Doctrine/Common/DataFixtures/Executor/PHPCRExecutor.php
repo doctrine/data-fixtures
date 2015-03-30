@@ -60,7 +60,7 @@ class PHPCRExecutor extends AbstractExecutor
     {
         $that = $this;
 
-        $this->dm->transactional(function ($dm) use ($append, $that, $fixtures) {
+        $function = function ($dm) use ($append, $that, $fixtures) {
             if ($append === false) {
                 $that->purge();
             }
@@ -68,7 +68,13 @@ class PHPCRExecutor extends AbstractExecutor
             foreach ($fixtures as $fixture) {
                 $that->load($dm, $fixture);
             }
-        });
+        };
+
+        if (method_exists($this->dm, 'transactional')) {
+            $this->dm->transactional($function);
+        } else {
+            $function($this->dm);
+        }
     }
 }
 
