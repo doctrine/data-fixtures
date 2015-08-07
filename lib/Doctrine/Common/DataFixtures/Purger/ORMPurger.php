@@ -110,6 +110,8 @@ class ORMPurger implements PurgerInterface
 
         $commitOrder = $this->getCommitOrder($this->em, $classes);
 
+        $quoteStrategy = $this->em->getConfiguration()->getQuoteStrategy();
+
         // Get platform parameters
         $platform = $this->em->getConnection()->getDatabasePlatform();
 
@@ -128,7 +130,7 @@ class ORMPurger implements PurgerInterface
                 continue;
             }
 
-            $orderedTables[] = $class->getQuotedTableName($platform);
+            $orderedTables[] = $quoteStrategy->getTableName($class, $platform);
         }
 
         foreach($orderedTables as $tbl) {
