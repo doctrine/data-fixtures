@@ -32,6 +32,11 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 class ORMExecutor extends AbstractExecutor
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+    
+    /**
      * Construct new fixtures loader instance.
      *
      * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
