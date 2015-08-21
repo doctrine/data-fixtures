@@ -128,7 +128,7 @@ class ORMPurger implements PurgerInterface
             ) {
                 continue;
             }
-            
+
             $orderedTables[] = $this->getTableName($class, $platform);
         }
 
@@ -195,7 +195,7 @@ class ORMPurger implements PurgerInterface
     private function getAssociationTables(array $classes, AbstractPlatform $platform)
     {
         $associationTables = array();
-        
+
         foreach ($classes as $class) {
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide'] && $assoc['type'] == ClassMetadata::MANY_TO_MANY) {
@@ -206,25 +206,35 @@ class ORMPurger implements PurgerInterface
 
         return $associationTables;
     }
-    
+
     /**
-     * 
+     *
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
      * @return string
      */
-    private function getTableName($class, $platform){
+    private function getTableName($class, $platform)
+    {
+        if (isset($class->table['schema']) && !method_exists($class, 'getSchemaName')) {
+            return $class->table['schema'].'.'.$this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+        }
+
         return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
     }
-    
+
     /**
-     * 
+     *
      * @param array            $association
      * @param \Doctrine\ORM\Mapping\ClassMetadata    $class
      * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
      * @return string
      */
-    private function getJoinTableName($assoc, $class, $platform){
+    private function getJoinTableName($assoc, $class, $platform)
+    {
+        if (isset($assoc['joinTable']['schema']) && !method_exists($class, 'getSchemaName')) {
+            return $assoc['joinTable']['schema'].'.'.$this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
+        }
+
         return $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
     }
 }
