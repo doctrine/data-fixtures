@@ -4,6 +4,7 @@
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\ORM\Version as ORMVersion;
 use ReflectionClass;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
@@ -19,7 +20,7 @@ class ORMPurgerTest extends BaseTest
     const TEST_ENTITY_USER_WITH_SCHEMA = 'Doctrine\Tests\Common\DataFixtures\TestEntity\UserWithSchema';
     const TEST_ENTITY_QUOTED = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Quoted';
 
-    
+
     public function testGetAssociationTables()
     {
         $em = $this->getMockAnnotationReaderEntityManager();
@@ -32,7 +33,7 @@ class ORMPurgerTest extends BaseTest
         $associationTables = $method->invokeArgs($purger, array(array($metadata), $platform));
         $this->assertEquals($associationTables[0], 'readers.author_reader');
     }
-    
+
     public function testGetAssociationTablesQuoted()
     {
         $em = $this->getMockAnnotationReaderEntityManager();
@@ -45,9 +46,14 @@ class ORMPurgerTest extends BaseTest
         $associationTables = $method->invokeArgs($purger, array(array($metadata), $platform));
         $this->assertEquals($associationTables[0], '"INSERT"');
     }
-    
+
     public function testTableNameWithSchema()
     {
+        $isDoctrine25 = (ORMVersion::compare('2.5.0') <= 0);
+        if (!$isDoctrine25) {
+            $this->markTestSkipped('@Table schema attribute is not supported in Doctrine < 2.5.0');
+        }
+
         $em = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_USER_WITH_SCHEMA);
         $platform = $em->getConnection()->getDatabasePlatform();
