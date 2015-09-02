@@ -124,7 +124,8 @@ class ORMPurger implements PurgerInterface
             if (
                 ($class->isInheritanceTypeSingleTable() && $class->name != $class->rootEntityName) ||
                 (isset($class->isEmbeddedClass) && $class->isEmbeddedClass) ||
-                $class->isMappedSuperclass
+                $class->isMappedSuperclass ||
+                $class->isReadOnly
             ) {
                 continue;
             }
