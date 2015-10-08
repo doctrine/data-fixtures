@@ -11,15 +11,17 @@ php:
   - 5.4
   - 5.5
   - 5.6
+  - 7.0
   - hhvm
 
 services: mongodb
 
 before_install:
-    - "[ $TRAVIS_PHP_VERSION = 'hhvm' ] || echo 'extension = mongo.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini"
+  - "if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != '7.0' ]]; then echo 'extension = mongo.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
 
 install: 
-    - composer install --dev
-    - "[ $TRAVIS_PHP_VERSION = 'hhvm' ] || composer require 'doctrine/mongodb-odm' '*@beta'"
+  - composer install --dev
+  - "if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != '7.0' ]]; then composer require 'doctrine/mongodb-odm' '*@beta'; fi"
 
-script: phpunit -v
+script:
+  - phpunit
