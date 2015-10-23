@@ -33,7 +33,7 @@ use Doctrine\Common\DataFixtures\Loader;
 use MyDataFixtures\LoadUserData;
 
 $loader = new Loader();
-$loader->addFixture(new LoadUserData);
+$loader->addFixture(new LoadUserData());
 ```
 
 You can load a set of fixtures from a directory as well:
@@ -89,7 +89,7 @@ class LoadUserRoleData extends AbstractFixture
         $adminRole = new Role();
         $adminRole->setName('admin');
 
-        $anonymousRole = new Role;
+        $anonymousRole = new Role();
         $anonymousRole->setName('anonymous');
 
         $manager->persist($adminRole);
