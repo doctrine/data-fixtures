@@ -148,45 +148,45 @@ class ORMPurger implements PurgerInterface
         $calc = new CommitOrderCalculator;
 
         foreach ($classes as $class) {
-            $calc->addClass($class);
+            $calc->addNode($class->name, $class);
 
             // $class before its parents
             foreach ($class->parentClasses as $parentClass) {
                 $parentClass = $em->getClassMetadata($parentClass);
 
-                if ( ! $calc->hasClass($parentClass->name)) {
-                    $calc->addClass($parentClass);
+                if ( ! $calc->hasNode($parentClass->name)) {
+                    $calc->addNode($parentClass->name, $parentClass);
                 }
 
-                $calc->addDependency($class, $parentClass);
+                $calc->addDependency($class->name, $parentClass->name, 0);
             }
 
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide']) {
                     $targetClass = $em->getClassMetadata($assoc['targetEntity']);
 
-                    if ( ! $calc->hasClass($targetClass->name)) {
-                        $calc->addClass($targetClass);
+                    if ( ! $calc->hasNode($targetClass->name)) {
+                        $calc->addNode($targetClass->name, $targetClass);
                     }
 
                     // add dependency ($targetClass before $class)
-                    $calc->addDependency($targetClass, $class);
+                    $calc->addDependency($targetClass->name, $class->name, 0);
 
                     // parents of $targetClass before $class, too
                     foreach ($targetClass->parentClasses as $parentClass) {
                         $parentClass = $em->getClassMetadata($parentClass);
 
-                        if ( ! $calc->hasClass($parentClass->name)) {
-                            $calc->addClass($parentClass);
+                        if ( ! $calc->hasNode($parentClass->name)) {
+                            $calc->addNode($parentClass->name, $parentClass);
                         }
 
-                        $calc->addDependency($parentClass, $class);
+                        $calc->addDependency($parentClass->name, $class->name, 0);
                     }
                 }
             }
         }
 
-        return $calc->getCommitOrder();
+        return $calc->sort();
     }
 
     /**
