@@ -350,6 +350,9 @@ class Loader
 
         $fixtures = array();
         $declared = get_declared_classes();
+        // Make the declared classes order deterministic
+        sort($declared);
+
         foreach ($declared as $className) {
             $reflClass = new \ReflectionClass($className);
             $sourceFile = $reflClass->getFileName();
