@@ -20,7 +20,7 @@
 namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Internal\CommitOrderCalculator;
+use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
@@ -145,48 +145,48 @@ class ORMPurger implements PurgerInterface
 
     private function getCommitOrder(EntityManagerInterface $em, array $classes)
     {
-        $calc = new CommitOrderCalculator;
+        $calc = new TopologicalSorter();
 
         foreach ($classes as $class) {
-            $calc->addClass($class);
+            $calc->addNode($class->name, $class);
 
             // $class before its parents
             foreach ($class->parentClasses as $parentClass) {
                 $parentClass = $em->getClassMetadata($parentClass);
 
-                if ( ! $calc->hasClass($parentClass->name)) {
-                    $calc->addClass($parentClass);
+                if ( ! $calc->hasNode($parentClass->name)) {
+                    $calc->addNode($parentClass->name, $parentClass);
                 }
 
-                $calc->addDependency($class, $parentClass);
+                $calc->addDependency($class->name, $parentClass->name);
             }
 
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide']) {
                     $targetClass = $em->getClassMetadata($assoc['targetEntity']);
 
-                    if ( ! $calc->hasClass($targetClass->name)) {
-                        $calc->addClass($targetClass);
+                    if ( ! $calc->hasNode($targetClass->name)) {
+                        $calc->addNode($targetClass->name, $targetClass);
                     }
 
                     // add dependency ($targetClass before $class)
-                    $calc->addDependency($targetClass, $class);
+                    $calc->addDependency($targetClass->name, $class->name);
 
                     // parents of $targetClass before $class, too
                     foreach ($targetClass->parentClasses as $parentClass) {
                         $parentClass = $em->getClassMetadata($parentClass);
 
-                        if ( ! $calc->hasClass($parentClass->name)) {
-                            $calc->addClass($parentClass);
+                        if ( ! $calc->hasNode($parentClass->name)) {
+                            $calc->addNode($parentClass->name, $parentClass);
                         }
 
-                        $calc->addDependency($parentClass, $class);
+                        $calc->addDependency($parentClass->name, $class->name);
                     }
                 }
             }
         }
 
-        return $calc->getCommitOrder();
+        return $calc->sort();
     }
 
     /**
