@@ -19,6 +19,7 @@
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -168,6 +169,14 @@ class DependentFixtureTest extends BaseTest
         $this->assertCount(2, $orderedFixtures);
         $this->assertInstanceOf(__NAMESPACE__ . '\BaseParentFixture1', array_shift($orderedFixtures));
         $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture1', array_shift($orderedFixtures));
+    }
+
+    public function test_UndefinedIndexWhenFixtureDependsOnOrderedFixture()
+    {
+        $loader = new Loader();
+        $loader->addFixture(new MyRole2Fixture());
+        $orderedFixtures = $loader->getFixtures();
+        $this->assertCount(2, $orderedFixtures);
     }
 }
 
@@ -393,4 +402,45 @@ class OrderedByNumberFixture3 implements FixtureInterface, OrderedFixtureInterfa
     {
         return 10;
     }
+}
+
+abstract class MyParentFixture extends AbstractFixture
+{
+    abstract protected function getFoo();
+
+    public function load(ObjectManager $manager)
+    {
+        $this->getFoo();
+    }
+
+}
+
+
+class MyRoleFixture extends MyParentFixture implements OrderedFixtureInterface
+{
+
+    protected function getFoo()
+    {
+    }
+
+    public function getOrder()
+    {
+        return 1;
+    }
+}
+
+class MyRole2Fixture extends MyParentFixture implements DependentFixtureInterface
+{
+
+    protected function getFoo()
+    {
+    }
+
+    function getDependencies()
+    {
+        return array(
+            'Doctrine\Tests\Common\DataFixtures\MyRoleFixture'
+        );
+    }
+
 }
