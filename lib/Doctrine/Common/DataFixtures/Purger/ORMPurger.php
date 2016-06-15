@@ -143,7 +143,7 @@ class ORMPurger implements PurgerInterface
 
         $connection = $this->em->getConnection();
         foreach($orderedTables as $tbl) {
-            if(array_search($tbl, $this->excluded) === false)){
+            if(array_search($tbl, $this->excluded)  === false){
                 if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                     $connection->executeUpdate('DELETE FROM ' . $tbl);
                 } else {
