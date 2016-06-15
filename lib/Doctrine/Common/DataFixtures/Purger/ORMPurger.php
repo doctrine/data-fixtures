@@ -139,16 +139,19 @@ class ORMPurger implements PurgerInterface
 
             $orderedTables[] = $class->getQuotedTableName($platform);
         }
-
-        foreach($orderedTables as $tbl) {
-	        if(array_search($tbl, $this->excluded) === false){
-	        	if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-	                $this->em->getConnection()->executeUpdate("DELETE FROM " . $tbl);
-	            } else {
-	                $this->em->getConnection()->executeUpdate($platform->getTruncateTableSQL($tbl, true));
-	            }
-            }
-        }
+		$connection = $this->em->getConnection();
+		$filterExpr = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
+		$efe = empty($filterExpr);
+		foreach($orderedTables as $tbl) {
+			if(($efe && array_search($tbl, $this->excluded) === false)||
+				(!$efe && !preg_match($filterExpr, $tbl) && array_search($tbl, $this->excluded) === false)){
+				if ($this->purgeMode === self::PURGE_MODE_DELETE) {
+					$connection->executeUpdate("DELETE FROM " . $tbl);
+				} else {
+					$connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+				}
+			}
+		}
     }
 
     private function getCommitOrder(EntityManagerInterface $em, array $classes)
