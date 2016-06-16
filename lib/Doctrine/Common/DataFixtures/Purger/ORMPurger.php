@@ -143,8 +143,7 @@ class ORMPurger implements PurgerInterface
 		$filterExpr = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
 		$efe = empty($filterExpr);
 		foreach($orderedTables as $tbl) {
-			if(($efe && array_search($tbl, $this->excluded) === false)||
-				(!$efe && preg_match($filterExpr, $tbl) && array_search($tbl, $this->excluded) === false)){
+			if(($efe||( !$efe && preg_match($filterExpr, $tbl) )) && array_search($tbl, $this->excluded) === false){
 				if ($this->purgeMode === self::PURGE_MODE_DELETE) {
 					$connection->executeUpdate("DELETE FROM " . $tbl);
 				} else {
