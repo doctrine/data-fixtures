@@ -71,7 +71,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $sortedList  = $this->sorter->sort();
         $correctList = array($node4, $node3, $node2, $node1, $node5);
 
-        $this->assertSame($correctList, $sortedList);
+        self::assertSame($correctList, $sortedList);
     }
 
     public function testSuccessSortMultiDependency()
@@ -97,12 +97,9 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $sortedList  = $this->sorter->sort();
         $correctList = array($node1, $node2, $node4, $node5, $node3);
 
-        $this->assertSame($correctList, $sortedList);
+        self::assertSame($correctList, $sortedList);
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testFailureSortCyclicDependency()
     {
         $node1 = new Mock\Node(1);
@@ -117,12 +114,11 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $this->sorter->addDependency('2', '3');
         $this->sorter->addDependency('3', '1');
 
+        $this->expectException(\RuntimeException::class);
+
         $this->sorter->sort();
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testFailureSortMissingDependency()
     {
         $node1 = new Mock\Node(1);
@@ -130,6 +126,8 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $this->sorter->addNode('1', $node1);
 
         $this->sorter->addDependency('1', '2');
+
+        $this->expectException(\RuntimeException::class);
 
         $this->sorter->sort();
     }
