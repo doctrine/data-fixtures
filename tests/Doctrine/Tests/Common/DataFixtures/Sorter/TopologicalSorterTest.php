@@ -31,6 +31,8 @@ use Doctrine\Tests\Mock;
  *       build a graph that has only 1 valid order to simplify your tests
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ *
+ * @covers \Doctrine\Common\DataFixtures\Sorter\TopologicalSorter
  */
 class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 {
