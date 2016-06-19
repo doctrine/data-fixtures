@@ -101,9 +101,8 @@ class ORMPurger implements PurgerInterface
     public function purge()
     {
         $classes = array();
-        $metadatas = $this->em->getMetadataFactory()->getAllMetadata();
 
-        foreach ($metadatas as $metadata) {
+        foreach ($this->em->getMetadataFactory()->getAllMetadata() as $metadata) {
             if (! $metadata->isMappedSuperclass && ! (isset($metadata->isEmbeddedClass) && $metadata->isEmbeddedClass)) {
                 $classes[] = $metadata;
             }
