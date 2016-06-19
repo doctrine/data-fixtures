@@ -133,14 +133,13 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $referenceRepository->getReference('duplicate'));
     }
 
-    /**
-     * @expectedException OutOfBoundsException
-     * @expectedExceptionMessage Reference to: (foo) does not exist
-     */
     public function testUndefinedReference()
     {
-        $em = $this->getMockSqliteEntityManager();
-        $referenceRepository = new ReferenceRepository($em);
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+
+        $this->expectException(\OutOfBoundsException::class);
+        $this->expectExceptionMessage('Reference to: (foo) does not exist');
+
         $referenceRepository->getReference('foo');
     }
 }

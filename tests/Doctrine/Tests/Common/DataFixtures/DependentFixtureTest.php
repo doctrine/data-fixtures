@@ -19,11 +19,14 @@
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
+use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Test Fixture ordering by dependencies.
@@ -95,9 +98,6 @@ class DependentFixtureTest extends BaseTest
     }
 
 
-    /**
-     * @expectedException \Doctrine\Common\DataFixtures\Exception\CircularReferenceException
-     */
     public function test_orderFixturesByDependencies_circularReferencesMakeMethodThrowCircularReferenceException()
     {
         $loader = new Loader();
@@ -106,19 +106,20 @@ class DependentFixtureTest extends BaseTest
         $loader->addFixture(new CircularReferenceFixture);
         $loader->addFixture(new CircularReferenceFixture2);
 
-        $orderedFixtures = $loader->getFixtures();
+        $this->expectException(CircularReferenceException::class);
+
+        $loader->getFixtures();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function test_orderFixturesByDependencies_fixturesCantHaveItselfAsParent()
     {
         $loader = new Loader();
 
         $loader->addFixture(new FixtureWithItselfAsParent);
 
-        $orderedFixtures = $loader->getFixtures();
+        $this->expectException(InvalidArgumentException::class);
+
+        $loader->getFixtures();
     }
 
     public function test_inCaseThereAreFixturesOrderedByNumberAndByDependenciesBothOrdersAreExecuted()
@@ -144,15 +145,14 @@ class DependentFixtureTest extends BaseTest
         $this->assertInstanceOf(__NAMESPACE__ . '\DependentFixture3', array_shift($orderedFixtures));
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function test_inCaseAFixtureHasAnUnexistentDependencyOrIfItWasntLoaded_throwsException()
     {
         $loader = new Loader();
         $loader->addFixture(new FixtureWithUnexistentDependency);
 
-        $orderedFixtures = $loader->getFixtures();
+        $this->expectException(RuntimeException::class);
+
+        $loader->getFixtures();
     }
 
     public function test_inCaseGetFixturesReturnsDifferentResultsEachTime()
