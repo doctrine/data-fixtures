@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -43,45 +42,28 @@ class TopologicalSorter
      * Matrix of nodes (aka. vertex).
      * Keys are provided hashes and values are the node definition objects.
      *
-     * The node state definition contains the following properties:
-     *
-     * - <b>state</b> (integer)
-     * Whether the node is NOT_VISITED or IN_PROGRESS
-     *
-     * - <b>value</b> (object)
-     * Actual node value
-     *
-     * - <b>dependencyList</b> (array<string>)
-     * Map of node dependencies defined as hashes.
-     *
-     * @var array<stdClass>
+     * @var Vertex[]
      */
-    private $nodeList = array();
+    private $nodeList = [];
 
     /**
      * Volatile variable holding calculated nodes during sorting process.
      *
      * @var array
      */
-    private $sortedNodeList = array();
+    private $sortedNodeList = [];
 
     /**
      * Adds a new node (vertex) to the graph, assigning its hash and value.
      *
      * @param string $hash
-     * @param object $node
+     * @param mixed  $node
      *
      * @return void
      */
     public function addNode($hash, $node)
     {
-        $definition = new \stdClass();
-
-        $definition->state          = self::NOT_VISITED;
-        $definition->value          = $node;
-        $definition->dependencyList = array();
-
-        $this->nodeList[$hash] = $definition;
+        $this->nodeList[$hash] = new Vertex($node);
     }
 
     /**
@@ -131,8 +113,8 @@ class TopologicalSorter
 
         $sortedList = $this->sortedNodeList;
 
-        $this->nodeList       = array();
-        $this->sortedNodeList = array();
+        $this->nodeList       = [];
+        $this->sortedNodeList = [];
 
         return $sortedList;
     }
@@ -140,13 +122,13 @@ class TopologicalSorter
     /**
      * Visit a given node definition for reordering.
      *
-     * {@internal Highly performance-sensitive method.}
+     * Note: Highly performance-sensitive method.
      *
      * @throws \RuntimeException
      *
-     * @param \stdClass $definition
+     * @param Vertex $definition
      */
-    private function visit($definition)
+    private function visit(Vertex $definition)
     {
         $definition->state = self::IN_PROGRESS;
 
