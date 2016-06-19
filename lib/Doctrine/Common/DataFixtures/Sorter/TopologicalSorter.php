@@ -34,10 +34,6 @@ namespace Doctrine\Common\DataFixtures\Sorter;
  */
 class TopologicalSorter
 {
-    const NOT_VISITED = 0;
-    const IN_PROGRESS = 1;
-    const VISITED     = 2;
-
     /**
      * Matrix of nodes (aka. vertex).
      * Keys are provided hashes and values are the node definition objects.
@@ -104,7 +100,7 @@ class TopologicalSorter
     public function sort()
     {
         foreach ($this->nodeList as $definition) {
-            if ($definition->state !== self::NOT_VISITED) {
+            if ($definition->state !== Vertex::NOT_VISITED) {
                 continue;
             }
 
@@ -130,7 +126,7 @@ class TopologicalSorter
      */
     private function visit(Vertex $definition)
     {
-        $definition->state = self::IN_PROGRESS;
+        $definition->state = Vertex::IN_PROGRESS;
 
         foreach ($definition->dependencyList as $dependency) {
             if ( ! isset($this->nodeList[$dependency])) {
@@ -146,22 +142,22 @@ class TopologicalSorter
             $childDefinition = $this->nodeList[$dependency];
 
             switch ($childDefinition->state) {
-                case self::VISITED:
+                case Vertex::VISITED:
                     break;
 
-                case self::IN_PROGRESS:
+                case Vertex::IN_PROGRESS:
                     $message = 'Graph contains cyclic dependency. An example of this problem would be the following: '
                         . 'Class C has class B as its dependency. Then, class B has class A has its dependency. '
                         . 'Finally, class A has class C as its dependency.';
 
                     throw new \RuntimeException($message);
 
-                case self::NOT_VISITED:
+                case Vertex::NOT_VISITED:
                     $this->visit($childDefinition);
             }
         }
 
-        $definition->state = self::VISITED;
+        $definition->state = Vertex::VISITED;
 
         $this->sortedNodeList[] = $definition->value;
     }
