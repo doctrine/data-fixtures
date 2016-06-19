@@ -27,7 +27,7 @@ namespace Doctrine\Common\DataFixtures\Sorter;
  *           designed to work with {@see \Doctrine\Common\DataFixtures\Sorter\TopologicalSorter}
  *           only.
  */
-class Node
+class Vertex
 {
     const NOT_VISITED = 0;
     const IN_PROGRESS = 1;

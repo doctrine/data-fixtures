@@ -20,22 +20,22 @@
 
 namespace Doctrine\Test\DataFixtures\Sorter;
 
-use Doctrine\Common\DataFixtures\Sorter\Node;
+use Doctrine\Common\DataFixtures\Sorter\Vertex;
 
 /**
  * @author Marco Pivetta <ocramius@gmail.com>
  *
- * @covers \Doctrine\Common\DataFixtures\Sorter\Node
+ * @covers \Doctrine\Common\DataFixtures\Sorter\Vertex
  */
-class NodeTest extends \PHPUnit_Framework_TestCase
+class VertexTest extends \PHPUnit_Framework_TestCase
 {
     public function testNode()
     {
         $value = new \stdClass();
-        $node  = new Node($value);
+        $node  = new Vertex($value);
 
         self::assertSame($value, $node->value);
-        self::assertSame(Node::NOT_VISITED, $node->state);
+        self::assertSame(Vertex::NOT_VISITED, $node->state);
         self::assertSame([], $node->dependencyList);
     }
 }
