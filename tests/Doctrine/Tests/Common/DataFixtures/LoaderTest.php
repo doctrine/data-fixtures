@@ -19,7 +19,9 @@
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
+use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 
 /**
  * Test fixtures loader.
@@ -31,9 +33,9 @@ class LoaderTest extends BaseTest
     public function testLoadFromDirectory()
     {
         $loader = new Loader();
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface'), array(), array(), 'Mock1');
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface', array(), array(), 'Mock2'));
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface', array(), array(), 'Mock3'));
+        $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock1')->getMock());
+        $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock2')->getMock());
+        $loader->addFixture($this->getMockBuilder(SharedFixtureInterface::class)->setMockClassName('Mock3')->getMock());
 
         $this->assertCount(3, $loader->getFixtures());
 
@@ -46,9 +48,9 @@ class LoaderTest extends BaseTest
     public function testLoadFromFile()
     {
         $loader = new Loader();
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface'), array(), array(), 'Mock1');
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\FixtureInterface', array(), array(), 'Mock2'));
-        $loader->addFixture($this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface', array(), array(), 'Mock3'));
+        $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock1')->getMock());
+        $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock2')->getMock());
+        $loader->addFixture($this->getMockBuilder(SharedFixtureInterface::class)->setMockClassName('Mock3')->getMock());
 
         $this->assertCount(3, $loader->getFixtures());
 
