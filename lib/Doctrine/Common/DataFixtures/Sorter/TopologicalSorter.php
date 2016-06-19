@@ -115,7 +115,7 @@ class TopologicalSorter
      * Return a valid order list of all current nodes.
      * The desired topological sorting is the postorder of these searches.
      *
-     * {@internal Highly performance-sensitive method.}
+     * Note: Highly performance-sensitive method.
      *
      * @return array
      */
