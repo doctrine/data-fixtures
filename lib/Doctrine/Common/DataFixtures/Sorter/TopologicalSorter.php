@@ -29,6 +29,9 @@ namespace Doctrine\Common\DataFixtures\Sorter;
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author Roman Borschel <roman@code-factory.org>
+ *
+ * @internal this class is to be used only by data-fixtures internals: do not
+ *           rely on it in your own libraries/applications.
  */
 class TopologicalSorter
 {
