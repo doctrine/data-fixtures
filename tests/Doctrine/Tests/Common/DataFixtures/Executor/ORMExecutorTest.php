@@ -65,7 +65,7 @@ class ORMExecutorTest extends BaseTest
     {
         $em = $this->getMockSqliteEntityManager();
         $executor = new ORMExecutor($em);
-        $fixture = $this->getMockFixture($em);
+        $fixture = $this->getMockFixture();
         $executor->execute(array($fixture), true);
     }
 

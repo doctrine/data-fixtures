@@ -137,7 +137,7 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
      */
     private function getPurger()
     {
-        return $this->createMock(PHPCRPurger::class, [], [], '', false);
+        return $this->createMock(PHPCRPurger::class);
     }
 
     /**
