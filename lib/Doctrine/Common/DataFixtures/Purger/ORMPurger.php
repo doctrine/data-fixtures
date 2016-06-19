@@ -121,9 +121,9 @@ class ORMPurger implements PurgerInterface
             $class = $commitOrder[$i];
 
             if (
-                ($class->isInheritanceTypeSingleTable() && $class->name != $class->rootEntityName) ||
                 (isset($class->isEmbeddedClass) && $class->isEmbeddedClass) ||
-                $class->isMappedSuperclass
+                $class->isMappedSuperclass ||
+                ($class->isInheritanceTypeSingleTable() && $class->name !== $class->rootEntityName)
             ) {
                 continue;
             }
@@ -142,6 +142,12 @@ class ORMPurger implements PurgerInterface
         }
     }
 
+    /**
+     * @param EntityManagerInterface $em
+     * @param ClassMetadata[]        $classes
+     *
+     * @return ClassMetadata[]
+     */
     private function getCommitOrder(EntityManagerInterface $em, array $classes)
     {
         $sorter = new TopologicalSorter();
