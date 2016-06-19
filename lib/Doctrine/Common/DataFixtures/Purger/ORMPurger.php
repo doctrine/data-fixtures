@@ -145,48 +145,48 @@ class ORMPurger implements PurgerInterface
 
     private function getCommitOrder(EntityManagerInterface $em, array $classes)
     {
-        $calc = new TopologicalSorter();
+        $sorter = new TopologicalSorter();
 
         foreach ($classes as $class) {
-            $calc->addNode($class->name, $class);
+            $sorter->addNode($class->name, $class);
 
             // $class before its parents
             foreach ($class->parentClasses as $parentClass) {
                 $parentClass = $em->getClassMetadata($parentClass);
 
-                if ( ! $calc->hasNode($parentClass->name)) {
-                    $calc->addNode($parentClass->name, $parentClass);
+                if ( ! $sorter->hasNode($parentClass->name)) {
+                    $sorter->addNode($parentClass->name, $parentClass);
                 }
 
-                $calc->addDependency($class->name, $parentClass->name);
+                $sorter->addDependency($class->name, $parentClass->name);
             }
 
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide']) {
                     $targetClass = $em->getClassMetadata($assoc['targetEntity']);
 
-                    if ( ! $calc->hasNode($targetClass->name)) {
-                        $calc->addNode($targetClass->name, $targetClass);
+                    if ( ! $sorter->hasNode($targetClass->name)) {
+                        $sorter->addNode($targetClass->name, $targetClass);
                     }
 
                     // add dependency ($targetClass before $class)
-                    $calc->addDependency($targetClass->name, $class->name);
+                    $sorter->addDependency($targetClass->name, $class->name);
 
                     // parents of $targetClass before $class, too
                     foreach ($targetClass->parentClasses as $parentClass) {
                         $parentClass = $em->getClassMetadata($parentClass);
 
-                        if ( ! $calc->hasNode($parentClass->name)) {
-                            $calc->addNode($parentClass->name, $parentClass);
+                        if ( ! $sorter->hasNode($parentClass->name)) {
+                            $sorter->addNode($parentClass->name, $parentClass);
                         }
 
-                        $calc->addDependency($parentClass->name, $class->name);
+                        $sorter->addDependency($parentClass->name, $class->name);
                     }
                 }
             }
         }
 
-        return $calc->sort();
+        return $sorter->sort();
     }
 
     /**
