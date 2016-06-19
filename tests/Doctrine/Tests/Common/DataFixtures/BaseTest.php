@@ -61,8 +61,7 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
             ->method('getMetadataDriverImpl')
             ->will($this->returnValue($this->createMock(MappingDriver::class)));
 
-        $em = EntityManager::create($conn, $config);
-        return $em;
+        return EntityManager::create($conn, $config);
     }
 
     /**
