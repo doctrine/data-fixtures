@@ -14,6 +14,7 @@
     },
     "require-dev": {
         "doctrine/orm": "^2.5.4",
+        "doctrine/dbal": "^2.5.4",
         "phpunit/phpunit": "^5.4.6"
     },
     "conflict": {
