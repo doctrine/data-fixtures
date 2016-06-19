@@ -84,19 +84,19 @@ class DependentFixtureTest extends BaseTest
         // BaseParentFixture1 has no dependencies, so it will always be first in this case
         $this->assertEquals($baseParentFixtureOrder, 0);
 
-        $this->assertTrue(($contactFixtureOrder > $contactMethodFixtureOrder));
-        $this->assertTrue(($contactFixtureOrder > $addressFixtureOrder));
-        $this->assertTrue(($contactFixtureOrder > $countryFixtureOrder));
-        $this->assertTrue(($contactFixtureOrder > $stateFixtureOrder));
-        $this->assertTrue(($contactFixtureOrder > $contactMethodFixtureOrder));
+        $this->assertTrue($contactFixtureOrder > $contactMethodFixtureOrder);
+        $this->assertTrue($contactFixtureOrder > $addressFixtureOrder);
+        $this->assertTrue($contactFixtureOrder > $countryFixtureOrder);
+        $this->assertTrue($contactFixtureOrder > $stateFixtureOrder);
+        $this->assertTrue($contactFixtureOrder > $contactMethodFixtureOrder);
 
-        $this->assertTrue(($addressFixtureOrder > $stateFixtureOrder));
-        $this->assertTrue(($addressFixtureOrder > $countryFixtureOrder));
+        $this->assertTrue($addressFixtureOrder > $stateFixtureOrder);
+        $this->assertTrue($addressFixtureOrder > $countryFixtureOrder);
     }
 
 
     /**
-     * @expectedException Doctrine\Common\DataFixtures\Exception\CircularReferenceException
+     * @expectedException \Doctrine\Common\DataFixtures\Exception\CircularReferenceException
      */
     public function test_orderFixturesByDependencies_circularReferencesMakeMethodThrowCircularReferenceException()
     {
@@ -110,7 +110,7 @@ class DependentFixtureTest extends BaseTest
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function test_orderFixturesByDependencies_fixturesCantHaveItselfAsParent()
     {
