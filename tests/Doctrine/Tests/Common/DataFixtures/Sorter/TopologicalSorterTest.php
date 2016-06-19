@@ -26,16 +26,16 @@ use Doctrine\Tests\Mock;
 /**
  * TopologicalSorter tests.
  *
- * {@internal When writing tests here consider that a lot of graph
- *            constellations can have many valid orderings, so you may want to
- *            build a graph that has only 1 valid order to simplify your tests}
+ * Note: When writing tests here consider that a lot of graph
+ *       constellations can have many valid orderings, so you may want to
+ *       build a graph that has only 1 valid order to simplify your tests
  *
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Doctrine\Fixture\Sorter\TopologicalSorter
+     * @var \Doctrine\Common\DataFixtures\Sorter\TopologicalSorter
      */
     private $sorter;
 
