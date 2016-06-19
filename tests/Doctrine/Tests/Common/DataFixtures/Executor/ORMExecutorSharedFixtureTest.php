@@ -21,7 +21,8 @@ namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Common\DataFixtures\SharedFixtureInterface;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
 
@@ -61,7 +62,7 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         }
 
         $em = $this->getMockSqliteEntityManager();
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
+        $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema(array());
         $schemaTool->createSchema(array(
             $em->getClassMetadata(self::TEST_ENTITY_ROLE),
@@ -90,6 +91,6 @@ class ORMExecutorSharedFixtureTest extends BaseTest
 
     private function getMockFixture()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface');
+        return $this->createMock(SharedFixtureInterface::class);
     }
 }

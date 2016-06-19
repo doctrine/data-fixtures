@@ -19,9 +19,9 @@
 
 namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use PHPUnit_Framework_TestCase;
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
 /**
@@ -39,7 +39,7 @@ class ORMExecutorTest extends BaseTest
             ->method('setEntityManager')
             ->with($em);
         $executor = new ORMExecutor($em, $purger);
-        $fixture = $this->getMockFixture($em);
+        $fixture = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
@@ -54,7 +54,7 @@ class ORMExecutorTest extends BaseTest
             ->method('purge')
             ->will($this->returnValue(null));
         $executor = new ORMExecutor($em, $purger);
-        $fixture = $this->getMockFixture($em);
+        $fixture = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
@@ -65,17 +65,17 @@ class ORMExecutorTest extends BaseTest
     {
         $em = $this->getMockSqliteEntityManager();
         $executor = new ORMExecutor($em);
-        $fixture = $this->getMockFixture($em);
+        $fixture = $this->getMockFixture();
         $executor->execute(array($fixture), true);
     }
 
-    private function getMockFixture($em)
+    private function getMockFixture()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\FixtureInterface');
+        return $this->createMock(FixtureInterface::class);
     }
 
     private function getMockPurger()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\Purger\ORMPurger');
+        return $this->createMock(ORMPurger::class);
     }
 }

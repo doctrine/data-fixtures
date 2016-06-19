@@ -19,6 +19,7 @@
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
+use Doctrine\DBAL\Driver;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use PHPUnit_Framework_TestCase;
@@ -30,35 +31,6 @@ use PHPUnit_Framework_TestCase;
  */
 abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
-    protected function getMockEntityManager()
-    {
-        $driver = $this->getMock('Doctrine\DBAL\Driver');
-        $driver->expects($this->once())
-            ->method('getDatabasePlatform')
-            ->will($this->returnValue($this->getMock('Doctrine\DBAL\Platforms\MySqlPlatform')));
-
-        $conn = $this->getMock('Doctrine\DBAL\Connection', array(), array(array(), $driver));
-        $conn->expects($this->once())
-            ->method('getEventManager')
-            ->will($this->returnValue($this->getMock('Doctrine\Common\EventManager')));
-
-        $config = $this->getMock('Doctrine\ORM\Configuration');
-        $config->expects($this->once())
-            ->method('getProxyDir')
-            ->will($this->returnValue('test'));
-
-        $config->expects($this->once())
-            ->method('getProxyNamespace')
-            ->will($this->returnValue('Proxies'));
-
-        $config->expects($this->once())
-            ->method('getMetadataDriverImpl')
-            ->will($this->returnValue($this->getMock('Doctrine\ORM\Mapping\Driver\DriverChain')));
-
-        $em = EntityManager::create($conn, $config);
-        return $em;
-    }
-
     /**
      * EntityManager mock object together with
      * annotation mapping driver

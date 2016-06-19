@@ -31,11 +31,11 @@ class FixtureTest extends BaseTest
 {
     public function testFixtureInterface()
     {
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock(ObjectManager::class);
         $fixture = new MyFixture2();
         $fixture->load($em);
 
-        $this->assertTrue($fixture->loaded);
+        self::assertTrue($fixture->loaded);
     }
 }
 

@@ -20,6 +20,9 @@
 namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Executor\PHPCRExecutor;
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
+use Doctrine\ODM\PHPCR\DocumentManager;
 use Exception;
 use PHPUnit_Framework_TestCase;
 
@@ -130,39 +133,37 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \Doctrine\Common\DataFixtures\Purger\PHPCRPurger|\PHPUnit_Framework_MockObject_MockObject
+     * @return PHPCRPurger|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getPurger()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\Purger\PHPCRPurger', array(), array(), '', false);
+        return $this->createMock(PHPCRPurger::class);
     }
 
     /**
-     * @return \Doctrine\ODM\PHPCR\DocumentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @return DocumentManager|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getDocumentManager()
     {
         $this->loadDocumentManagerClass();
 
-        return $this->getMock(
-            'Doctrine\ODM\PHPCR\DocumentManager',
-            array(
+        return $this
+            ->getMockBuilder(DocumentManager::class)
+            ->setMethods([
                 'transactional',
                 'flush',
                 'clear',
-            ),
-            array(),
-            '',
-            false
-        );
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
-     * @return \Doctrine\Common\DataFixtures\FixtureInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FixtureInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getMockFixture()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\FixtureInterface', array(), array(), '', false);
+        return $this->createMock(FixtureInterface::class);
     }
 
     /**
@@ -171,7 +172,7 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
     private function loadDocumentManagerClass()
     {
 
-        if (class_exists('Doctrine\ODM\PHPCR\DocumentManager')) {
+        if (class_exists(DocumentManager::class)) {
             return;
         }
 
