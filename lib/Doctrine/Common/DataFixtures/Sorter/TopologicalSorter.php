@@ -180,7 +180,7 @@ class TopologicalSorter
 
             switch ($childDefinition->state) {
                 case self::VISITED:
-                    continue;
+                    break;
 
                 case self::IN_PROGRESS:
                     $message = 'Graph contains cyclic dependency. An example of this problem would be the following: '
