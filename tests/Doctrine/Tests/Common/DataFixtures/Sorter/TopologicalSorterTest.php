@@ -20,6 +20,7 @@
 
 namespace Doctrine\Test\DataFixtures\Sorter;
 
+use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\Tests\Mock;
 
@@ -114,7 +115,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $this->sorter->addDependency('2', '3');
         $this->sorter->addDependency('3', '1');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CircularReferenceException::class);
 
         $this->sorter->sort();
     }

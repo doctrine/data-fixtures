@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\DataFixtures\Sorter;
 
+use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
+
 /**
  * TopologicalSorter is an ordering algorithm for directed graphs (DG) and/or
  * directed acyclic graphs (DAG) by using a depth-first searching (DFS) to
@@ -121,6 +123,7 @@ class TopologicalSorter
      * Note: Highly performance-sensitive method.
      *
      * @throws \RuntimeException
+     * @throws CircularReferenceException
      *
      * @param Vertex $definition
      */
@@ -130,13 +133,11 @@ class TopologicalSorter
 
         foreach ($definition->dependencyList as $dependency) {
             if ( ! isset($this->nodeList[$dependency])) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'Fixture "%s" has a dependency of fixture "%s", but it not listed to be loaded.',
-                        get_class($definition->value),
-                        $dependency
-                    )
-                );
+                throw new \RuntimeException(sprintf(
+                    'Fixture "%s" has a dependency of fixture "%s", but it not listed to be loaded.',
+                    get_class($definition->value),
+                    $dependency
+                ));
             }
 
             $childDefinition = $this->nodeList[$dependency];
@@ -146,11 +147,11 @@ class TopologicalSorter
                     break;
 
                 case Vertex::IN_PROGRESS:
-                    $message = 'Graph contains cyclic dependency. An example of this problem would be the following: '
+                    throw new CircularReferenceException(
+                        'Graph contains cyclic dependency. An example of this problem would be the following: '
                         . 'Class C has class B as its dependency. Then, class B has class A has its dependency. '
-                        . 'Finally, class A has class C as its dependency.';
-
-                    throw new \RuntimeException($message);
+                        . 'Finally, class A has class C as its dependency.'
+                    );
 
                 case Vertex::NOT_VISITED:
                     $this->visit($childDefinition);
