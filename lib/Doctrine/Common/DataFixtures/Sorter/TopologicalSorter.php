@@ -99,8 +99,8 @@ class TopologicalSorter
     /**
      * Adds a new dependency (edge) to the graph using their hashes.
      *
-     * @param string $fromNode
-     * @param string $toNode
+     * @param string $fromHash
+     * @param string $toHash
      *
      * @return void
      */
