@@ -97,6 +97,9 @@ class TopologicalSorter
      *
      * Note: Highly performance-sensitive method.
      *
+     * @throws \RuntimeException
+     * @throws CircularReferenceException
+     *
      * @return array
      */
     public function sort()
