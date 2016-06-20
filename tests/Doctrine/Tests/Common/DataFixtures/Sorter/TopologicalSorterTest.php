@@ -120,7 +120,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $this->sorter->sort();
     }
 
-    public function testNoFailureOnSelfReferencingCyclicDependency()
+    public function testNoFailureOnSelfReferencingDependency()
     {
         $node1 = new Mock\Node(1);
         $node2 = new Mock\Node(2);
