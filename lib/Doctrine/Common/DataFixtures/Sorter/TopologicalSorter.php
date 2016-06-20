@@ -146,7 +146,7 @@ class TopologicalSorter
             $childDefinition = $this->nodeList[$dependency];
 
             // allow self referencing classes
-            if ($definition->value->getName() === $childDefinition->value->getName()) {
+            if ($definition === $childDefinition) {
                 continue;
             }
 
