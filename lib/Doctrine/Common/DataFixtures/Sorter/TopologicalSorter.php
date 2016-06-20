@@ -145,6 +145,11 @@ class TopologicalSorter
 
             $childDefinition = $this->nodeList[$dependency];
 
+            // allow self referencing classes
+            if ($definition === $childDefinition) {
+                continue;
+            }
+
             switch ($childDefinition->state) {
                 case Vertex::VISITED:
                     break;

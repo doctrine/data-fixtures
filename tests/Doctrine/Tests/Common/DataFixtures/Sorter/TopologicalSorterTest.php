@@ -120,6 +120,32 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $this->sorter->sort();
     }
 
+    public function testNoFailureOnSelfReferencingDependency()
+    {
+        $node1 = new Mock\Node(1);
+        $node2 = new Mock\Node(2);
+        $node3 = new Mock\Node(3);
+        $node4 = new Mock\Node(4);
+        $node5 = new Mock\Node(5);
+
+        $this->sorter->addNode('1', $node1);
+        $this->sorter->addNode('2', $node2);
+        $this->sorter->addNode('3', $node3);
+        $this->sorter->addNode('4', $node4);
+        $this->sorter->addNode('5', $node5);
+
+        $this->sorter->addDependency('1', '2');
+        $this->sorter->addDependency('1', '1');
+        $this->sorter->addDependency('2', '3');
+        $this->sorter->addDependency('3', '4');
+        $this->sorter->addDependency('5', '1');
+
+        $sortedList  = $this->sorter->sort();
+        $correctList = array($node4, $node3, $node2, $node1, $node5);
+
+        self::assertSame($correctList, $sortedList);
+    }
+
     public function testFailureSortMissingDependency()
     {
         $node1 = new Mock\Node(1);
