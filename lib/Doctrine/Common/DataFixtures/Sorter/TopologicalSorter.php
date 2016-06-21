@@ -62,7 +62,9 @@ class TopologicalSorter
      */
     public function addNode($hash, ClassMetadata $node)
     {
-        $this->nodeList[$hash] = new Vertex($node);
+        if ( ! $this->hasNode($hash)) {
+            $this->nodeList[$hash] = new Vertex($node);
+        }
     }
 
     /**
@@ -87,6 +89,14 @@ class TopologicalSorter
      */
     public function addDependency($fromHash, $toHash)
     {
+        if (( ! $this->hasNode($fromHash)) || ( ! $this->hasNode($toHash))) {
+            throw new \RuntimeException(sprintf(
+                'Fixture "%s" has a dependency of fixture "%s", but it not listed to be loaded.',
+                $fromHash,
+                $toHash
+            ));
+        }
+
         $definition = $this->nodeList[$fromHash];
 
         $definition->dependencyList[] = $toHash;
@@ -136,14 +146,6 @@ class TopologicalSorter
         $definition->state = Vertex::IN_PROGRESS;
 
         foreach ($definition->dependencyList as $dependency) {
-            if ( ! isset($this->nodeList[$dependency])) {
-                throw new \RuntimeException(sprintf(
-                    'Fixture "%s" has a dependency of fixture "%s", but it not listed to be loaded.',
-                    get_class($definition->value),
-                    $dependency
-                ));
-            }
-
             $childDefinition = $this->nodeList[$dependency];
 
             // allow self referencing classes
