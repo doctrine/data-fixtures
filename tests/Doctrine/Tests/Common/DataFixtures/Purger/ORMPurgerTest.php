@@ -16,6 +16,7 @@ use Doctrine\ORM\Tools\Setup;
  */
 class ORMPurgerTest extends BaseTest
 {
+    const TEST_ENTITY_ROLE = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Role';
     const TEST_ENTITY_USER = 'Doctrine\Tests\Common\DataFixtures\TestEntity\User';
     const TEST_ENTITY_USER_WITH_SCHEMA = 'Doctrine\Tests\Common\DataFixtures\TestEntity\UserWithSchema';
     const TEST_ENTITY_QUOTED = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Quoted';
@@ -47,6 +48,19 @@ class ORMPurgerTest extends BaseTest
         $this->assertEquals($associationTables[0], '"INSERT"');
     }
 
+    public function testGetAssociationTablesUnidirectional()
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+        $metadata = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $purger = new ORMPurger($em);
+        $class = new ReflectionClass('Doctrine\Common\DataFixtures\Purger\ORMPurger');
+        $method = $class->getMethod('getAssociationTables');
+        $method->setAccessible(true);
+        $associationTables = $method->invokeArgs($purger, array(array($metadata), $platform));
+        $this->assertEquals($associationTables[0], 'users.role_id');
+    }
+
     public function testTableNameWithSchema()
     {
         $isDoctrine25 = (ORMVersion::compare('2.5.0') <= 0);
@@ -64,5 +78,4 @@ class ORMPurgerTest extends BaseTest
         $tableName = $method->invokeArgs($purger, array($metadata, $platform));
         $this->assertStringStartsWith('test_schema',$tableName);
     }
-
 }
