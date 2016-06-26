@@ -47,4 +47,12 @@ class Node
         $this->value = $value;
         $this->name = 'Node ' . (string) $value;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 }
