@@ -155,14 +155,27 @@ class TopologicalSorter
                     break;
 
                 case Vertex::IN_PROGRESS:
+                    if ($definition->value instanceof \Doctrine\ORM\Mapping\ClassMetadata) {
+                        throw new CircularReferenceException(
+                            sprintf(
+                                'Graph contains cyclic dependency between the classes "%s" and'
+                                .' "%s". An example of this problem would be the following: '
+                                .'Class C has class B as its dependency. Then, class B has class A has its dependency. '
+                                .'Finally, class A has class C as its dependency.',
+                                $definition->value->getName(),
+                                $childDefinition->value->getName()
+                            )
+                        );
+                    }
+
                     throw new CircularReferenceException(
                         sprintf(
                             'Graph contains cyclic dependency between the classes "%s" and'
                             .' "%s". An example of this problem would be the following: '
                             .'Class C has class B as its dependency. Then, class B has class A has its dependency. '
                             .'Finally, class A has class C as its dependency.',
-                            $definition->value->getName(),
-                            $childDefinition->value->getName()
+                            get_class($definition->value),
+                            get_class($childDefinition->value)
                         )
                     );
 

@@ -33,11 +33,6 @@ class Node
     public $value;
 
     /**
-     * @var mixed
-     */
-    public $name;
-
-    /**
      * Constructor.
      *
      * @param mixed $value
@@ -45,14 +40,5 @@ class Node
     public function __construct($value)
     {
         $this->value = $value;
-        $this->name = 'Node ' . (string) $value;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 }
