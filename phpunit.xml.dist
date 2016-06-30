@@ -15,4 +15,10 @@
             <directory>./tests/Doctrine/</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>lib</directory>
+        </whitelist>
+    </filter>
 </phpunit>
