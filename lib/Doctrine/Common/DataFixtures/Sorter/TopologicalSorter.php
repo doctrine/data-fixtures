@@ -20,6 +20,7 @@
 namespace Doctrine\Common\DataFixtures\Sorter;
 
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 /**
  * TopologicalSorter is an ordering algorithm for directed graphs (DG) and/or
@@ -54,12 +55,12 @@ class TopologicalSorter
     /**
      * Adds a new node (vertex) to the graph, assigning its hash and value.
      *
-     * @param string $hash
-     * @param mixed  $node
+     * @param string        $hash
+     * @param ClassMetadataInfo $node
      *
      * @return void
      */
-    public function addNode($hash, $node)
+    public function addNode($hash, ClassMetadataInfo $node)
     {
         $this->nodeList[$hash] = new Vertex($node);
     }
@@ -155,27 +156,14 @@ class TopologicalSorter
                     break;
 
                 case Vertex::IN_PROGRESS:
-                    if ($definition->value instanceof \Doctrine\ORM\Mapping\ClassMetadata) {
-                        throw new CircularReferenceException(
-                            sprintf(
-                                'Graph contains cyclic dependency between the classes "%s" and'
-                                .' "%s". An example of this problem would be the following: '
-                                .'Class C has class B as its dependency. Then, class B has class A has its dependency. '
-                                .'Finally, class A has class C as its dependency.',
-                                $definition->value->getName(),
-                                $childDefinition->value->getName()
-                            )
-                        );
-                    }
-
                     throw new CircularReferenceException(
                         sprintf(
                             'Graph contains cyclic dependency between the classes "%s" and'
                             .' "%s". An example of this problem would be the following: '
                             .'Class C has class B as its dependency. Then, class B has class A has its dependency. '
                             .'Finally, class A has class C as its dependency.',
-                            get_class($definition->value),
-                            get_class($childDefinition->value)
+                            $definition->value->getName(),
+                            $childDefinition->value->getName()
                         )
                     );
 
