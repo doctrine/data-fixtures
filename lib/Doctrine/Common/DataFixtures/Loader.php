@@ -119,7 +119,10 @@ class Loader
     public function getFixture($className)
     {
         if (isset($this->fixtures[$className])) {
-            throw new \InvalidArgumentException(sprintf('"%s" is not a registered fixture'));
+            throw new \InvalidArgumentException(sprintf(
+                '"%s" is not a registered fixture',
+                $className
+            ));
         }
 
         return $this->fixtures[$className];
