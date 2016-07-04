@@ -48,6 +48,10 @@ class ORMPurgerTest extends BaseTest
         $this->assertEquals($associationTables[0], '"INSERT"');
     }
 
+    /**
+     * Get getAssociationTables for unidirectional reference:
+     * users.role_id should be set to null, or get deleted first, if a user needs to be removed
+     */
     public function testGetAssociationTablesUnidirectional()
     {
         $em = $this->getMockAnnotationReaderEntityManager();
