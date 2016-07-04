@@ -4,11 +4,11 @@ namespace Doctrine\Tests\Common\DataFixtures;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
-use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\Tools\Setup;
+use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\ExcludedEntity;
+use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity;
 
 /**
  * 
@@ -17,9 +17,8 @@ use Doctrine\ORM\Tools\SchemaTool;
  */
 class ORMPurgerExcludeTest extends BaseTest {
 	
-	const TEST_ENTITY_ROLE = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Role';
-	const TEST_ENTITY_USER = 'Doctrine\Tests\Common\DataFixtures\TestEntity\User';
-	const TEST_ENTITY_QUOTED = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Quoted';
+	const TEST_ENTITY_INCLUDED = 'Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity';
+	const TEST_ENTITY_EXCLUDED = 'Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\ExcludedEntity';
 	
 	/**
 	 * Loads test data
@@ -30,8 +29,11 @@ class ORMPurgerExcludeTest extends BaseTest {
 		if (!extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped('Missing pdo_sqlite extension.');
         }
+        
+        $dbParams = array('driver' => 'pdo_sqlite', 'memory' => true);
+        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__.'/../TestPurgeEntity'), true);
+        $em = EntityManager::create($dbParams, $config);
 
-        $em = $this->getMockSqliteEntityManager();
         $connection = $em->getConnection();
         $configuration = $connection->getConfiguration();
         $configuration->setFilterSchemaAssetsExpression(null);
@@ -39,17 +41,19 @@ class ORMPurgerExcludeTest extends BaseTest {
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
         $schemaTool->dropDatabase();
         $schemaTool->createSchema(array(
-	            $em->getClassMetadata(self::TEST_ENTITY_ROLE),
-	            $em->getClassMetadata(self::TEST_ENTITY_USER),
-        		$em->getClassMetadata(self::TEST_ENTITY_QUOTED)
+	            $em->getClassMetadata(self::TEST_ENTITY_INCLUDED),
+	            $em->getClassMetadata(self::TEST_ENTITY_EXCLUDED)
         ));
 		
-        $purger = new ORMPurger();
-        $executor = new ORMExecutor($em, $purger);
-
-        $userFixture = new TestFixtures\UserFixture;
-        $roleFixture = new TestFixtures\RoleFixture;
-        $executor->execute(array($roleFixture, $userFixture), true);
+        $entity = new ExcludedEntity();
+        $entity->setId(1);
+        $em->persist($entity);
+        
+        $entity = new IncludedEntity();
+        $entity->setId(1);
+        $em->persist($entity);
+        
+        $em->flush();
 		
 		return $em;
 	}
@@ -57,21 +61,19 @@ class ORMPurgerExcludeTest extends BaseTest {
 	/**
 	 * Execute test purge
 	 * 
-	 * @param EntityManager $em
 	 * @param string|null $expression
 	 * @param array $list
 	 */
-	public function executeTestPurge(EntityManager $em, $expression, array $list){
+	public function executeTestPurge($expression, array $list){
+		$em = $this->loadTestData();
+		$excludedRepository = $em->getRepository(self::TEST_ENTITY_EXCLUDED);
+		$includedRepository = $em->getRepository(self::TEST_ENTITY_INCLUDED);
 		
-		$userRepository = $em->getRepository(self::TEST_ENTITY_USER);
-		$roleRepository = $em->getRepository(self::TEST_ENTITY_ROLE);
+		$excluded = $excludedRepository->findAll();
+		$included = $includedRepository->findAll();
 		
-		$users = $userRepository->findAll();
-		$roles = $roleRepository->findAll();
-		
-		$this->assertGreaterThan(0, count($users));
-		$this->assertGreaterThan(0, count($roles));
-
+		$this->assertGreaterThan(0, count($included));
+		$this->assertGreaterThan(0, count($excluded));
 		
 		$connection = $em->getConnection();
 		$configuration = $connection->getConfiguration();
@@ -80,43 +82,27 @@ class ORMPurgerExcludeTest extends BaseTest {
 		$purger = new ORMPurger($em,$list);
 		$purger->purge();
 		
-		$users = $userRepository->findAll();
-		$roles = $roleRepository->findAll();
+		$excluded = $excludedRepository->findAll();
+		$included = $includedRepository->findAll();
 		
-		$this->assertEquals(0, count($users));
-		$this->assertGreaterThan(0, count($roles));
+		$this->assertEquals(0, count($included));
+		$this->assertGreaterThan(0, count($excluded));
 		
 	}
 	
 	/**
 	 * Test for purge exclusion usig dbal filter expression regexp.
-	 * Only purge tables starting whit User
 	 * 
 	 */
 	public function testPurgeExcludeUsingFilterExpression(){
-		$em = $this->loadTestData();
-		$this->executeTestPurge($em,'~^User~', array());
+		$this->executeTestPurge('~^(?!ExcludedEntity)~', array());
 	}
 	
 	/**
 	 * Test for purge exclusion usig explicit exclution list.
-	 * Only purge User table
 	 *
 	 */
 	public function testPurgeExcludeUsingList(){
-		$em = $this->loadTestData();
-		$connection = $em->getConnection();
-		$tables = $connection->getSchemaManager()->listTableNames();
-		
-		$metadata = $em->getMetadataFactory()->getAllMetadata();
-		$platform = $em->getConnection()->getDatabasePlatform();
-		$purger = new ORMPurger();
-		$class = new \ReflectionClass('Doctrine\Common\DataFixtures\Purger\ORMPurger');
-		$method = $class->getMethod('getAssociationTables');
-		$method->setAccessible(true);
-		$associationTables = $method->invokeArgs($purger, array($metadata, $platform));
-		
-		$excluded = array_diff(array_merge($tables,$associationTables), array('User')); // avoid General error: 1 no such table: readers.author_reader
-		$this->executeTestPurge($em,null,$excluded);
+		$this->executeTestPurge(null,array('ExcludedEntity'));
 	}
 }
