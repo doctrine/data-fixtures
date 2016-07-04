@@ -141,9 +141,9 @@ class ORMPurger implements PurgerInterface
         }
 		$connection = $this->em->getConnection();
 		$filterExpr = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
-		$efe = empty($filterExpr);
+		$emptyFilterExpression = empty($filterExpr);
 		foreach($orderedTables as $tbl) {
-			if(($efe||( !$efe && preg_match($filterExpr, $tbl) )) && array_search($tbl, $this->excluded) === false){
+			if(($emptyFilterExpression||preg_match($filterExpr, $tbl)) && array_search($tbl, $this->excluded) === false){
 				if ($this->purgeMode === self::PURGE_MODE_DELETE) {
 					$connection->executeUpdate("DELETE FROM " . $tbl);
 				} else {
