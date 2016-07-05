@@ -47,13 +47,22 @@ class ORMPurger implements PurgerInterface
     private $purgeMode = self::PURGE_MODE_DELETE;
 
     /**
+    * Table/view names to be excleded from purge
+    *
+    * @var string[]
+    */
+    private $excluded;
+
+    /**
      * Construct new purger instance.
      *
      * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
+     * @param string[] $excluded array of table/view names to be excleded from purge
      */
-    public function __construct(EntityManagerInterface $em = null)
+    public function __construct(EntityManagerInterface $em = null, array $excluded = array())
     {
         $this->em = $em;
+        $this->excluded = $excluded;
     }
 
     /**
@@ -131,14 +140,18 @@ class ORMPurger implements PurgerInterface
             $orderedTables[] = $this->getTableName($class, $platform);
         }
 
-        $connection = $this->em->getConnection();
-        foreach($orderedTables as $tbl) {
-            if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-                $connection->executeUpdate('DELETE FROM ' . $tbl);
-            } else {
-                $connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
-            }
-        }
+		$connection = $this->em->getConnection();
+		$filterExpr = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
+		$emptyFilterExpression = empty($filterExpr);
+		foreach($orderedTables as $tbl) {
+			if(($emptyFilterExpression||preg_match($filterExpr, $tbl)) && array_search($tbl, $this->excluded) === false){
+				if ($this->purgeMode === self::PURGE_MODE_DELETE) {
+					$connection->executeUpdate("DELETE FROM " . $tbl);
+				} else {
+					$connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+				}
+			}
+		}
     }
 
     /**
