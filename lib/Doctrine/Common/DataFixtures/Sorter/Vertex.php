@@ -19,7 +19,7 @@
 
 namespace Doctrine\Common\DataFixtures\Sorter;
 
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * @author Marco Pivetta <ocramius@gmail.com>
@@ -41,7 +41,7 @@ class Vertex
     public $state = self::NOT_VISITED;
 
     /**
-     * @var ClassMetadataInfo Actual node value
+     * @var ClassMetadata Actual node value
      */
     public $value;
 
@@ -51,9 +51,9 @@ class Vertex
     public $dependencyList = [];
 
     /**
-     * @param ClassMetadataInfo $value
+     * @param ClassMetadata $value
      */
-    public function __construct(ClassMetadataInfo $value)
+    public function __construct(ClassMetadata $value)
     {
         $this->value = $value;
     }

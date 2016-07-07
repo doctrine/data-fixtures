@@ -20,7 +20,7 @@
 namespace Doctrine\Common\DataFixtures\Sorter;
 
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * TopologicalSorter is an ordering algorithm for directed graphs (DG) and/or
@@ -56,11 +56,11 @@ class TopologicalSorter
      * Adds a new node (vertex) to the graph, assigning its hash and value.
      *
      * @param string        $hash
-     * @param ClassMetadataInfo $node
+     * @param ClassMetadata $node
      *
      * @return void
      */
-    public function addNode($hash, ClassMetadataInfo $node)
+    public function addNode($hash, ClassMetadata $node)
     {
         $this->nodeList[$hash] = new Vertex($node);
     }

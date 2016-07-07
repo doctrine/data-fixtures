@@ -22,7 +22,7 @@ namespace Doctrine\Test\DataFixtures\Sorter;
 
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Tests\Mock;
 
 /**
@@ -53,11 +53,11 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessSortLinearDependency()
     {
-        $node1 = new ClassMetadataInfo(1);
-        $node2 = new ClassMetadataInfo(2);
-        $node3 = new ClassMetadataInfo(3);
-        $node4 = new ClassMetadataInfo(4);
-        $node5 = new ClassMetadataInfo(5);
+        $node1 = new ClassMetadata(1);
+        $node2 = new ClassMetadata(2);
+        $node3 = new ClassMetadata(3);
+        $node4 = new ClassMetadata(4);
+        $node5 = new ClassMetadata(5);
 
         $this->sorter->addNode('1', $node1);
         $this->sorter->addNode('2', $node2);
@@ -78,11 +78,11 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessSortMultiDependency()
     {
-        $node1 = new ClassMetadataInfo(1);
-        $node2 = new ClassMetadataInfo(2);
-        $node3 = new ClassMetadataInfo(3);
-        $node4 = new ClassMetadataInfo(4);
-        $node5 = new ClassMetadataInfo(5);
+        $node1 = new ClassMetadata(1);
+        $node2 = new ClassMetadata(2);
+        $node3 = new ClassMetadata(3);
+        $node4 = new ClassMetadata(4);
+        $node5 = new ClassMetadata(5);
 
         $this->sorter->addNode('1', $node1);
         $this->sorter->addNode('2', $node2);
@@ -104,9 +104,9 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 
     public function testFailureSortCyclicDependency()
     {
-        $node1 = new ClassMetadataInfo(1);
-        $node2 = new ClassMetadataInfo(2);
-        $node3 = new ClassMetadataInfo(3);
+        $node1 = new ClassMetadata(1);
+        $node2 = new ClassMetadata(2);
+        $node3 = new ClassMetadata(3);
 
         $this->sorter->addNode('1', $node1);
         $this->sorter->addNode('2', $node2);
@@ -123,11 +123,11 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 
     public function testNoFailureOnSelfReferencingDependency()
     {
-        $node1 = new ClassMetadataInfo(1);
-        $node2 = new ClassMetadataInfo(2);
-        $node3 = new ClassMetadataInfo(3);
-        $node4 = new ClassMetadataInfo(4);
-        $node5 = new ClassMetadataInfo(5);
+        $node1 = new ClassMetadata(1);
+        $node2 = new ClassMetadata(2);
+        $node3 = new ClassMetadata(3);
+        $node4 = new ClassMetadata(4);
+        $node5 = new ClassMetadata(5);
 
         $this->sorter->addNode('1', $node1);
         $this->sorter->addNode('2', $node2);
@@ -149,7 +149,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
 
     public function testFailureSortMissingDependency()
     {
-        $node1 = new ClassMetadataInfo(1);
+        $node1 = new ClassMetadata(1);
 
         $this->sorter->addNode('1', $node1);
 
