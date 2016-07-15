@@ -23,7 +23,6 @@ namespace Doctrine\Test\DataFixtures\Sorter;
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\Tests\Mock;
 
 /**
  * TopologicalSorter tests.
@@ -147,16 +146,44 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         self::assertSame($correctList, $sortedList);
     }
 
-    public function testFailureSortMissingDependency()
+    public function testNoOverrideExistingNodeDependency()
+    {
+        $node1 = new ClassMetadata(1);
+        $node2 = new ClassMetadata(2);
+
+        $this->sorter->addNode('1', $node1);
+        $this->sorter->addNode('2', $node2);
+        $this->sorter->addDependency('1', '2');
+        $this->sorter->addNode('1', $node1);
+
+        $sortedList  = $this->sorter->sort();
+        $correctList = array($node2, $node1);
+        $this->assertSame($correctList, $sortedList);
+    }
+
+    public function testCannotAddDependencyForAMissingNodeTo()
     {
         $node1 = new ClassMetadata(1);
 
         $this->sorter->addNode('1', $node1);
 
+        $this->expectException(\RuntimeException::class);
         $this->sorter->addDependency('1', '2');
+    }
+
+    public function testCannotAddDependencyForAMissingNodeFrom()
+    {
+        $node2 = new ClassMetadata(2);
+
+        $this->sorter->addNode('2', $node2);
 
         $this->expectException(\RuntimeException::class);
+        $this->sorter->addDependency('1', '2');
+    }
 
-        $this->sorter->sort();
+    public function testCannotAddDependencyForAMissingNodes()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->sorter->addDependency('1', '2');
     }
 }

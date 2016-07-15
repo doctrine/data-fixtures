@@ -22,8 +22,6 @@ namespace Doctrine\Common\DataFixtures\Purger;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
@@ -93,7 +91,7 @@ class ORMPurger implements PurgerInterface
      */
     public function setEntityManager(EntityManagerInterface $em)
     {
-      $this->em = $em;
+        $this->em = $em;
     }
 
     /**
@@ -109,26 +107,14 @@ class ORMPurger implements PurgerInterface
     /** @inheritDoc */
     public function purge()
     {
-        $classes = array();
+        $classes = $this->getAllMetadataClassesFromEntityManager();
 
-        foreach ($this->em->getMetadataFactory()->getAllMetadata() as $metadata) {
-            if (! $metadata->isMappedSuperclass && ! (isset($metadata->isEmbeddedClass) && $metadata->isEmbeddedClass)) {
-                $classes[] = $metadata;
-            }
-        }
-
-        $commitOrder = $this->getCommitOrder($this->em, $classes);
-
-        // Get platform parameters
-        $platform = $this->em->getConnection()->getDatabasePlatform();
+        $commitOrder = $this->getCommitOrder($classes);
 
         // Drop association tables first
-        $orderedTables = $this->getAssociationTables($commitOrder, $platform);
+        $orderedTables = $this->getAssociationTables($commitOrder);
 
-        // Drop tables in reverse commit order
-        for ($i = count($commitOrder) - 1; $i >= 0; --$i) {
-            $class = $commitOrder[$i];
-
+        foreach ($commitOrder as $class) {
             if (
                 (isset($class->isEmbeddedClass) && $class->isEmbeddedClass) ||
                 $class->isMappedSuperclass ||
@@ -137,30 +123,31 @@ class ORMPurger implements PurgerInterface
                 continue;
             }
 
-            $orderedTables[] = $this->getTableName($class, $platform);
+            $orderedTables[] = $this->getTableName($class);
         }
 
-		$connection = $this->em->getConnection();
-		$filterExpr = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
-		$emptyFilterExpression = empty($filterExpr);
-		foreach($orderedTables as $tbl) {
-			if(($emptyFilterExpression||preg_match($filterExpr, $tbl)) && array_search($tbl, $this->excluded) === false){
-				if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-					$connection->executeUpdate("DELETE FROM " . $tbl);
-				} else {
-					$connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
-				}
-			}
-		}
+        $connection = $this->em->getConnection();
+        $filterExpr = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
+        $emptyFilterExpression = empty($filterExpr);
+        foreach ($orderedTables as $tbl) {
+            if (($emptyFilterExpression || preg_match($filterExpr, $tbl)) && array_search($tbl, $this->excluded) === false) {
+
+                if ($this->purgeMode === self::PURGE_MODE_DELETE) {
+                    $connection->executeUpdate('DELETE FROM ' . $tbl);
+                } else {
+                    $platform = $this->em->getConnection()->getDatabasePlatform();
+                    $connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+                }
+            }
+        }
     }
 
     /**
-     * @param EntityManagerInterface $em
-     * @param ClassMetadata[]        $classes
+     * @param ClassMetadata[] $classes
      *
      * @return ClassMetadata[]
      */
-    private function getCommitOrder(EntityManagerInterface $em, array $classes)
+    private function getCommitOrder(array $classes)
     {
         $sorter = new TopologicalSorter();
 
@@ -168,41 +155,19 @@ class ORMPurger implements PurgerInterface
             $sorter->addNode($class->name, $class);
 
             // $class before its parents
-            foreach ($class->parentClasses as $parentClass) {
-                $parentClass     = $em->getClassMetadata($parentClass);
-                $parentClassName = $parentClass->getName();
+            $this->addParentClassDependencies($sorter, $class);
 
-                if ( ! $sorter->hasNode($parentClassName)) {
-                    $sorter->addNode($parentClassName, $parentClass);
-                }
-
-                $sorter->addDependency($class->name, $parentClassName);
-            }
-
-            foreach ($class->associationMappings as $assoc) {
-                if ($assoc['isOwningSide']) {
-                    /* @var $targetClass ClassMetadata */
-                    $targetClass     = $em->getClassMetadata($assoc['targetEntity']);
-                    $targetClassName = $targetClass->getName();
-
-                    if ( ! $sorter->hasNode($targetClassName)) {
-                        $sorter->addNode($targetClassName, $targetClass);
-                    }
+            foreach ($class->associationMappings as $association) {
+                if ($association['isOwningSide'] && !isset($association['inherited'])) {
+                    $associationClass = $this->em->getClassMetadata($association['targetEntity']);
+                    $associationClassName = $associationClass->getName();
 
                     // add dependency ($targetClass before $class)
-                    $sorter->addDependency($targetClassName, $class->name);
+                    $sorter->addNode($associationClassName, $associationClass);
+                    $sorter->addDependency($associationClassName, $class->name);
 
                     // parents of $targetClass before $class, too
-                    foreach ($targetClass->parentClasses as $parentClass) {
-                        $parentClass     = $em->getClassMetadata($parentClass);
-                        $parentClassName = $parentClass->getName();
-
-                        if ( ! $sorter->hasNode($parentClassName)) {
-                            $sorter->addNode($parentClassName, $parentClass);
-                        }
-
-                        $sorter->addDependency($parentClassName, $class->name);
-                    }
+                    $this->addParentClassDependencies($sorter, $associationClass);
                 }
             }
         }
@@ -211,14 +176,29 @@ class ORMPurger implements PurgerInterface
     }
 
     /**
+     * @param TopologicalSorter $sorter
+     * @param $childrenClass
+     */
+    private function addParentClassDependencies(TopologicalSorter $sorter, $childrenClass)
+    {
+        foreach ($childrenClass->parentClasses as $parentClass) {
+            $parentClass = $this->em->getClassMetadata($parentClass);
+            $parentClassName = $parentClass->getName();
+
+            $sorter->addNode($parentClassName, $parentClass);
+            $sorter->addDependency($childrenClass->name, $parentClassName);
+        }
+    }
+
+    /**
      * @param array $classes
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
      * @return array
      */
-    private function getAssociationTables(array $classes, AbstractPlatform $platform)
+    private function getAssociationTables(array $classes)
     {
-        $associationTables = array();
+        $platform = $this->em->getConnection()->getDatabasePlatform();
 
+        $associationTables = array();
         foreach ($classes as $class) {
             foreach ($class->associationMappings as $assoc) {
                 if ($assoc['isOwningSide'] && $assoc['type'] == ClassMetadata::MANY_TO_MANY) {
@@ -233,13 +213,14 @@ class ORMPurger implements PurgerInterface
     /**
      *
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
      * @return string
      */
-    private function getTableName($class, $platform)
+    private function getTableName($class)
     {
+        $platform = $this->em->getConnection()->getDatabasePlatform();
+
         if (isset($class->table['schema']) && !method_exists($class, 'getSchemaName')) {
-            return $class->table['schema'].'.'.$this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+            return $class->table['schema'] . '.' . $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
         }
 
         return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
@@ -247,17 +228,32 @@ class ORMPurger implements PurgerInterface
 
     /**
      *
-     * @param array            $association
-     * @param \Doctrine\ORM\Mapping\ClassMetadata    $class
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
+     * @param array $assoc
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      * @return string
      */
-    private function getJoinTableName($assoc, $class, $platform)
+    private function getJoinTableName($assoc, $class)
     {
+        $platform = $this->em->getConnection()->getDatabasePlatform();
+
         if (isset($assoc['joinTable']['schema']) && !method_exists($class, 'getSchemaName')) {
-            return $assoc['joinTable']['schema'].'.'.$this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
+            return $assoc['joinTable']['schema'] . '.' . $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
         }
 
         return $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
+    }
+
+    /**
+     * @return array
+     */
+    private function getAllMetadataClassesFromEntityManager()
+    {
+        $classes = array();
+        foreach ($this->em->getMetadataFactory()->getAllMetadata() as $metadata) {
+            if (!$metadata->isMappedSuperclass && !(isset($metadata->isEmbeddedClass) && $metadata->isEmbeddedClass)) {
+                $classes[] = $metadata;
+            }
+        }
+        return $classes;
     }
 }

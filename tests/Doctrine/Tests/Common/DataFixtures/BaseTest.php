@@ -57,4 +57,19 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__.'/TestEntity'), true);
         return EntityManager::create($dbParams, $config);
     }
+
+    /**
+     * EntityManager mock object together with
+     * annotation mapping driver and pdo_sqlite
+     * database in memory
+     *
+     * @return EntityManager
+     * @throws \Doctrine\ORM\ORMException
+     */
+    protected function getMockSqliteEntityManagerWithDummyEntities()
+    {
+        $dbParams = array('driver' => 'pdo_sqlite', 'memory' => true);
+        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__.'/TestEntity/DummyEntities'), true);
+        return EntityManager::create($dbParams, $config);
+    }
 }
