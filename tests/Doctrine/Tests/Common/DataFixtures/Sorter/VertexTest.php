@@ -21,6 +21,7 @@
 namespace Doctrine\Test\DataFixtures\Sorter;
 
 use Doctrine\Common\DataFixtures\Sorter\Vertex;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * @author Marco Pivetta <ocramius@gmail.com>
@@ -31,7 +32,7 @@ class VertexTest extends \PHPUnit_Framework_TestCase
 {
     public function testNode()
     {
-        $value = new \stdClass();
+        $value = new ClassMetadata('\Sample\Entity');
         $node  = new Vertex($value);
 
         self::assertSame($value, $node->value);
