@@ -151,14 +151,10 @@ class TopologicalSorter
                 continue;
             }
 
-            switch ($childDefinition->state) {
-                case Vertex::VISITED:
-                case Vertex::IN_PROGRESS:
-                    break;
-
-                case Vertex::NOT_VISITED:
-                    $this->visit($childDefinition);
+            if ($childDefinition->state == Vertex::NOT_VISITED) {
+                $this->visit($childDefinition);
             }
+
         }
 
         $definition->state = Vertex::VISITED;
