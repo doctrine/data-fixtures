@@ -116,7 +116,9 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $this->sorter->addDependency('2', '3');
         $this->sorter->addDependency('3', '1');
 
-        $this->expectException(CircularReferenceException::class);
+        $sortedList  = $this->sorter->sort();
+
+        self::assertSame(array($node3, $node2, $node1), $sortedList);
 
         $this->sorter->sort();
     }

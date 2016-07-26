@@ -153,19 +153,8 @@ class TopologicalSorter
 
             switch ($childDefinition->state) {
                 case Vertex::VISITED:
-                    break;
-
                 case Vertex::IN_PROGRESS:
-                    throw new CircularReferenceException(
-                        sprintf(
-                            'Graph contains cyclic dependency between the classes "%s" and'
-                            .' "%s". An example of this problem would be the following: '
-                            .'Class C has class B as its dependency. Then, class B has class A has its dependency. '
-                            .'Finally, class A has class C as its dependency.',
-                            $definition->value->getName(),
-                            $childDefinition->value->getName()
-                        )
-                    );
+                    break;
 
                 case Vertex::NOT_VISITED:
                     $this->visit($childDefinition);
