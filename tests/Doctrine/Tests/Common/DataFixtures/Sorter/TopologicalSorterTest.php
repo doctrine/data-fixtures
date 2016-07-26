@@ -102,7 +102,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         self::assertSame($correctList, $sortedList);
     }
 
-    public function testFailureSortCyclicDependency()
+    public function testSortCyclicDependency()
     {
         $node1 = new ClassMetadata(1);
         $node2 = new ClassMetadata(2);
