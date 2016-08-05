@@ -86,6 +86,11 @@ class ReferenceRepository
         if (method_exists($uow, 'getEntityIdentifier')) {
             return $uow->getEntityIdentifier($reference);
         }
+        
+        // Dealing with PHPCR ODM UnitOfWork
+        if (method_exists($uow, 'getDocumentId')) {
+            return $uow->getDocumentId($reference);
+        }
 
         // ODM UnitOfWork
         return $uow->getDocumentIdentifier($reference);
