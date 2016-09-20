@@ -165,7 +165,9 @@ class ORMPurger implements PurgerInterface
         $sorter = new TopologicalSorter();
 
         foreach ($classes as $class) {
-            $sorter->addNode($class->name, $class);
+            if ( ! $sorter->hasNode($class->name)) {
+                $sorter->addNode($class->name, $class);
+            }
 
             // $class before its parents
             foreach ($class->parentClasses as $parentClass) {
@@ -207,7 +209,7 @@ class ORMPurger implements PurgerInterface
             }
         }
 
-        return $sorter->sort();
+        return array_reverse($sorter->sort());
     }
 
     /**
