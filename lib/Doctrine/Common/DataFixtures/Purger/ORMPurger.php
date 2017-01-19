@@ -19,6 +19,7 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -244,7 +245,9 @@ class ORMPurger implements PurgerInterface
             return $class->table['schema'].'.'.$this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
         }
 
-        return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+        $tableName = $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+        $tableAsset = new Table($tableName);
+        return $tableAsset->getQuotedName($platform);
     }
 
     /**

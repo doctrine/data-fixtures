@@ -19,6 +19,7 @@ class ORMPurgerTest extends BaseTest
     const TEST_ENTITY_USER = 'Doctrine\Tests\Common\DataFixtures\TestEntity\User';
     const TEST_ENTITY_USER_WITH_SCHEMA = 'Doctrine\Tests\Common\DataFixtures\TestEntity\UserWithSchema';
     const TEST_ENTITY_QUOTED = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Quoted';
+    const TEST_ENTITY_RESERVED_KEYWORD = 'Doctrine\Tests\Common\DataFixtures\TestEntity\ReservedKeyword';
 
 
     public function testGetAssociationTables()
@@ -65,4 +66,16 @@ class ORMPurgerTest extends BaseTest
         $this->assertStringStartsWith('test_schema',$tableName);
     }
 
+    public function testTableNameQuotedIfReservedKeyword()
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+        $metadata = $em->getClassMetadata(self::TEST_ENTITY_RESERVED_KEYWORD);
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $purger = new ORMPurger($em);
+        $class = new ReflectionClass('Doctrine\Common\DataFixtures\Purger\ORMPurger');
+        $method = $class->getMethod('getTableName');
+        $method->setAccessible(true);
+        $tableName = $method->invokeArgs($purger, array($metadata, $platform));
+        $this->assertEquals($tableName, '"SELECT"');
+    }
 }
