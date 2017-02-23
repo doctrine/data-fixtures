@@ -44,7 +44,9 @@ $loader->loadFromDirectory('/path/to/MyDataFixtures');
 
 Or you can load a set of fixtures from a file:
 
-    $loader->loadFromFile('/path/to/MyDataFixtures/MyFixture1.php');
+```php
+$loader->loadFromFile('/path/to/MyDataFixtures/MyFixture1.php');
+```
 
 You can get the added fixtures using the getFixtures() method:
 
