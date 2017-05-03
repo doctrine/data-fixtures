@@ -87,6 +87,11 @@ class ReferenceRepository
             return $uow->getEntityIdentifier($reference);
         }
 
+        // PHPCR ODM UnitOfWork
+        if ($this->manager instanceof PhpcrDocumentManager) {
+            return $uow->getDocumentId($reference);
+        }
+
         // ODM UnitOfWork
         return $uow->getDocumentIdentifier($reference);
     }
