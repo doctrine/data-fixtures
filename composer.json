@@ -26,10 +26,10 @@
         "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
     },
     "autoload": {
-        "psr-0": { "Doctrine\\Common\\DataFixtures": "lib/" }
+        "psr-4": { "Doctrine\\Common\\DataFixtures\\": "lib/" }
     },
     "autoload-dev": {
-        "psr-0": { "Doctrine\\Tests": "tests/" }
+        "psr-4": { "Doctrine\\Tests\\": "tests/" }
     },
     "extra": {
         "branch-alias": {
