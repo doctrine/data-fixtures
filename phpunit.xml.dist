@@ -12,7 +12,7 @@
 >
     <testsuites>
         <testsuite name="Doctrine Data Fixtures Test Suite">
-            <directory>./tests/Doctrine/</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
 
