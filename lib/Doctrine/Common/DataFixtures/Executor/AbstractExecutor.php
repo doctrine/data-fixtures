@@ -118,7 +118,7 @@ abstract class AbstractExecutor
         if ($fixture instanceof SharedFixtureInterface) {
             $fixture->setReferenceRepository($this->referenceRepository);
         }
-        $fixture->load($manager);
+        $fixture->load($manager, $this->logger ?: null);
         $manager->clear();
     }
 
