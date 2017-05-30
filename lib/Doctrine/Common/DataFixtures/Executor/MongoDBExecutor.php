@@ -76,6 +76,7 @@ class MongoDBExecutor extends AbstractExecutor
     {
         if ($append === false) {
             $this->purge();
+            $this->getObjectManager()->getSchemaManager()->updateIndexes();
         }
         foreach ($fixtures as $fixture) {
             $this->load($this->dm, $fixture);
