@@ -146,7 +146,7 @@ class ORMPurger implements PurgerInterface
 		foreach($orderedTables as $tbl) {
 			if(($emptyFilterExpression||preg_match($filterExpr, $tbl)) && array_search($tbl, $this->excluded) === false){
 				if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-					$connection->executeUpdate("DELETE FROM " . $tbl);
+					$connection->executeUpdate("DELETE FROM `" . $tbl . "`");
 				} else {
 					$connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
 				}
