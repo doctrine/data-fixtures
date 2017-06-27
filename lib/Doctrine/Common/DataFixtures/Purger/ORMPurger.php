@@ -23,6 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 /**
@@ -146,7 +147,9 @@ class ORMPurger implements PurgerInterface
 		foreach($orderedTables as $tbl) {
 			if(($emptyFilterExpression||preg_match($filterExpr, $tbl)) && array_search($tbl, $this->excluded) === false){
 				if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-					$connection->executeUpdate("DELETE FROM `" . $tbl . "`");
+					$tblIdentifier = new Identifier($tbl);
+					$tblQuoted = $tblIdentifier->getQuotedName($platform);
+					$connection->executeUpdate("DELETE FROM " . $tblQuoted);
 				} else {
 					$connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
 				}
