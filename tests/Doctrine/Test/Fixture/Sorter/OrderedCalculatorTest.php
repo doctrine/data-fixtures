@@ -106,10 +106,10 @@ class OrderedCalculatorTest extends \PHPUnit_Framework_TestCase
                     $orderedFixtureC,
                 ),
             ),
-            // Unassigned only
+            // Unassigned only (LIFO caused by PrioritySorter::sort)
             array(
-                array($fixtureB),
-                array($fixtureB),
+                array($fixtureA, $fixtureB),
+                array($fixtureB, $fixtureA),
             ),
             // Mixed
             array(

@@ -25,8 +25,6 @@ use Doctrine\Fixture\Executor\BulkExecutorEventSubscriber;
 use Doctrine\Fixture\Event\BulkFixtureEvent;
 use Doctrine\Fixture\Event\BulkImportFixtureEventListener;
 use Doctrine\Fixture\Event\BulkPurgeFixtureEventListener;
-use Doctrine\Fixture\Event\ImportFixtureEventListener;
-use Doctrine\Fixture\Event\PurgeFixtureEventListener;
 use Doctrine\Test\Mock\Unassigned\FixtureA;
 
 /**

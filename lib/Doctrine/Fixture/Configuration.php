@@ -21,7 +21,6 @@
 namespace Doctrine\Fixture;
 
 use Doctrine\Common\EventManager;
-use Doctrine\Fixture\Filter\Filter;
 use Doctrine\Fixture\Sorter\CalculatorFactory;
 
 /**

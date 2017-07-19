@@ -22,7 +22,6 @@ namespace Doctrine\Test\Fixture;
 
 use Doctrine\Common\EventManager;
 use Doctrine\Fixture\Configuration;
-use Doctrine\Fixture\Filter\ChainFilter;
 use Doctrine\Fixture\Sorter\CalculatorFactory;
 
 /**
