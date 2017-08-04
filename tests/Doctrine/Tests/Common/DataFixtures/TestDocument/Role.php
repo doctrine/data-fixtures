@@ -15,7 +15,7 @@ class Role
     private $id;
 
     /**
-     * @ODM\String
+     * @ODM\Field(type="string")
      * @ODM\Index
      */
     private $name;
