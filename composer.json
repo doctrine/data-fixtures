@@ -23,7 +23,8 @@
     "suggest": {
         "doctrine/orm": "For loading ORM fixtures",
         "doctrine/mongodb-odm": "For loading MongoDB ODM fixtures",
-        "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
+        "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures",
+        "alcaeus/mongo-php-adapter": "For using MongoDB ODM with PHP 7"
     },
     "autoload": {
         "psr-4": { "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures" }
