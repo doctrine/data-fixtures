@@ -23,8 +23,8 @@ use Doctrine\Common\DataFixtures\Executor\PHPCRExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
 use Doctrine\ODM\PHPCR\DocumentManager;
+use Doctrine\Tests\Common\DataFixtures\BaseTest;
 use Exception;
-use PHPUnit_Framework_TestCase;
 
 /**
  * Tests for {@see \Doctrine\Common\DataFixtures\Executor\PHPCRExecutor}
@@ -33,7 +33,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @covers \Doctrine\Common\DataFixtures\Executor\PHPCRExecutor
  */
-class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
+class PHPCRExecutorTest extends BaseTest
 {
     public function testExecuteSingleFixtureWithNoPurge()
     {

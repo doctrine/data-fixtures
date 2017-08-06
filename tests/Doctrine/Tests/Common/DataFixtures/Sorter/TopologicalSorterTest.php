@@ -23,6 +23,7 @@ namespace Doctrine\Test\DataFixtures\Sorter;
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
 /**
  * TopologicalSorter tests.
@@ -35,7 +36,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  *
  * @covers \Doctrine\Common\DataFixtures\Sorter\TopologicalSorter
  */
-class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
+class TopologicalSorterTest extends BaseTest
 {
     public function testSuccessSortLinearDependency()
     {

@@ -22,14 +22,14 @@ namespace Doctrine\Tests\Common\DataFixtures;
 use Doctrine\DBAL\Driver;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Base test class
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-abstract class BaseTest extends PHPUnit_Framework_TestCase
+abstract class BaseTest extends TestCase
 {
     /**
      * EntityManager mock object together with
