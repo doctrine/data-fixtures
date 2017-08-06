@@ -9,7 +9,7 @@
         {"name": "Jonathan Wage", "email": "jonwage@gmail.com"}
     ],
     "require": {
-        "php": "^5.6 || ^7.0",
+        "php": "^7.1",
         "doctrine/common": "~2.2"
     },
     "require-dev": {
@@ -17,13 +17,11 @@
         "doctrine/dbal": "^2.5.4",
         "phpunit/phpunit": "^5.4.6"
     },
-    "conflict": {
-        "doctrine/orm": "< 2.4"
-    },
     "suggest": {
         "doctrine/orm": "For loading ORM fixtures",
         "doctrine/mongodb-odm": "For loading MongoDB ODM fixtures",
-        "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
+        "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures",
+        "alcaeus/mongo-php-adapter": "For using MongoDB ODM with PHP 7"
     },
     "autoload": {
         "psr-4": { "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures" }
