@@ -37,7 +37,7 @@ class ReferenceRepository
      *
      * @var array
      */
-    private $references = array();
+    private $references = [];
 
     /**
      * List of identifiers stored for references
@@ -46,7 +46,7 @@ class ReferenceRepository
      *
      * @var array
      */
-    private $identities = array();
+    private $identities = [];
 
     /**
      * Currently used object manager

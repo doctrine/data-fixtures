@@ -50,7 +50,7 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
                 return $callback($dm);
             }));
 
-        $executor->execute(array($fixture), true);
+        $executor->execute([$fixture], true);
     }
 
     public function testExecuteMultipleFixturesWithNoPurge()
@@ -70,7 +70,7 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
                 return $callback($dm);
             }));
 
-        $executor->execute(array($fixture1, $fixture2), true);
+        $executor->execute([$fixture1, $fixture2], true);
     }
 
     public function testExecuteFixtureWithPurge()
@@ -90,7 +90,7 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
             }));
         $purger->expects($this->once())->method('purge');
 
-        $executor->execute(array($fixture), false);
+        $executor->execute([$fixture], false);
     }
 
     public function testExecuteFixtureWithoutPurge()
@@ -110,7 +110,7 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
             }));
         $purger->expects($this->never())->method('purge');
 
-        $executor->execute(array($fixture), true);
+        $executor->execute([$fixture], true);
     }
 
     public function testFailedTransactionalStopsPurgingAndFixtureLoading()
@@ -126,7 +126,7 @@ class PHPCRExecutorTest extends PHPUnit_Framework_TestCase
         $purger->expects($this->never())->method('purge');
 
         try {
-            $executor->execute(array($fixture), true);
+            $executor->execute([$fixture], true);
         } catch (\Exception $caughtException) {
             $this->assertSame($exception, $caughtException);
         }

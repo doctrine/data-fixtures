@@ -43,7 +43,7 @@ class ORMExecutorTest extends BaseTest
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
-        $executor->execute(array($fixture), true);
+        $executor->execute([$fixture], true);
     }
 
     public function testExecuteWithPurge()
@@ -58,7 +58,7 @@ class ORMExecutorTest extends BaseTest
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
-        $executor->execute(array($fixture), false);
+        $executor->execute([$fixture], false);
     }
 
     public function testExecuteTransaction()
@@ -66,7 +66,7 @@ class ORMExecutorTest extends BaseTest
         $em = $this->getMockSqliteEntityManager();
         $executor = new ORMExecutor($em);
         $fixture = $this->getMockFixture();
-        $executor->execute(array($fixture), true);
+        $executor->execute([$fixture], true);
     }
 
     private function getMockFixture()

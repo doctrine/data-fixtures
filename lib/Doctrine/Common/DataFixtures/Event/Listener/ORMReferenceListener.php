@@ -52,9 +52,9 @@ final class ORMReferenceListener implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(
+        return [
             'postPersist' // would be better to use onClear, but it is supported only in 2.1
-        );
+        ];
     }
 
     /**

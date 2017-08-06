@@ -59,7 +59,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $sorter->addDependency('5', '1');
 
         $sortedList  = $sorter->sort();
-        $correctList = array($node4, $node3, $node2, $node1, $node5);
+        $correctList = [$node4, $node3, $node2, $node1, $node5];
 
         self::assertSame($correctList, $sortedList);
     }
@@ -87,7 +87,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $sorter->addDependency('5', '1');
 
         $sortedList  = $sorter->sort();
-        $correctList = array($node1, $node2, $node4, $node5, $node3);
+        $correctList = [$node1, $node2, $node4, $node5, $node3];
 
         self::assertSame($correctList, $sortedList);
     }
@@ -109,7 +109,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $sorter->addDependency('3', '1');
 
         $sortedList  = $sorter->sort();
-        $correctList = array($node3, $node2, $node1);
+        $correctList = [$node3, $node2, $node1];
 
         self::assertSame($correctList, $sortedList);
 
@@ -160,7 +160,7 @@ class TopologicalSorterTest extends \PHPUnit_Framework_TestCase
         $sorter->addDependency('5', '1');
 
         $sortedList  = $sorter->sort();
-        $correctList = array($node4, $node3, $node2, $node1, $node5);
+        $correctList = [$node4, $node3, $node2, $node1, $node5];
 
         self::assertSame($correctList, $sortedList);
     }

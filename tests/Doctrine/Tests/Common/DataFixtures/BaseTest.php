@@ -39,8 +39,8 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
      */
     protected function getMockAnnotationReaderEntityManager()
     {
-        $dbParams = array('driver' => 'pdo_sqlite', 'memory' => true);
-        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__.'/TestEntity'), true);
+        $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
+        $config = Setup::createAnnotationMetadataConfiguration([__DIR__.'/TestEntity'], true);
         return EntityManager::create($dbParams, $config);
     }
 
@@ -53,8 +53,8 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
      */
     protected function getMockSqliteEntityManager()
     {
-        $dbParams = array('driver' => 'pdo_sqlite', 'memory' => true);
-        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__.'/TestEntity'), true);
+        $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
+        $config = Setup::createAnnotationMetadataConfiguration([__DIR__.'/TestEntity'], true);
         return EntityManager::create($dbParams, $config);
     }
 }

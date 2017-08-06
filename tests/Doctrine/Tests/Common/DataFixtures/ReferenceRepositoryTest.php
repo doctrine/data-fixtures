@@ -60,16 +60,16 @@ class ReferenceRepositoryTest extends BaseTest
     {
         $em = $this->getMockSqliteEntityManager();
         $referenceRepository = $this->getMockBuilder(ReferenceRepository::class)
-            ->setConstructorArgs(array($em))
+            ->setConstructorArgs([$em])
             ->getMock();
         $em->getEventManager()->addEventSubscriber(
             new ORMReferenceListener($referenceRepository)
         );
         $schemaTool = new SchemaTool($em);
-        $schemaTool->dropSchema(array());
-        $schemaTool->createSchema(array(
+        $schemaTool->dropSchema([]);
+        $schemaTool->createSchema([
             $em->getClassMetadata(Role::class)
-        ));
+        ]);
 
         $referenceRepository->expects($this->once())
             ->method('addReference')
@@ -77,11 +77,11 @@ class ReferenceRepositoryTest extends BaseTest
 
         $referenceRepository->expects($this->once())
             ->method('getReferenceNames')
-            ->will($this->returnValue(array('admin-role')));
+            ->will($this->returnValue(['admin-role']));
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
-            ->with('admin-role', array('id' => 1));
+            ->with('admin-role', ['id' => 1]);
 
         $roleFixture = new TestFixtures\RoleFixture;
         $roleFixture->setReferenceRepository($referenceRepository);
@@ -97,10 +97,10 @@ class ReferenceRepositoryTest extends BaseTest
             new ORMReferenceListener($referenceRepository)
         );
         $schemaTool = new SchemaTool($em);
-        $schemaTool->dropSchema(array());
-        $schemaTool->createSchema(array(
+        $schemaTool->dropSchema([]);
+        $schemaTool->createSchema([
             $em->getClassMetadata(Role::class)
-        ));
+        ]);
         $roleFixture = new TestFixtures\RoleFixture;
         $roleFixture->setReferenceRepository($referenceRepository);
 
@@ -123,7 +123,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository = new ReferenceRepository($em);
         $em->getEventManager()->addEventSubscriber(new ORMReferenceListener($referenceRepository));
         $schemaTool = new SchemaTool($em);
-        $schemaTool->createSchema(array($em->getClassMetadata(Role::class)));
+        $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
 
         $role = new TestEntity\Role;
         $role->setName('admin');
@@ -186,10 +186,10 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository = new ReferenceRepository($em);
 
         $schemaTool = new SchemaTool($em);
-        $schemaTool->dropSchema(array());
-        $schemaTool->createSchema(array(
+        $schemaTool->dropSchema([]);
+        $schemaTool->createSchema([
             $em->getClassMetadata(Role::class)
-        ));
+        ]);
 
         $role = new Role();
         $role->setName('role_name');

@@ -52,9 +52,9 @@ final class MongoDBReferenceListener implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(
+        return [
             'postPersist'
-        );
+        ];
     }
 
     /**
