@@ -42,10 +42,10 @@ class OrderedFixtureTest extends BaseTest
         $orderedFixtures = $loader->getFixtures();
 
         $this->assertCount(4, $orderedFixtures);
-        $this->assertInstanceOf(__NAMESPACE__ . '\BaseFixture1', $orderedFixtures[0]);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OrderedFixture2', $orderedFixtures[1]);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OrderedFixture1', $orderedFixtures[2]);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OrderedFixture3', $orderedFixtures[3]);
+        $this->assertInstanceOf(BaseFixture1::class, $orderedFixtures[0]);
+        $this->assertInstanceOf(OrderedFixture2::class, $orderedFixtures[1]);
+        $this->assertInstanceOf(OrderedFixture1::class, $orderedFixtures[2]);
+        $this->assertInstanceOf(OrderedFixture3::class, $orderedFixtures[3]);
     }
 }
 

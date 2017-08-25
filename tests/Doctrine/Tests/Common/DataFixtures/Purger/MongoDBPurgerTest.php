@@ -12,7 +12,7 @@ use Doctrine\Tests\Common\DataFixtures\TestDocument\Role;
 
 class MongoDBPurgerTest extends BaseTest
 {
-    const TEST_DOCUMENT_ROLE = 'Doctrine\Tests\Common\DataFixtures\TestDocument\Role';
+    const TEST_DOCUMENT_ROLE = Role::class;
 
     private function getDocumentManager()
     {
