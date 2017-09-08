@@ -54,7 +54,7 @@ class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {}
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 5;
     }
@@ -65,7 +65,7 @@ class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {}
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 2;
     }
@@ -76,7 +76,7 @@ class OrderedFixture3 implements FixtureInterface, OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {}
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 8;
     }

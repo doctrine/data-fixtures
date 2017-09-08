@@ -32,7 +32,7 @@ interface OrderedFixtureInterface
     /**
      * Get the order of this fixture
      * 
-     * @return integer
+     * @return int
      */  
-    public function getOrder();
+    public function getOrder(): int;
 }

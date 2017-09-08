@@ -152,7 +152,7 @@ class MyFixture extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {}
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 10; // number in which order to load fixtures
     }
