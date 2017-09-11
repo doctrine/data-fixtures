@@ -8,7 +8,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestPurgeEntity;
  * @Entity
  */
 class ExcludedEntity{
-	
+    
     /**
      * @Column(type="integer")
      * @Id
@@ -19,7 +19,7 @@ class ExcludedEntity{
         $this->id = $id;
     }
     
-	public function getId() {
-		return $this->id;
-	}
+    public function getId() {
+        return $this->id;
+    }
 }
