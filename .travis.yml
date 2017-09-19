@@ -18,7 +18,7 @@ matrix:
 services: mongodb
 
 before_install:
-  - pecl install mongodb
+  - pecl install -f mongodb
 
 before_script:
   - composer self-update
