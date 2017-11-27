@@ -38,6 +38,6 @@ class VertexTest extends BaseTest
 
         self::assertSame($value, $node->value);
         self::assertSame(Vertex::NOT_VISITED, $node->state);
-        self::assertSame([], $node->dependencyList);
+        self::assertEmpty($node->dependencyList);
     }
 }
