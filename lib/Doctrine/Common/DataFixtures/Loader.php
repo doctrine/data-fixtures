@@ -153,7 +153,7 @@ class Loader
                 $this->orderFixturesByDependencies = true;
                 foreach($fixture->getDependencies() as $class) {
                     if (class_exists($class)) {
-                        $this->addFixture(new $class);
+                        $this->addFixture($this->createFixture($class));
                     }
                 }
             }
@@ -197,6 +197,17 @@ class Loader
 
         $interfaces = class_implements($className);
         return in_array(FixtureInterface::class, $interfaces) ? false : true;
+    }
+
+    /**
+     * Creates the fixture object from the class.
+     *
+     * @param string $class
+     * @return FixtureInterface
+     */
+    protected function createFixture($class)
+    {
+        return new $class();
     }
 
     /**
@@ -376,7 +387,7 @@ class Loader
             $sourceFile = $reflClass->getFileName();
 
             if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
-                $fixture = new $className;
+                $fixture = $this->createFixture($className);
                 $fixtures[] = $fixture;
                 $this->addFixture($fixture);
             }
