@@ -18,12 +18,13 @@ matrix:
 services: mongodb
 
 before_install:
-  - pecl install mongodb
+  - pecl install -f mongodb
 
 before_script:
   - composer self-update
   - composer install --prefer-source
-  - composer require --ignore-platform-reqs alcaeus/mongo-php-adapter
+  - composer config "platform.ext-mongo" "1.6.16"
+  - composer require alcaeus/mongo-php-adapter
   - composer require doctrine/mongodb-odm
 
 script:
