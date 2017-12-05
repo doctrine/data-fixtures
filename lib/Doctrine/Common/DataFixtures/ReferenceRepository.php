@@ -137,7 +137,7 @@ class ReferenceRepository
      *
      * @param string $name
      * @param object $object - managed object
-     * @throws BadMethodCallException - if repository already has
+     * @throws \BadMethodCallException - if repository already has
      *      a reference by $name
      * @return void
      */
@@ -154,7 +154,7 @@ class ReferenceRepository
      * named by $name
      *
      * @param string $name
-     * @throws OutOfBoundsException - if repository does not exist
+     * @throws \OutOfBoundsException - if repository does not exist
      * @return object
      */
     public function getReference($name)
