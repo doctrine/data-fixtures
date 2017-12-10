@@ -87,14 +87,14 @@ class DependentFixtureTest extends BaseTest
         // BaseParentFixture1 has no dependencies, so it will always be first in this case
         $this->assertEquals($baseParentFixtureOrder, 0);
 
-        $this->assertTrue($contactFixtureOrder > $contactMethodFixtureOrder);
-        $this->assertTrue($contactFixtureOrder > $addressFixtureOrder);
-        $this->assertTrue($contactFixtureOrder > $countryFixtureOrder);
-        $this->assertTrue($contactFixtureOrder > $stateFixtureOrder);
-        $this->assertTrue($contactFixtureOrder > $contactMethodFixtureOrder);
+        $this->assertGreaterThan($contactMethodFixtureOrder, $contactFixtureOrder);
+        $this->assertGreaterThan($addressFixtureOrder, $contactFixtureOrder);
+        $this->assertGreaterThan($countryFixtureOrder, $contactFixtureOrder);
+        $this->assertGreaterThan($stateFixtureOrder, $contactFixtureOrder);
+        $this->assertGreaterThan($contactMethodFixtureOrder, $contactFixtureOrder);
 
-        $this->assertTrue($addressFixtureOrder > $stateFixtureOrder);
-        $this->assertTrue($addressFixtureOrder > $countryFixtureOrder);
+        $this->assertGreaterThan($stateFixtureOrder, $addressFixtureOrder);
+        $this->assertGreaterThan($countryFixtureOrder, $addressFixtureOrder);
     }
 
 

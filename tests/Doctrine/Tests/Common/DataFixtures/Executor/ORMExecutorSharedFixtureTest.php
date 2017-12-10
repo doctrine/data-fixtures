@@ -79,13 +79,13 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $referenceRepository = $executor->getReferenceRepository();
         $references = $referenceRepository->getReferences();
 
-        $this->assertEquals(2, count($references));
+        $this->assertCount(2, $references);
         $roleReference = $referenceRepository->getReference('admin-role');
-        $this->assertTrue($roleReference instanceof Role);
+        $this->assertInstanceOf(Role::class, $roleReference);
         $this->assertEquals('admin', $roleReference->getName());
 
         $userReference = $referenceRepository->getReference('admin');
-        $this->assertTrue($userReference instanceof User);
+        $this->assertInstanceOf(User::class, $userReference);
         $this->assertEquals('admin@example.com', $userReference->getEmail());
     }
 

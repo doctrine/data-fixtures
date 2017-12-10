@@ -80,7 +80,7 @@ class ORMPurgerExcludeTest extends BaseTest
         $excluded = $excludedRepository->findAll();
         $included = $includedRepository->findAll();
 
-        $this->assertEquals(0, count($included));
+        $this->assertCount(0, $included);
         $this->assertGreaterThan(0, count($excluded));
     }
 
