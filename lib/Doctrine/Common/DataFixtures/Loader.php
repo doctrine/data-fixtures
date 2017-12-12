@@ -271,8 +271,8 @@ class Loader
                 
                 $this->validateDependencies($dependenciesClasses);
 
-                if (!is_array($dependenciesClasses) || empty($dependenciesClasses)) {
-                    throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.', 'getDependencies', $fixtureClass));
+                if (!is_array($dependenciesClasses)) {
+                    throw new \InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture.', 'getDependencies', $fixtureClass));
                 }
 
                 if (in_array($fixtureClass, $dependenciesClasses)) {

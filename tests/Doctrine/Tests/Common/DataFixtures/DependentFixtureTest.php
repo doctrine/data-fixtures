@@ -169,6 +169,17 @@ class DependentFixtureTest extends BaseTest
         $this->assertInstanceOf(BaseParentFixture1::class, array_shift($orderedFixtures));
         $this->assertInstanceOf(DependentFixture1::class, array_shift($orderedFixtures));
     }
+
+    public function test_dependentFixtureInterfaceAllowsToDefineEmptyDependencies()
+    {
+        $loader = new Loader();
+        $loader->addFixture(new NonEmptyDependenciesFixture);
+        $loader->addFixture(new EmptyDependenciesFixture);
+        $orderedFixtures = $loader->getFixtures();
+        $this->assertCount(2, $orderedFixtures);
+        $this->assertInstanceOf(__NAMESPACE__ . '\EmptyDependenciesFixture', array_shift($orderedFixtures));
+        $this->assertInstanceOf(__NAMESPACE__ . '\NonEmptyDependenciesFixture', array_shift($orderedFixtures));
+    }
 }
 
 class DependentFixture1 implements FixtureInterface, DependentFixtureInterface
@@ -376,5 +387,26 @@ class OrderedByNumberFixture3 implements FixtureInterface, OrderedFixtureInterfa
     public function getOrder()
     {
         return 10;
+    }
+}
+
+class EmptyDependenciesFixture implements FixtureInterface, DependentFixtureInterface
+{
+    public function load(ObjectManager $manager)
+    {}
+    public function getDependencies()
+    {
+        return array();
+    }
+}
+class NonEmptyDependenciesFixture implements FixtureInterface, DependentFixtureInterface
+{
+    public function load(ObjectManager $manager)
+    {}
+    public function getDependencies()
+    {
+        return array(
+            'Doctrine\Tests\Common\DataFixtures\EmptyDependenciesFixture'
+        );
     }
 }
