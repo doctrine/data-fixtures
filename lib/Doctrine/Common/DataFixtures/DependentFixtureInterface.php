@@ -33,5 +33,5 @@ interface DependentFixtureInterface
      *
      * @return array
      */
-    function getDependencies();
+    public function getDependencies();
 }
