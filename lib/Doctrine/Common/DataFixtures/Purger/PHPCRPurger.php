@@ -2,9 +2,8 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
+use Doctrine\ODM\PHPCR\DocumentManagerInterface;
 use PHPCR\Util\NodeHelper;
-
-use Doctrine\ODM\PHPCR\DocumentManager;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
@@ -14,37 +13,21 @@ use Doctrine\ODM\PHPCR\DocumentManager;
 class PHPCRPurger implements PurgerInterface
 {
     /**
-     * DocumentManager instance used for persistence.
-     * @var DocumentManager
+     * @var DocumentManagerInterface
      */
     private $dm;
 
-    /**
-     * Construct new purger instance.
-     *
-     * @param DocumentManager $dm DocumentManager instance used for persistence.
-     */
-    public function __construct(DocumentManager $dm = null)
+    public function __construct(DocumentManagerInterface $dm = null)
     {
         $this->dm = $dm;
     }
 
-    /**
-     * Set the DocumentManager instance this purger instance should use.
-     *
-     * @param DocumentManager $dm
-     */
-    public function setDocumentManager(DocumentManager $dm)
+    public function setDocumentManager(DocumentManagerInterface $dm)
     {
         $this->dm = $dm;
     }
 
-    /**
-     * Retrieve the DocumentManager instance this purger instance is using.
-     *
-     * @return \Doctrine\ODM\PHPCR\DocumentManager
-     */
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManagerInterface
     {
         return $this->dm;
     }

@@ -16,31 +16,33 @@ use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
  */
 abstract class AbstractExecutor
 {
-    /** Purger instance for purging database before loading data fixtures */
+    /**
+     * Purger instance for purging database before loading data fixtures
+     *
+     * @var PurgerInterface
+     */
     protected $purger;
 
-    /** Logger callback for logging messages when loading data fixtures */
+    /**
+     * Logger callback for logging messages when loading data fixtures
+     *
+     * @var callable
+     */
     protected $logger;
 
     /**
      * Fixture reference repository
+     *
      * @var ReferenceRepository
      */
     protected $referenceRepository;
 
-    /**
-     * Loads an instance of reference repository
-     *
-     * @param Doctrine\Common\Persistence\ObjectManager $manager
-     */
     public function __construct(ObjectManager $manager)
     {
         $this->referenceRepository = new ReferenceRepository($manager);
     }
 
     /**
-     * Get reference repository
-     *
      * @return ReferenceRepository
      */
     public function getReferenceRepository()
@@ -48,11 +50,6 @@ abstract class AbstractExecutor
         return $this->referenceRepository;
     }
 
-    /**
-     * Set the reference repository
-     *
-     * @param ReferenceRepository $referenceRepository Reference repository
-     */
     public function setReferenceRepository(ReferenceRepository $referenceRepository)
     {
         $this->referenceRepository = $referenceRepository;
@@ -69,9 +66,7 @@ abstract class AbstractExecutor
     }
 
     /**
-     * Get purger
-     *
-     * @return Purger
+     * @return PurgerInterface
      */
     public function getPurger()
     {
@@ -81,7 +76,7 @@ abstract class AbstractExecutor
     /**
      * Set the logger callable to execute with the log() method.
      *
-     * @param $logger
+     * @param callable $logger
      */
     public function setLogger($logger)
     {
@@ -102,7 +97,7 @@ abstract class AbstractExecutor
     /**
      * Load a fixture with the given persistence manager.
      *
-     * @param Doctrine\Common\Persistence\ObjectManager $manager
+     * @param ObjectManager    $manager
      * @param FixtureInterface $fixture
      */
     public function load(ObjectManager $manager, FixtureInterface $fixture)
@@ -124,6 +119,8 @@ abstract class AbstractExecutor
 
     /**
      * Purges the database before loading.
+     *
+     * @throws \Exception if the purger is not defined
      */
     public function purge()
     {
@@ -139,7 +136,7 @@ abstract class AbstractExecutor
     /**
      * Executes the given array of data fixtures.
      *
-     * @param array $fixtures Array of fixtures to execute.
+     * @param array   $fixtures Array of fixtures to execute.
      * @param boolean $append Whether to append the data fixtures or purge the database before loading.
      */
     abstract public function execute(array $fixtures, $append = false);

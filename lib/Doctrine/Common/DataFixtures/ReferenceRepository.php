@@ -34,15 +34,10 @@ class ReferenceRepository
     /**
      * Currently used object manager
      *
-     * @var Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     private $manager;
 
-    /**
-     * Initialize the ReferenceRepository
-     *
-     * @param Doctrine\Common\Persistence\ObjectManager $manager
-     */
     public function __construct(ObjectManager $manager)
     {
         $this->manager = $manager;
@@ -217,7 +212,7 @@ class ReferenceRepository
     /**
      * Get object manager
      *
-     * @return Doctrine\Common\Persistence\ObjectManager
+     * @return ObjectManager
      */
     public function getManager()
     {
