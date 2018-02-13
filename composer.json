@@ -33,5 +33,8 @@
         "branch-alias": {
             "dev-master": "1.3.x-dev"
         }
+    },
+    "conflict": {
+        "doctrine/phpcr-odm": "<1.3.0"
     }
 }
