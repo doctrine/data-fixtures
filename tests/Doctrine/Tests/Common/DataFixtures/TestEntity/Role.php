@@ -8,9 +8,8 @@ namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 class Role
 {
     /**
-     * @Column(type="integer")
+     * @Column(type="role_id")
      * @Id
-     * @GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -18,6 +17,15 @@ class Role
      * @Column(length=50)
      */
     private $name;
+
+    /**
+     * Role constructor.
+     * @param $id
+     */
+    public function __construct($id = null)
+    {
+        $this->id = $id ?? new RoleId('uuid');
+    }
 
     public function getId()
     {
