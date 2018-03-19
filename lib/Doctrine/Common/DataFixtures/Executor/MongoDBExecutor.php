@@ -12,13 +12,8 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class MongoDBExecutor extends AbstractExecutor
+final class MongoDBExecutor extends AbstractExecutor
 {
-    /**
-     * Construct new fixtures loader instance.
-     *
-     * @param DocumentManager $dm DocumentManager instance used for persistence.
-     */
     public function __construct(DocumentManager $dm, MongoDBPurger $purger = null)
     {
         $this->dm = $dm;
@@ -31,12 +26,7 @@ class MongoDBExecutor extends AbstractExecutor
         $dm->getEventManager()->addEventSubscriber($this->listener);
     }
 
-    /**
-     * Retrieve the DocumentManager instance this executor instance is using.
-     *
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
-     */
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManager
     {
         return $this->dm;
     }
