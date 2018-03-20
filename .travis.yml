@@ -26,6 +26,7 @@ before_script:
   - composer config "platform.ext-mongo" "1.6.16"
   - composer require alcaeus/mongo-php-adapter
   - composer require doctrine/mongodb-odm
+  - composer require jackalope/jackalope-doctrine-dbal doctrine/phpcr-odm
 
 script:
   - ./vendor/bin/phpunit -v
