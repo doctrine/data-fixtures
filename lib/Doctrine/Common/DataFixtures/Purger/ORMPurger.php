@@ -2,11 +2,11 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\DBAL\Schema\Identifier;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
@@ -223,11 +223,15 @@ class ORMPurger implements PurgerInterface
      */
     private function getTableName($class, $platform)
     {
-        if (isset($class->table['schema']) && !method_exists($class, 'getSchemaName')) {
-            return $class->table['schema'].'.'.$this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+        if (method_exists($class, 'getSchemaName')) {
+            $identifier[] = $class->getSchemaName();
+        } else if (isset($class->table['schema'])) {
+            $identifier[] = $class->table['schema'];
         }
 
-        return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+        $identifier[] = $class->getTableName();
+
+        return (new Identifier(\implode('.', $identifier)))->getQuotedName($platform);
     }
 
     /**
