@@ -11,9 +11,15 @@ cache:
   directories:
     - $HOME/.composer/cache
 
+services: mongodb
+
 before_install:
   - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
+  - pecl install -f mongodb
   - travis_retry composer self-update
+
+before_script:
+  - composer config "platform.ext-mongo" "1.6.16"
 
 install:
   - rm composer.lock
