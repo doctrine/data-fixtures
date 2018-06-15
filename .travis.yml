@@ -1,32 +1,45 @@
-language: php
-
+dist: trusty
 sudo: false
-
-cache:
-  directories:
-    - $HOME/.composer/cache
+language: php
 
 php:
   - 7.1
   - 7.2
   - nightly
 
-matrix:
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
+  - travis_retry composer self-update
+
+install:
+  - rm composer.lock
+  - travis_retry composer update --prefer-dist
+
+script:
+  - ./vendor/bin/phpunit
+
+jobs:
   allow_failures:
     - php: nightly
 
-services: mongodb
+  include:
+    - stage: Test
+      env: DEPENDENCIES=low
+      install:
+        - rm composer.lock
+        - travis_retry composer update --prefer-dist --prefer-lowest
 
-before_install:
-  - pecl install -f mongodb
-
-before_script:
-  - composer self-update
-  - composer install --prefer-source
-  - composer config "platform.ext-mongo" "1.6.16"
-  - composer require alcaeus/mongo-php-adapter
-  - composer require doctrine/mongodb-odm
-  - composer require jackalope/jackalope-doctrine-dbal doctrine/phpcr-odm
-
-script:
-  - ./vendor/bin/phpunit -v
+    - stage: Test
+      env: COVERAGE
+      before_script:
+        - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
+        - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
+      script:
+        - ./vendor/bin/phpunit --coverage-clover clover.xml
+      after_script:
+        - wget https://scrutinizer-ci.com/ocular.phar
+        - php ocular.phar code-coverage:upload --format=php-clover clover.xml
