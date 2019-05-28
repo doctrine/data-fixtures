@@ -2,6 +2,8 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\AbstractMySQLDriver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -131,7 +133,7 @@ class ORMPurger implements PurgerInterface
                 if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                     $connection->executeUpdate("DELETE FROM " . $tbl);
                 } else {
-                    $connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
+                    $connection->executeUpdate($this->getTruncateTableSQL($platform, $connection, $tbl));
                 }
             }
         }
@@ -244,5 +246,23 @@ class ORMPurger implements PurgerInterface
         }
 
         return $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
+    }
+
+    /**
+     * @param AbstractPlatform $platform
+     * @param Connection       $connection
+     * @param string           $tbl
+     *
+     * @return string
+     */
+    private function getTruncateTableSQL(AbstractPlatform $platform, Connection $connection, $tbl)
+    {
+        $sql = $platform->getTruncateTableSQL($tbl, true);
+
+        if ($connection->getDriver() instanceof AbstractMySQLDriver) {
+            $sql = 'SET FOREIGN_KEY_CHECKS = 0;'.$sql.';SET FOREIGN_KEY_CHECKS = 1;';
+        }
+
+        return $sql;
     }
 }
