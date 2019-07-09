@@ -9,6 +9,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\ExcludedEntity;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity;
+use function method_exists;
 
 class ORMPurgerExcludeTest extends BaseTest
 {
@@ -59,7 +60,7 @@ class ORMPurgerExcludeTest extends BaseTest
      * @param string|null $expression
      * @param array $list
      */
-    public function executeTestPurge($expression, array $list){
+    public function executeTestPurge($expression, array $list, ?callable $filter = null){
         $em = $this->loadTestData();
         $excludedRepository = $em->getRepository(self::TEST_ENTITY_EXCLUDED);
         $includedRepository = $em->getRepository(self::TEST_ENTITY_INCLUDED);
@@ -73,6 +74,14 @@ class ORMPurgerExcludeTest extends BaseTest
         $connection = $em->getConnection();
         $configuration = $connection->getConfiguration();
         $configuration->setFilterSchemaAssetsExpression($expression);
+
+        if ($filter !== null) {
+            if (!method_exists($configuration, 'setSchemaAssetsFilter')) {
+                $this->markTestSkipped('DBAL 2.9 or newer is required to test schema assets filters');
+            }
+
+            $configuration->setSchemaAssetsFilter($filter);
+        }
 
         $purger = new ORMPurger($em,$list);
         $purger->purge();
@@ -88,13 +97,20 @@ class ORMPurgerExcludeTest extends BaseTest
      * Test for purge exclusion usig dbal filter expression regexp.
      */
     public function testPurgeExcludeUsingFilterExpression(){
-        $this->executeTestPurge('~^(?!ExcludedEntity)~', []);
+        $this->executeTestPurge('~^(?!ExcludedEntity)~', [], null);
     }
 
     /**
      * Test for purge exclusion usig explicit exclution list.
      */
     public function testPurgeExcludeUsingList(){
-        $this->executeTestPurge(null, ['ExcludedEntity']);
+        $this->executeTestPurge(null, ['ExcludedEntity'], null);
+    }
+
+    public function testPurgeExcludeUsingFilterCallable() : void
+    {
+        $this->executeTestPurge(null, [], static function (string $table) : bool {
+            return preg_match('~^(?!ExcludedEntity)~', $table);
+        });
     }
 }
