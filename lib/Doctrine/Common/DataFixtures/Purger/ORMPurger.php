@@ -2,6 +2,7 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -132,6 +133,9 @@ class ORMPurger implements PurgerInterface
 
         $schemaAssetsFilter = method_exists($connection->getConfiguration(), 'getSchemaAssetsFilter') ? $connection->getConfiguration()->getSchemaAssetsFilter() : null;
 
+        $singleQueryTruncateSupported = $platform instanceof PostgreSqlPlatform;
+        $tablesToTruncate = [];
+
         foreach($orderedTables as $tbl) {
             // If we have a filter expression, check it and skip if necessary
             if (!$emptyFilterExpression && !preg_match($filterExpr, $tbl)) {
@@ -150,9 +154,14 @@ class ORMPurger implements PurgerInterface
 
             if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                 $connection->executeUpdate("DELETE FROM " . $tbl);
+            } elseif ($this->purgeMode === self::PURGE_MODE_TRUNCATE && $singleQueryTruncateSupported === true) {
+                $tablesToTruncate[] = $tbl;
             } else {
                 $connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
             }
+        }
+        if (count($tablesToTruncate) >0) {
+            $connection->executeUpdate("TRUNCATE " . implode(", ", $tablesToTruncate) . " CASCADE");
         }
     }
 
