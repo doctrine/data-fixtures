@@ -2,15 +2,23 @@
     "name": "doctrine/data-fixtures",
     "type": "library",
     "description": "Data Fixtures for all Doctrine Object Managers",
-    "keywords": ["database"],
+    "keywords": [
+        "database"
+    ],
     "homepage": "http://www.doctrine-project.org",
     "license": "MIT",
     "authors": [
-        {"name": "Jonathan Wage", "email": "jonwage@gmail.com"}
+        {
+            "name": "Jonathan Wage",
+            "email": "jonwage@gmail.com"
+        }
     ],
     "require": {
         "php": "^7.1",
         "doctrine/common": "~2.2"
+    },
+    "conflict": {
+        "doctrine/phpcr-odm": "<1.3.0"
     },
     "require-dev": {
         "doctrine/dbal": "^2.5.4",
@@ -18,26 +26,27 @@
         "phpunit/phpunit": "^7.0"
     },
     "suggest": {
-        "doctrine/orm": "For loading ORM fixtures",
+        "alcaeus/mongo-php-adapter": "For using MongoDB ODM with PHP 7",
         "doctrine/mongodb-odm": "For loading MongoDB ODM fixtures",
-        "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures",
-        "alcaeus/mongo-php-adapter": "For using MongoDB ODM with PHP 7"
+        "doctrine/orm": "For loading ORM fixtures",
+        "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
     },
-    "autoload": {
-        "psr-4": { "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures" }
-    },
-    "autoload-dev": {
-        "psr-4": { "Doctrine\\Tests\\": "tests/Doctrine/Tests" }
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
             "dev-master": "1.3.x-dev"
         }
     },
-    "conflict": {
-        "doctrine/phpcr-odm": "<1.3.0"
+    "autoload": {
+        "psr-4": {
+            "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures"
+        }
     },
-    "config": {
-        "sort-packages": true
+    "autoload-dev": {
+        "psr-4": {
+            "Doctrine\\Tests\\": "tests/Doctrine/Tests"
+        }
     }
 }
