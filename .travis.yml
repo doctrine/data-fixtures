@@ -22,7 +22,6 @@ before_install:
   - pecl install -f mongodb
 
 before_script:
-  - composer self-update
   - composer install --prefer-source
   - composer config "platform.ext-mongo" "1.6.16"
   - composer require alcaeus/mongo-php-adapter
