@@ -20,6 +20,7 @@ services: mongodb
 
 before_install:
   - pecl install -f mongodb
+  - composer validate --strict
 
 before_script:
   - composer install --prefer-source
