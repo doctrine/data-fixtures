@@ -12,18 +12,13 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class ORMExecutor extends AbstractExecutor
+final class ORMExecutor extends AbstractExecutor
 {
     /**
      * @var EntityManagerInterface
      */
     private $em;
-    
-    /**
-     * Construct new fixtures loader instance.
-     *
-     * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
-     */
+
     public function __construct(EntityManagerInterface $em, ORMPurger $purger = null)
     {
         $this->em = $em;
@@ -36,12 +31,7 @@ class ORMExecutor extends AbstractExecutor
         $em->getEventManager()->addEventSubscriber($this->listener);
     }
 
-    /**
-     * Retrieve the EntityManagerInterface instance this executor instance is using.
-     *
-     * @return \Doctrine\ORM\EntityManagerInterface
-     */
-    public function getObjectManager()
+    public function getObjectManager(): EntityManagerInterface
     {
         return $this->em;
     }

@@ -11,7 +11,7 @@ use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Daniel Barsotti <daniel.barsotti@liip.ch>
  */
-class PHPCRExecutor extends AbstractExecutor
+final class PHPCRExecutor extends AbstractExecutor
 {
     /**
      * @var DocumentManagerInterface
@@ -33,7 +33,7 @@ class PHPCRExecutor extends AbstractExecutor
         }
     }
 
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManagerInterface
     {
         return $this->dm;
     }

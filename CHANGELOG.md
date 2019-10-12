@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] - unreleased
+
+### Changed
+
+ - [290: Make purgers and executors final](https://github.com/doctrine/data-fixtures/pull/290) - @dbu
+
 ## [1.3.0] - 2017-11-27
 
 ### Fixed

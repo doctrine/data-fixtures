@@ -2,7 +2,6 @@
 
 namespace Doctrine\Common\DataFixtures\Purger;
 
-use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\ODM\PHPCR\DocumentManagerInterface;
 use PHPCR\Util\NodeHelper;
 
@@ -11,7 +10,7 @@ use PHPCR\Util\NodeHelper;
  *
  * @author Daniel Barsotti <daniel.barsotti@liip.ch>
  */
-class PHPCRPurger implements PurgerInterface
+final class PHPCRPurger implements PurgerInterface
 {
     /**
      * @var DocumentManagerInterface
@@ -23,12 +22,12 @@ class PHPCRPurger implements PurgerInterface
         $this->dm = $dm;
     }
 
-    public function setDocumentManager(DocumentManager $dm)
+    public function setDocumentManager(DocumentManagerInterface $dm)
     {
         $this->dm = $dm;
     }
 
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManagerInterface
     {
         return $this->dm;
     }

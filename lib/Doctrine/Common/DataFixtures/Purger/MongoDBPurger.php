@@ -9,37 +9,24 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
-class MongoDBPurger implements PurgerInterface
+final class MongoDBPurger implements PurgerInterface
 {
-    /** DocumentManager instance used for persistence. */
+    /**
+     * @var DocumentManager
+     */
     private $dm;
 
-    /**
-     * Construct new purger instance.
-     *
-     * @param DocumentManager $dm DocumentManager instance used for persistence.
-     */
     public function __construct(DocumentManager $dm = null)
     {
         $this->dm = $dm;
     }
 
-    /**
-     * Set the DocumentManager instance this purger instance should use.
-     *
-     * @param DocumentManager $dm
-     */
     public function setDocumentManager(DocumentManager $dm)
     {
         $this->dm = $dm;
     }
 
-    /**
-     * Retrieve the DocumentManager instance this purger instance is using.
-     *
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
-     */
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManager
     {
         return $this->dm;
     }

@@ -10,7 +10,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
 
 /**
- * Abstract fixture executor.
+ * The fixture executor is responsible for executing a set of fixtures.
+ *
+ * It can trigger the purger before executing the fixtures to reset the database first.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
  */
