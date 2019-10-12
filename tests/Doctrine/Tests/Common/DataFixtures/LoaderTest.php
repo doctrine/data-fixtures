@@ -2,9 +2,11 @@
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use TestFixtures\MyFixture1;
 use TestFixtures\NotAFixture;
 
@@ -58,4 +60,44 @@ class LoaderTest extends BaseTest
 
         $this->assertInstanceOf(MyFixture1::class, $fixture);
     }
+
+    public function testAddFixtureDoesNotCreateFixtureDependencyIfAlreadyAdded()
+    {
+        $loader = new Loader();
+
+        $a = new AlreadyAddedFixture();
+
+        $loader->addFixture($a);
+
+        $b = new DependentOnAlreadyAddedFixture();
+
+        $loader->addFixture($b);
+
+        $this->assertEquals(1, AlreadyAddedFixture::$called, 'Should only have called the constructor once');
+    }
 }
+
+class AlreadyAddedFixture implements FixtureInterface
+{
+    static $called = 0;
+
+    public function __construct()
+    {
+        static::$called += 1;
+    }
+
+    public function load(ObjectManager $manager)
+    {}
+}
+
+class DependentOnAlreadyAddedFixture implements FixtureInterface, DependentFixtureInterface
+{
+    public function load(ObjectManager $manager)
+    {}
+
+    public function getDependencies()
+    {
+        return [AlreadyAddedFixture::class];
+    }
+}
+

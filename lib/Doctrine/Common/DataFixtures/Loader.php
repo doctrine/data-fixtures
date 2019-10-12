@@ -135,7 +135,7 @@ class Loader
             } elseif ($fixture instanceof DependentFixtureInterface) {
                 $this->orderFixturesByDependencies = true;
                 foreach($fixture->getDependencies() as $class) {
-                    if (class_exists($class)) {
+                    if (!isset($this->fixtures[$fixtureClass]) && class_exists($class)) {
                         $this->addFixture($this->createFixture($class));
                     }
                 }
