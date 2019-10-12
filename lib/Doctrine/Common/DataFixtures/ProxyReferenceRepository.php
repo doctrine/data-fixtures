@@ -52,7 +52,7 @@ class ProxyReferenceRepository extends ReferenceRepository
             $simpleReferences[$name] = [$className, $this->getIdentifier($reference, $unitOfWork)];
         }
 
-        $serializedData = json_encode([
+        $serializedData = serialize([
             'references' => $simpleReferences,
             'identities' => $this->getIdentities(),
         ]);
@@ -67,7 +67,7 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     public function unserialize($serializedData)
     {
-        $repositoryData = json_decode($serializedData, true);
+        $repositoryData = unserialize($serializedData);
         $references     = $repositoryData['references'];
 
         foreach ($references as $name => $proxyReference) {

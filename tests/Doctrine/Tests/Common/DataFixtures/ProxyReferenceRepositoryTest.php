@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
+use Doctrine\Tests\Common\DataFixtures\TestEntity\RoleId;
 
 /**
  * Test ProxyReferenceRepository.
@@ -23,8 +24,6 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $em = $this->getMockAnnotationReaderEntityManager();
         $role = new TestEntity\Role;
         $role->setName('admin');
-        $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
-        $meta->getReflectionProperty('id')->setValue($role, 1);
 
         $referenceRepo = new ProxyReferenceRepository($em);
         $referenceRepo->addReference('test', $role);
@@ -61,7 +60,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
-            ->with('admin-role', ['id' => 1]);
+            ->with('admin-role', ['id' => new RoleId('uuid')]);
 
         $roleFixture = new TestFixtures\RoleFixture;
         $roleFixture->setReferenceRepository($referenceRepository);

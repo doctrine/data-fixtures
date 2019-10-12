@@ -10,6 +10,7 @@ use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
+use Doctrine\Tests\Common\DataFixtures\TestEntity\RoleId;
 use Prophecy\Prophecy\ProphecyInterface;
 
 /**
@@ -64,7 +65,7 @@ class ReferenceRepositoryTest extends BaseTest
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
-            ->with('admin-role', ['id' => 1]);
+            ->with('admin-role', ['id' => new RoleId('uuid')]);
 
         $roleFixture = new TestFixtures\RoleFixture;
         $roleFixture->setReferenceRepository($referenceRepository);

@@ -3,8 +3,10 @@
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\DBAL\Driver;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use Doctrine\Tests\Common\DataFixtures\TestType\RoleIdType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,8 +38,17 @@ abstract class BaseTest extends TestCase
      */
     protected function getMockSqliteEntityManager()
     {
+        $this->registerCustomTypes();
+
         $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
         $config = Setup::createAnnotationMetadataConfiguration([__DIR__.'/TestEntity'], true);
         return EntityManager::create($dbParams, $config);
+    }
+
+    protected function registerCustomTypes(): void
+    {
+        if (!Type::hasType(RoleIdType::NAME)) {
+            Type::addType(RoleIdType::NAME, RoleIdType::class);
+        }
     }
 }
