@@ -28,3 +28,9 @@ jobs:
     # Tests the lowest set of dependencies
     - php: 7.2
       env: LOWEST COMPOSER_FLAGS="--prefer-lowest"
+
+    - stage: Code Quality
+      env: CODING_STANDARDS
+      php: 7.2
+      script:
+        - ./vendor/bin/phpcs

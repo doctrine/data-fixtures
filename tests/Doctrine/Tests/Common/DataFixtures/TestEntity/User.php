@@ -1,54 +1,70 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use function md5;
+
 /**
- * @Entity
+ * @ORM\Entity
  */
 class User
 {
     /**
-     * @Column(type="integer")
-     * @Id
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     *
+     * @var int|null
      */
     private $id;
-    
+
     /**
-     * @Column(length=32)
-     * @Id
+     * @ORM\Column(length=32)
+     * @ORM\Id
+     *
+     * @var string|null
      */
     private $code;
 
     /**
-     * @Column(length=32)
+     * @ORM\Column(length=32)
+     *
+     * @var string|null
      */
     private $password;
 
     /**
-     * @Column(length=255)
+     * @ORM\Column(length=255)
+     *
+     * @var string|null
      */
     private $email;
 
     /**
-     * @ManyToOne(targetEntity="Role", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"})
+     *
+     * @var Role|null
      */
     private $role;
 
     /**
-     * @ManyToMany(targetEntity="Doctrine\Tests\Common\DataFixtures\TestEntity\User", inversedBy="authors")
-     * @JoinTable(name="author_reader", schema="readers",
-     *      joinColumns={@JoinColumn(name="author_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="reader_id", referencedColumnName="id")}
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="authors")
+     * @ORM\JoinTable(name="author_reader", schema="readers",
+     *      joinColumns={@ORM\JoinColumn(name="author_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="reader_id", referencedColumnName="id")}
      * )
      *
-     * @var User[]
+     * @var User[]|Collection
      */
     private $readers;
 
     /**
-     * @ManyToMany(targetEntity="Doctrine\Tests\Common\DataFixtures\TestEntity\User", mappedBy="readers")
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="readers")
      *
-     * @var User[]
+     * @var User[]|Collection
      */
     private $authors;
 
@@ -56,12 +72,22 @@ class User
     {
         $this->id = $id;
     }
-    
+
+    public function getId() : ?int
+    {
+        return $this->id;
+    }
+
     public function setCode($code)
     {
         $this->code = $code;
     }
-    
+
+    public function getCode() : ?string
+    {
+        return $this->code;
+    }
+
     public function setPassword($password)
     {
         $this->password = md5($password);
@@ -93,7 +119,7 @@ class User
     }
 
     /**
-     * @return User[]
+     * @return User[]|Collection
      */
     public function getReaders()
     {
@@ -101,7 +127,8 @@ class User
     }
 
     /**
-     * @param User[] $readers
+     * @param User[]|Collection $readers
+     *
      * @return User
      */
     public function setReaders($readers)
@@ -112,7 +139,7 @@ class User
     }
 
     /**
-     * @return User[]
+     * @return User[]|Collection
      */
     public function getAuthors()
     {
@@ -120,7 +147,8 @@ class User
     }
 
     /**
-     * @param User[] $authors
+     * @param User[]|Collection $authors
+     *
      * @return User
      */
     public function setAuthors($authors)

@@ -22,6 +22,7 @@
     },
     "require-dev": {
         "alcaeus/mongo-php-adapter": "^1.1",
+        "doctrine/coding-standard": "^6.0",
         "doctrine/dbal": "^2.5.4",
         "doctrine/mongodb-odm": "^1.3.0",
         "doctrine/orm": "^2.5.4",

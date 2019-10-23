@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Executor\PHPCRExecutor;
@@ -8,11 +10,12 @@ use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 use Exception;
+use PHPUnit_Framework_MockObject_MockObject;
+use Throwable;
+use function class_exists;
 
 /**
  * Tests for {@see \Doctrine\Common\DataFixtures\Executor\PHPCRExecutor}
- *
- * @author Marco Pivetta <ocramius@gmail.com>
  *
  * @covers \Doctrine\Common\DataFixtures\Executor\PHPCRExecutor
  */
@@ -29,7 +32,7 @@ class PHPCRExecutorTest extends BaseTest
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(function ($callback) use ($dm) {
+            ->will($this->returnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             }));
 
@@ -49,7 +52,7 @@ class PHPCRExecutorTest extends BaseTest
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(function ($callback) use ($dm) {
+            ->will($this->returnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             }));
 
@@ -68,7 +71,7 @@ class PHPCRExecutorTest extends BaseTest
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(function ($callback) use ($dm) {
+            ->will($this->returnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             }));
         $purger->expects($this->once())->method('purge');
@@ -88,7 +91,7 @@ class PHPCRExecutorTest extends BaseTest
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(function ($callback) use ($dm) {
+            ->will($this->returnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             }));
         $purger->expects($this->never())->method('purge');
@@ -110,13 +113,13 @@ class PHPCRExecutorTest extends BaseTest
 
         try {
             $executor->execute([$fixture], true);
-        } catch (\Exception $caughtException) {
+        } catch (Throwable $caughtException) {
             $this->assertSame($exception, $caughtException);
         }
     }
 
     /**
-     * @return PHPCRPurger|\PHPUnit_Framework_MockObject_MockObject
+     * @return PHPCRPurger|PHPUnit_Framework_MockObject_MockObject
      */
     private function getPurger()
     {
@@ -124,11 +127,11 @@ class PHPCRExecutorTest extends BaseTest
     }
 
     /**
-     * @return DocumentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @return DocumentManager|PHPUnit_Framework_MockObject_MockObject
      */
     private function getDocumentManager()
     {
-        if (!class_exists(DocumentManager::class)) {
+        if (! class_exists(DocumentManager::class)) {
             $this->markTestSkipped('Missing doctrine/phpcr-odm');
         }
 
@@ -144,7 +147,7 @@ class PHPCRExecutorTest extends BaseTest
     }
 
     /**
-     * @return FixtureInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FixtureInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private function getMockFixture()
     {

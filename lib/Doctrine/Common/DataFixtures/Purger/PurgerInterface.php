@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\DataFixtures\Purger;
 
 /**
  * PurgerInterface
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 interface PurgerInterface
 {
@@ -14,5 +14,5 @@ interface PurgerInterface
      *
      * @return void
      */
-    function purge();
+    public function purge();
 }

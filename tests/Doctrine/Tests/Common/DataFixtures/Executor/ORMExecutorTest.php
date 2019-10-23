@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
@@ -9,20 +11,18 @@ use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
 /**
  * Test Fixture executor.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ORMExecutorTest extends BaseTest
 {
     public function testExecuteWithNoPurge()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('setEntityManager')
             ->with($em);
         $executor = new ORMExecutor($em, $purger);
-        $fixture = $this->getMockFixture();
+        $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
@@ -31,13 +31,13 @@ class ORMExecutorTest extends BaseTest
 
     public function testExecuteWithPurge()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('purge')
             ->will($this->returnValue(null));
         $executor = new ORMExecutor($em, $purger);
-        $fixture = $this->getMockFixture();
+        $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
@@ -46,9 +46,9 @@ class ORMExecutorTest extends BaseTest
 
     public function testExecuteTransaction()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $executor = new ORMExecutor($em);
-        $fixture = $this->getMockFixture();
+        $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);

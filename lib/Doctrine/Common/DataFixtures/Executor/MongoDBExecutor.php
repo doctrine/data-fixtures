@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\DataFixtures\Executor;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\Event\Listener\MongoDBReferenceListener;
+use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\ODM\MongoDB\DocumentManager;
 
 /**
  * Class responsible for executing data fixtures.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class MongoDBExecutor extends AbstractExecutor
 {
@@ -19,7 +19,7 @@ class MongoDBExecutor extends AbstractExecutor
      *
      * @param DocumentManager $dm DocumentManager instance used for persistence.
      */
-    public function __construct(DocumentManager $dm, MongoDBPurger $purger = null)
+    public function __construct(DocumentManager $dm, ?MongoDBPurger $purger = null)
     {
         $this->dm = $dm;
         if ($purger !== null) {
@@ -34,7 +34,7 @@ class MongoDBExecutor extends AbstractExecutor
     /**
      * Retrieve the DocumentManager instance this executor instance is using.
      *
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     * @return DocumentManager
      */
     public function getObjectManager()
     {
@@ -50,7 +50,7 @@ class MongoDBExecutor extends AbstractExecutor
         );
 
         $this->referenceRepository = $referenceRepository;
-        $this->listener = new MongoDBReferenceListener($this->referenceRepository);
+        $this->listener            = new MongoDBReferenceListener($this->referenceRepository);
         $this->dm->getEventManager()->addEventSubscriber($this->listener);
     }
 

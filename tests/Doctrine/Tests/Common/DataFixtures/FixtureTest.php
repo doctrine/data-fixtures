@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -7,14 +9,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Test Fixture interface.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class FixtureTest extends BaseTest
 {
     public function testFixtureInterface()
     {
-        $em = $this->createMock(ObjectManager::class);
+        $em      = $this->createMock(ObjectManager::class);
         $fixture = new MyFixture2();
         $fixture->load($em);
 
@@ -24,6 +24,7 @@ class FixtureTest extends BaseTest
 
 class MyFixture2 implements FixtureInterface
 {
+    /** @var bool */
     public $loaded = false;
 
     public function load(ObjectManager $manager)

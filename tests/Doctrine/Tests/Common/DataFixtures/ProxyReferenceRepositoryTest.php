@@ -1,27 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures;
 
-use Doctrine\Common\DataFixtures\ProxyReferenceRepository;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
-use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\Common\DataFixtures\ProxyReferenceRepository;
 use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 
 /**
  * Test ProxyReferenceRepository.
- *
- * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
- * @author Anthon Pang <anthonp@nationalfibre.net>
  */
 class ProxyReferenceRepositoryTest extends BaseTest
 {
-    const TEST_ENTITY_ROLE = Role::class;
+    public const TEST_ENTITY_ROLE = Role::class;
 
     public function testReferenceEntry()
     {
-        $em = $this->getMockAnnotationReaderEntityManager();
-        $role = new TestEntity\Role;
+        $em   = $this->getMockAnnotationReaderEntityManager();
+        $role = new TestEntity\Role();
         $role->setName('admin');
         $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
         $meta->getReflectionProperty('id')->setValue($role, 1);
@@ -38,7 +37,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
 
     public function testReferenceIdentityPopulation()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = $this->getMockBuilder(ProxyReferenceRepository::class)
             ->setConstructorArgs([$em])
             ->getMock();
@@ -47,9 +46,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         );
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
-        $schemaTool->createSchema([
-            $em->getClassMetadata(self::TEST_ENTITY_ROLE)
-        ]);
+        $schemaTool->createSchema([$em->getClassMetadata(self::TEST_ENTITY_ROLE)]);
 
         $referenceRepository->expects($this->once())
             ->method('addReference')
@@ -63,24 +60,22 @@ class ProxyReferenceRepositoryTest extends BaseTest
             ->method('setReferenceIdentity')
             ->with('admin-role', ['id' => 1]);
 
-        $roleFixture = new TestFixtures\RoleFixture;
+        $roleFixture = new TestFixtures\RoleFixture();
         $roleFixture->setReferenceRepository($referenceRepository);
         $roleFixture->load($em);
     }
 
     public function testReferenceReconstruction()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ProxyReferenceRepository($em);
-        $listener = new ORMReferenceListener($referenceRepository);
+        $listener            = new ORMReferenceListener($referenceRepository);
         $em->getEventManager()->addEventSubscriber($listener);
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
-        $schemaTool->createSchema([
-            $em->getClassMetadata(self::TEST_ENTITY_ROLE)
-        ]);
-        $roleFixture = new TestFixtures\RoleFixture;
+        $schemaTool->createSchema([$em->getClassMetadata(self::TEST_ENTITY_ROLE)]);
+        $roleFixture = new TestFixtures\RoleFixture();
         $roleFixture->setReferenceRepository($referenceRepository);
 
         $roleFixture->load($em);
@@ -120,13 +115,13 @@ class ProxyReferenceRepositoryTest extends BaseTest
 
     public function testReferenceMultipleEntries()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ProxyReferenceRepository($em);
         $em->getEventManager()->addEventSubscriber(new ORMReferenceListener($referenceRepository));
         $schemaTool = new SchemaTool($em);
         $schemaTool->createSchema([$em->getClassMetadata(self::TEST_ENTITY_ROLE)]);
 
-        $role = new TestEntity\Role;
+        $role = new TestEntity\Role();
         $role->setName('admin');
 
         $em->persist($role);

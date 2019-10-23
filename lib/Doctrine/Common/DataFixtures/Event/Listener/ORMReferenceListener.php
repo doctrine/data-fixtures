@@ -1,29 +1,24 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Doctrine\Common\DataFixtures\Event\Listener;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * Reference Listener populates identities for
  * stored references
- *
- * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  */
 final class ORMReferenceListener implements EventSubscriber
 {
-    /**
-     * @var ReferenceRepository
-     */
+    /** @var ReferenceRepository */
     private $referenceRepository;
 
     /**
      * Initialize listener
-     *
-     * @param ReferenceRepository $referenceRepository
      */
     public function __construct(ReferenceRepository $referenceRepository)
     {
@@ -35,28 +30,28 @@ final class ORMReferenceListener implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return [
-            'postPersist' // would be better to use onClear, but it is supported only in 2.1
-        ];
+        // would be better to use onClear, but it is supported only in 2.1
+        return ['postPersist'];
     }
 
     /**
      * Populates identities for stored references
-     *
-     * @param LifecycleEventArgs $args
      */
     public function postPersist(LifecycleEventArgs $args)
     {
         $object = $args->getEntity();
 
-        if (($names = $this->referenceRepository->getReferenceNames($object)) !== false) {
-            foreach ($names as $name) {
-                $identity = $args->getEntityManager()
-                    ->getUnitOfWork()
-                    ->getEntityIdentifier($object);
+        $names = $this->referenceRepository->getReferenceNames($object);
+        if ($names === false) {
+            return;
+        }
 
-                $this->referenceRepository->setReferenceIdentity($name, $identity);
-            }
+        foreach ($names as $name) {
+            $identity = $args->getEntityManager()
+                ->getUnitOfWork()
+                ->getEntityIdentifier($object);
+
+            $this->referenceRepository->setReferenceIdentity($name, $identity);
         }
     }
 }

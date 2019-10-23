@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Doctrine\Test\DataFixtures\Sorter;
 
@@ -8,8 +9,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
 /**
- * @author Marco Pivetta <ocramius@gmail.com>
- *
  * @covers \Doctrine\Common\DataFixtures\Sorter\Vertex
  */
 class VertexTest extends BaseTest

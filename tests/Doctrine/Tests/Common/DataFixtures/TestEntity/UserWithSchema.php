@@ -1,55 +1,71 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use function md5;
+
 /**
- * @Entity
- * @Table(name="user",schema="test_schema")
+ * @ORM\Entity
+ * @ORM\Table(name="user",schema="test_schema")
  */
 class UserWithSchema
 {
     /**
-     * @Column(type="integer")
-     * @Id
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     *
+     * @var int|null
      */
     private $id;
-    
+
     /**
-     * @Column(length=32)
-     * @Id
+     * @ORM\Column(length=32)
+     * @ORM\Id
+     *
+     * @var string|null
      */
     private $code;
 
     /**
-     * @Column(length=32)
+     * @ORM\Column(length=32)
+     *
+     * @var string|null
      */
     private $password;
 
     /**
-     * @Column(length=255)
+     * @ORM\Column(length=255)
+     *
+     * @var string|null
      */
     private $email;
 
     /**
-     * @ManyToOne(targetEntity="Role", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"})
+     *
+     * @var Role|null
      */
     private $role;
 
     /**
-     * @ManyToMany(targetEntity="Doctrine\Tests\Common\DataFixtures\TestEntity\UserWithSchema", inversedBy="authors")
-     * @JoinTable(name="author_reader", schema="readers",
-     *      joinColumns={@JoinColumn(name="author_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="reader_id", referencedColumnName="id")}
+     * @ORM\ManyToMany(targetEntity=UserWithSchema::class, inversedBy="authors")
+     * @ORM\JoinTable(name="author_reader", schema="readers",
+     *      joinColumns={@ORM\JoinColumn(name="author_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="reader_id", referencedColumnName="id")}
      * )
      *
-     * @var User[]
+     * @var UserWithSchema[]|Collection
      */
     private $readers;
 
     /**
-     * @ManyToMany(targetEntity="Doctrine\Tests\Common\DataFixtures\TestEntity\UserWithSchema", mappedBy="readers")
+     * @ORM\ManyToMany(targetEntity=UserWithSchema::class, mappedBy="readers")
      *
-     * @var User[]
+     * @var UserWithSchema[]|Collection
      */
     private $authors;
 
@@ -57,12 +73,22 @@ class UserWithSchema
     {
         $this->id = $id;
     }
-    
+
+    public function getId() : ?int
+    {
+        return $this->id;
+    }
+
     public function setCode($code)
     {
         $this->code = $code;
     }
-    
+
+    public function getCode() : ?string
+    {
+        return $this->code;
+    }
+
     public function setPassword($password)
     {
         $this->password = md5($password);
@@ -94,7 +120,7 @@ class UserWithSchema
     }
 
     /**
-     * @return User[]
+     * @return UserWithSchema[]|Collection
      */
     public function getReaders()
     {
@@ -102,8 +128,9 @@ class UserWithSchema
     }
 
     /**
-     * @param User[] $readers
-     * @return User
+     * @param UserWithSchema[]|Collection $readers
+     *
+     * @return UserWithSchema
      */
     public function setReaders($readers)
     {
@@ -113,7 +140,7 @@ class UserWithSchema
     }
 
     /**
-     * @return User[]
+     * @return UserWithSchema[]|Collection
      */
     public function getAuthors()
     {
@@ -121,8 +148,9 @@ class UserWithSchema
     }
 
     /**
-     * @param User[] $authors
-     * @return User
+     * @param UserWithSchema[]|Collection $authors
+     *
+     * @return UserWithSchema
      */
     public function setAuthors($authors)
     {
