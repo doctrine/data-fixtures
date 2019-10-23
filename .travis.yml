@@ -18,10 +18,10 @@ before_install:
 
 before_script:
   - composer self-update
-  - composer install --prefer-source
   - composer config "platform.ext-mongo" "1.6.16"
-  - composer require alcaeus/mongo-php-adapter
-  - composer require doctrine/mongodb-odm
+  - composer require --no-update alcaeus/mongo-php-adapter
+  - composer require --no-update doctrine/mongodb-odm "^1.3.0"
+  - composer install --prefer-source
   - composer require jackalope/jackalope-doctrine-dbal doctrine/phpcr-odm
 
 script:
