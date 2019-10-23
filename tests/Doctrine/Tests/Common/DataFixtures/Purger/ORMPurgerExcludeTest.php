@@ -32,7 +32,7 @@ class ORMPurgerExcludeTest extends BaseTest
         }
 
         $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
-        $config   = Setup::createAnnotationMetadataConfiguration([__DIR__ . '/../TestPurgeEntity'], true);
+        $config   = Setup::createAnnotationMetadataConfiguration([__DIR__ . '/../TestPurgeEntity'], true, null, null, false);
         $em       = EntityManager::create($dbParams, $config);
 
         $connection    = $em->getConnection();
@@ -118,7 +118,7 @@ class ORMPurgerExcludeTest extends BaseTest
     public function testPurgeExcludeUsingFilterCallable() : void
     {
         $this->executeTestPurge(null, [], static function (string $table) : bool {
-            return preg_match('~^(?!ExcludedEntity)~', $table);
+            return (bool) preg_match('~^(?!ExcludedEntity)~', $table);
         });
     }
 }

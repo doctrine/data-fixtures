@@ -123,7 +123,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Reference to: (foo) does not exist');
+        $this->expectExceptionMessage('Reference to "foo" does not exist');
 
         $referenceRepository->getReference('foo');
     }
@@ -134,7 +134,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->addReference('duplicated_reference', new stdClass());
 
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Reference to: (duplicated_reference) already exists, use method setReference in order to override it');
+        $this->expectExceptionMessage('Reference to "duplicated_reference" already exists, use method setReference in order to override it');
 
         $referenceRepository->addReference('duplicated_reference', new stdClass());
     }
@@ -144,7 +144,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Reference to: (missing_reference) does not exist');
+        $this->expectExceptionMessage('Reference to "missing_reference" does not exist');
 
         $referenceRepository->getReference('missing_reference');
     }
