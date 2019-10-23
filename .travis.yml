@@ -17,8 +17,14 @@ before_install:
   - pecl install -f mongodb
   - composer validate --strict
 
-before_script:
-  - composer install
+install:
+  - composer update --prefer-stable --prefer-dist ${COMPOSER_FLAGS}
 
 script:
   - ./vendor/bin/phpunit -v
+
+jobs:
+  include:
+    # Tests the lowest set of dependencies
+    - php: 7.2
+      env: LOWEST COMPOSER_FLAGS="--prefer-lowest"
