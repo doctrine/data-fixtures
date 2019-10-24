@@ -128,7 +128,9 @@ class PHPCRExecutorTest extends BaseTest
      */
     private function getDocumentManager()
     {
-        $this->loadDocumentManagerClass();
+        if (!class_exists(DocumentManager::class)) {
+            $this->markTestSkipped('Missing doctrine/phpcr-odm');
+        }
 
         return $this
             ->getMockBuilder(DocumentManager::class)
@@ -147,40 +149,5 @@ class PHPCRExecutorTest extends BaseTest
     private function getMockFixture()
     {
         return $this->createMock(FixtureInterface::class);
-    }
-
-    /**
-     * Ensures that the {@see \Doctrine\ODM\PHPCR\DocumentManager} class exists
-     */
-    private function loadDocumentManagerClass()
-    {
-
-        if (class_exists(DocumentManager::class)) {
-            return;
-        }
-
-        // hold my beer while I do some mocking
-        eval(
-        <<<'PHP'
-namespace Doctrine\ODM\PHPCR;
-
-class DocumentManager implements \Doctrine\Common\Persistence\ObjectManager
-{
-    public function find($className, $id) {}
-    public function persist($object) {}
-    public function remove($object) {}
-    public function merge($object) {}
-    public function clear($objectName = null) {}
-    public function detach($object) {}
-    public function refresh($object) {}
-    public function flush() {}
-    public function getRepository($className) {}
-    public function getClassMetadata($className) {}
-    public function getMetadataFactory() {}
-    public function initializeObject($obj) {}
-    public function contains($object) {}
-}
-PHP
-        );
     }
 }
