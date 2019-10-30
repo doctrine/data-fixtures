@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
@@ -8,25 +10,24 @@ use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+use function extension_loaded;
 
 /**
  * Test referenced fixture execution
- *
- * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  */
 class ORMExecutorSharedFixtureTest extends BaseTest
 {
-    const TEST_ENTITY_ROLE = Role::class;
-    const TEST_ENTITY_USER = User::class;
+    public const TEST_ENTITY_ROLE = Role::class;
+    public const TEST_ENTITY_USER = User::class;
 
     public function testFixtureExecution()
     {
-        $em = $this->getMockAnnotationReaderEntityManager();
-        $purger = new ORMPurger();
+        $em       = $this->getMockAnnotationReaderEntityManager();
+        $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
         $referenceRepository = $executor->getReferenceRepository();
-        $fixture = $this->getMockFixture();
+        $fixture             = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
@@ -40,27 +41,27 @@ class ORMExecutorSharedFixtureTest extends BaseTest
 
     public function testSharedFixtures()
     {
-        if (!extension_loaded('pdo_sqlite')) {
+        if (! extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped('Missing pdo_sqlite extension.');
         }
 
-        $em = $this->getMockSqliteEntityManager();
+        $em         = $this->getMockSqliteEntityManager();
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
         $schemaTool->createSchema([
             $em->getClassMetadata(self::TEST_ENTITY_ROLE),
-            $em->getClassMetadata(self::TEST_ENTITY_USER)
+            $em->getClassMetadata(self::TEST_ENTITY_USER),
         ]);
 
-        $purger = new ORMPurger();
+        $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
-        $userFixture = new TestFixtures\UserFixture;
-        $roleFixture = new TestFixtures\RoleFixture;
+        $userFixture = new TestFixtures\UserFixture();
+        $roleFixture = new TestFixtures\RoleFixture();
         $executor->execute([$roleFixture, $userFixture], true);
 
         $referenceRepository = $executor->getReferenceRepository();
-        $references = $referenceRepository->getReferences();
+        $references          = $referenceRepository->getReferences();
 
         $this->assertCount(2, $references);
         $roleReference = $referenceRepository->getReference('admin-role');

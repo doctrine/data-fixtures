@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\DataFixtures\Executor;
 
-use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\Common\DataFixtures\ReferenceRepository;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\Common\DataFixtures\SharedFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
+use function get_class;
+use function sprintf;
 
 /**
  * Abstract fixture executor.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 abstract class AbstractExecutor
 {
@@ -57,8 +60,6 @@ abstract class AbstractExecutor
 
     /**
      * Sets the Purger instance to use for this executor instance.
-     *
-     * @param PurgerInterface $purger
      */
     public function setPurger(PurgerInterface $purger)
     {
@@ -96,16 +97,13 @@ abstract class AbstractExecutor
 
     /**
      * Load a fixture with the given persistence manager.
-     *
-     * @param ObjectManager    $manager
-     * @param FixtureInterface $fixture
      */
     public function load(ObjectManager $manager, FixtureInterface $fixture)
     {
         if ($this->logger) {
             $prefix = '';
             if ($fixture instanceof OrderedFixtureInterface) {
-                $prefix = sprintf('[%d] ',$fixture->getOrder());
+                $prefix = sprintf('[%d] ', $fixture->getOrder());
             }
             $this->log('loading ' . $prefix . get_class($fixture));
         }
@@ -120,12 +118,12 @@ abstract class AbstractExecutor
     /**
      * Purges the database before loading.
      *
-     * @throws \Exception if the purger is not defined
+     * @throws Exception if the purger is not defined.
      */
     public function purge()
     {
         if ($this->purger === null) {
-            throw new \Exception('Doctrine\Common\DataFixtures\Purger\PurgerInterface instance is required if you want to purge the database before loading your data fixtures.');
+            throw new Exception('Doctrine\Common\DataFixtures\Purger\PurgerInterface instance is required if you want to purge the database before loading your data fixtures.');
         }
         if ($this->logger) {
             $this->log('purging database');
@@ -136,8 +134,8 @@ abstract class AbstractExecutor
     /**
      * Executes the given array of data fixtures.
      *
-     * @param array   $fixtures Array of fixtures to execute.
-     * @param boolean $append Whether to append the data fixtures or purge the database before loading.
+     * @param array $fixtures Array of fixtures to execute.
+     * @param bool  $append   Whether to append the data fixtures or purge the database before loading.
      */
     abstract public function execute(array $fixtures, $append = false);
 }

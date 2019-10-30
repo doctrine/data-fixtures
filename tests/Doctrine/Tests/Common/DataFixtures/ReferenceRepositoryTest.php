@@ -1,30 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures;
 
-use Doctrine\Common\DataFixtures\ReferenceRepository;
+use BadMethodCallException;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
+use OutOfBoundsException;
 use Prophecy\Prophecy\ProphecyInterface;
+use stdClass;
 
-/**
- * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
- * @author Manuel Gonalez <mgonyan@gmail.com>
- */
 class ReferenceRepositoryTest extends BaseTest
 {
     public function testReferenceEntry()
     {
         $em = $this->getMockAnnotationReaderEntityManager();
-        
-        $role = new TestEntity\Role;
+
+        $role = new TestEntity\Role();
         $role->setName('admin');
-        
+
         $meta = $em->getClassMetadata(Role::class);
         $meta->getReflectionProperty('id')->setValue($role, 1);
 
@@ -41,7 +42,7 @@ class ReferenceRepositoryTest extends BaseTest
 
     public function testReferenceIdentityPopulation()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = $this->getMockBuilder(ReferenceRepository::class)
             ->setConstructorArgs([$em])
             ->getMock();
@@ -50,9 +51,7 @@ class ReferenceRepositoryTest extends BaseTest
         );
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
-        $schemaTool->createSchema([
-            $em->getClassMetadata(Role::class)
-        ]);
+        $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
 
         $referenceRepository->expects($this->once())
             ->method('addReference')
@@ -66,7 +65,7 @@ class ReferenceRepositoryTest extends BaseTest
             ->method('setReferenceIdentity')
             ->with('admin-role', ['id' => 1]);
 
-        $roleFixture = new TestFixtures\RoleFixture;
+        $roleFixture = new TestFixtures\RoleFixture();
         $roleFixture->setReferenceRepository($referenceRepository);
 
         $roleFixture->load($em);
@@ -74,17 +73,15 @@ class ReferenceRepositoryTest extends BaseTest
 
     public function testReferenceReconstruction()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
         $em->getEventManager()->addEventSubscriber(
             new ORMReferenceListener($referenceRepository)
         );
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
-        $schemaTool->createSchema([
-            $em->getClassMetadata(Role::class)
-        ]);
-        $roleFixture = new TestFixtures\RoleFixture;
+        $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
+        $roleFixture = new TestFixtures\RoleFixture();
         $roleFixture->setReferenceRepository($referenceRepository);
 
         $roleFixture->load($em);
@@ -102,13 +99,13 @@ class ReferenceRepositoryTest extends BaseTest
 
     public function testReferenceMultipleEntries()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
         $em->getEventManager()->addEventSubscriber(new ORMReferenceListener($referenceRepository));
         $schemaTool = new SchemaTool($em);
         $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
 
-        $role = new TestEntity\Role;
+        $role = new TestEntity\Role();
         $role->setName('admin');
 
         $em->persist($role);
@@ -125,8 +122,8 @@ class ReferenceRepositoryTest extends BaseTest
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
-        $this->expectException(\OutOfBoundsException::class);
-        $this->expectExceptionMessage('Reference to: (foo) does not exist');
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('Reference to "foo" does not exist');
 
         $referenceRepository->getReference('foo');
     }
@@ -134,27 +131,27 @@ class ReferenceRepositoryTest extends BaseTest
     public function testThrowsExceptionAddingDuplicatedReference()
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
-        $referenceRepository->addReference('duplicated_reference', new \stdClass());
+        $referenceRepository->addReference('duplicated_reference', new stdClass());
 
-        $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Reference to: (duplicated_reference) already exists, use method setReference in order to override it');
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Reference to "duplicated_reference" already exists, use method setReference in order to override it');
 
-        $referenceRepository->addReference('duplicated_reference', new \stdClass());
+        $referenceRepository->addReference('duplicated_reference', new stdClass());
     }
 
     public function testThrowsExceptionTryingToGetWrongReference()
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
-        $this->expectException(\OutOfBoundsException::class);
-        $this->expectExceptionMessage('Reference to: (missing_reference) does not exist');
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('Reference to "missing_reference" does not exist');
 
         $referenceRepository->getReference('missing_reference');
     }
 
     public function testHasIdentityCheck()
     {
-        $role = new Role();
+        $role                = new Role();
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
         $referenceRepository->setReferenceIdentity('entity', $role);
 
@@ -165,14 +162,12 @@ class ReferenceRepositoryTest extends BaseTest
 
     public function testSetReferenceHavingIdentifier()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
-        $schemaTool->createSchema([
-            $em->getClassMetadata(Role::class)
-        ]);
+        $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
 
         $role = new Role();
         $role->setName('role_name');
@@ -187,7 +182,7 @@ class ReferenceRepositoryTest extends BaseTest
 
     public function testGetIdentifierWhenHasNotBeenManagedYetByUnitOfWork()
     {
-        $role = new Role();
+        $role               = new Role();
         $identitiesExpected = ['id' => 1];
 
         /** @var UnitOfWork | ProphecyInterface $uow */

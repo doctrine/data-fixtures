@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\DataFixtures\Sorter;
 
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use RuntimeException;
+use function get_class;
+use function sprintf;
 
 /**
  * TopologicalSorter is an ordering algorithm for directed graphs (DG) and/or
@@ -11,9 +16,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  * traverse the graph built in memory.
  * This algorithm have a linear running time based on nodes (V) and dependency
  * between the nodes (E), resulting in a computational complexity of O(V + E).
- *
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Roman Borschel <roman@code-factory.org>
  *
  * @internal this class is to be used only by data-fixtures internals: do not
  *           rely on it in your own libraries/applications.
@@ -38,14 +40,14 @@ class TopologicalSorter
     /**
      * Allow or not cyclic dependencies
      *
-     * @var boolean
+     * @var bool
      */
     private $allowCyclicDependencies;
 
     /**
      * Construct TopologicalSorter object
      *
-     * @param boolean $allowCyclicDependencies
+     * @param bool $allowCyclicDependencies
      */
     public function __construct($allowCyclicDependencies = true)
     {
@@ -55,8 +57,7 @@ class TopologicalSorter
     /**
      * Adds a new node (vertex) to the graph, assigning its hash and value.
      *
-     * @param string        $hash
-     * @param ClassMetadata $node
+     * @param string $hash
      *
      * @return void
      */
@@ -98,10 +99,10 @@ class TopologicalSorter
      *
      * Note: Highly performance-sensitive method.
      *
-     * @throws \RuntimeException
-     * @throws CircularReferenceException
-     *
      * @return array
+     *
+     * @throws RuntimeException
+     * @throws CircularReferenceException
      */
     public function sort()
     {
@@ -126,18 +127,16 @@ class TopologicalSorter
      *
      * Note: Highly performance-sensitive method.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      * @throws CircularReferenceException
-     *
-     * @param Vertex $definition
      */
     private function visit(Vertex $definition)
     {
         $definition->state = Vertex::IN_PROGRESS;
 
         foreach ($definition->dependencyList as $dependency) {
-            if ( ! isset($this->nodeList[$dependency])) {
-                throw new \RuntimeException(sprintf(
+            if (! isset($this->nodeList[$dependency])) {
+                throw new RuntimeException(sprintf(
                     'Fixture "%s" has a dependency of fixture "%s", but it not listed to be loaded.',
                     get_class($definition->value),
                     $dependency
@@ -155,13 +154,13 @@ class TopologicalSorter
                 case Vertex::VISITED:
                     break;
                 case Vertex::IN_PROGRESS:
-                    if ( ! $this->allowCyclicDependencies) {
+                    if (! $this->allowCyclicDependencies) {
                         throw new CircularReferenceException(
                             sprintf(
                                 'Graph contains cyclic dependency between the classes "%s" and'
-                                .' "%s". An example of this problem would be the following: '
-                                .'Class C has class B as its dependency. Then, class B has class A has its dependency. '
-                                .'Finally, class A has class C as its dependency.',
+                                . ' "%s". An example of this problem would be the following: '
+                                . 'Class C has class B as its dependency. Then, class B has class A has its dependency. '
+                                . 'Finally, class A has class C as its dependency.',
                                 $definition->value->getName(),
                                 $childDefinition->value->getName()
                             )

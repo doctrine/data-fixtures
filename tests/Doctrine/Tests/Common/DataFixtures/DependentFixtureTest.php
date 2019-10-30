@@ -1,30 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures;
 
-use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
-use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\Loader;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InvalidArgumentException;
 use RuntimeException;
+use function array_search;
+use function array_shift;
 
 /**
  * Test Fixture ordering by dependencies.
- *
- * @author Gustavo Adrian <comfortablynumb84@gmail.com>
  */
 class DependentFixtureTest extends BaseTest
 {
-    public function test_orderFixturesByDependencies_orderClassesWithASingleParent()
+    public function testOrderFixturesByDependenciesOrderClassesWithASingleParent()
     {
         $loader = new Loader();
-        $loader->addFixture(new DependentFixture3);
-        $loader->addFixture(new DependentFixture1);
-        $loader->addFixture(new DependentFixture2);
-        $loader->addFixture(new BaseParentFixture1);
+        $loader->addFixture(new DependentFixture3());
+        $loader->addFixture(new DependentFixture1());
+        $loader->addFixture(new DependentFixture2());
+        $loader->addFixture(new BaseParentFixture1());
 
         $orderedFixtures = $loader->getFixtures();
 
@@ -35,16 +37,16 @@ class DependentFixtureTest extends BaseTest
         $this->assertInstanceOf(DependentFixture3::class, array_shift($orderedFixtures));
     }
 
-    public function test_orderFixturesByDependencies_orderClassesWithAMultipleParents()
+    public function testOrderFixturesByDependenciesOrderClassesWithAMultipleParents()
     {
         $loader = new Loader();
 
-        $addressFixture         = new AddressFixture();
-        $contactMethodFixture   = new ContactMethodFixture();
-        $contactFixture         = new ContactFixture();
-        $baseParentFixture      = new BaseParentFixture1();
-        $countryFixture         = new CountryFixture();
-        $stateFixture           = new StateFixture();
+        $addressFixture       = new AddressFixture();
+        $contactMethodFixture = new ContactMethodFixture();
+        $contactFixture       = new ContactFixture();
+        $baseParentFixture    = new BaseParentFixture1();
+        $countryFixture       = new CountryFixture();
+        $stateFixture         = new StateFixture();
 
         $loader->addFixture($addressFixture);
         $loader->addFixture($contactMethodFixture);
@@ -57,12 +59,12 @@ class DependentFixtureTest extends BaseTest
 
         $this->assertCount(6, $orderedFixtures);
 
-        $contactFixtureOrder = array_search($contactFixture, $orderedFixtures);
+        $contactFixtureOrder       = array_search($contactFixture, $orderedFixtures);
         $contactMethodFixtureOrder = array_search($contactMethodFixture, $orderedFixtures);
-        $addressFixtureOrder = array_search($addressFixture, $orderedFixtures);
-        $countryFixtureOrder = array_search($countryFixture, $orderedFixtures);
-        $stateFixtureOrder = array_search($stateFixture, $orderedFixtures);
-        $baseParentFixtureOrder = array_search($baseParentFixture, $orderedFixtures);
+        $addressFixtureOrder       = array_search($addressFixture, $orderedFixtures);
+        $countryFixtureOrder       = array_search($countryFixture, $orderedFixtures);
+        $stateFixtureOrder         = array_search($stateFixture, $orderedFixtures);
+        $baseParentFixtureOrder    = array_search($baseParentFixture, $orderedFixtures);
 
         // Order of fixtures is not exact. We need to test, however, that dependencies are
         // indeed satisfied
@@ -80,41 +82,40 @@ class DependentFixtureTest extends BaseTest
         $this->assertGreaterThan($countryFixtureOrder, $addressFixtureOrder);
     }
 
-
-    public function test_orderFixturesByDependencies_circularReferencesMakeMethodThrowCircularReferenceException()
+    public function testOrderFixturesByDependenciesCircularReferencesMakeMethodThrowCircularReferenceException()
     {
         $loader = new Loader();
 
-        $loader->addFixture(new CircularReferenceFixture3);
-        $loader->addFixture(new CircularReferenceFixture);
-        $loader->addFixture(new CircularReferenceFixture2);
+        $loader->addFixture(new CircularReferenceFixture3());
+        $loader->addFixture(new CircularReferenceFixture());
+        $loader->addFixture(new CircularReferenceFixture2());
 
         $this->expectException(CircularReferenceException::class);
 
         $loader->getFixtures();
     }
 
-    public function test_orderFixturesByDependencies_fixturesCantHaveItselfAsParent()
+    public function testOrderFixturesByDependenciesFixturesCantHaveItselfAsParent()
     {
         $loader = new Loader();
 
-        $loader->addFixture(new FixtureWithItselfAsParent);
+        $loader->addFixture(new FixtureWithItselfAsParent());
 
         $this->expectException(InvalidArgumentException::class);
 
         $loader->getFixtures();
     }
 
-    public function test_inCaseThereAreFixturesOrderedByNumberAndByDependenciesBothOrdersAreExecuted()
+    public function testInCaseThereAreFixturesOrderedByNumberAndByDependenciesBothOrdersAreExecuted()
     {
         $loader = new Loader();
-        $loader->addFixture(new OrderedByNumberFixture1);
-        $loader->addFixture(new OrderedByNumberFixture3);
-        $loader->addFixture(new OrderedByNumberFixture2);
-        $loader->addFixture(new DependentFixture3);
-        $loader->addFixture(new DependentFixture1);
-        $loader->addFixture(new DependentFixture2);
-        $loader->addFixture(new BaseParentFixture1);
+        $loader->addFixture(new OrderedByNumberFixture1());
+        $loader->addFixture(new OrderedByNumberFixture3());
+        $loader->addFixture(new OrderedByNumberFixture2());
+        $loader->addFixture(new DependentFixture3());
+        $loader->addFixture(new DependentFixture1());
+        $loader->addFixture(new DependentFixture2());
+        $loader->addFixture(new BaseParentFixture1());
 
         $orderedFixtures = $loader->getFixtures();
 
@@ -128,21 +129,21 @@ class DependentFixtureTest extends BaseTest
         $this->assertInstanceOf(DependentFixture3::class, array_shift($orderedFixtures));
     }
 
-    public function test_inCaseAFixtureHasAnUnexistentDependencyOrIfItWasntLoaded_throwsException()
+    public function testInCaseAFixtureHasAnUnexistentDependencyOrIfItWasntLoadedThrowsException()
     {
         $loader = new Loader();
-        $loader->addFixture(new FixtureWithUnexistentDependency);
+        $loader->addFixture(new FixtureWithUnexistentDependency());
 
         $this->expectException(RuntimeException::class);
 
         $loader->getFixtures();
     }
 
-    public function test_inCaseGetFixturesReturnsDifferentResultsEachTime()
+    public function testInCaseGetFixturesReturnsDifferentResultsEachTime()
     {
         $loader = new Loader();
-        $loader->addFixture(new DependentFixture1);
-        $loader->addFixture(new BaseParentFixture1);
+        $loader->addFixture(new DependentFixture1());
+        $loader->addFixture(new BaseParentFixture1());
 
         // Intentionally calling getFixtures() twice
         $loader->getFixtures();
@@ -157,7 +158,8 @@ class DependentFixtureTest extends BaseTest
 class DependentFixture1 implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -168,7 +170,8 @@ class DependentFixture1 implements FixtureInterface, DependentFixtureInterface
 class DependentFixture2 implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -179,7 +182,8 @@ class DependentFixture2 implements FixtureInterface, DependentFixtureInterface
 class DependentFixture3 implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -190,13 +194,15 @@ class DependentFixture3 implements FixtureInterface, DependentFixtureInterface
 class BaseParentFixture1 implements FixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 }
 
 class CountryFixture implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -207,13 +213,14 @@ class CountryFixture implements FixtureInterface, DependentFixtureInterface
 class StateFixture implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
         return [
             BaseParentFixture1::class,
-            CountryFixture::class
+            CountryFixture::class,
         ];
     }
 }
@@ -221,14 +228,15 @@ class StateFixture implements FixtureInterface, DependentFixtureInterface
 class AddressFixture implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
         return [
             BaseParentFixture1::class,
             CountryFixture::class,
-            StateFixture::class
+            StateFixture::class,
         ];
     }
 }
@@ -236,7 +244,8 @@ class AddressFixture implements FixtureInterface, DependentFixtureInterface
 class ContactMethodFixture implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -247,13 +256,14 @@ class ContactMethodFixture implements FixtureInterface, DependentFixtureInterfac
 class ContactFixture implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
         return [
             AddressFixture::class,
-            ContactMethodFixture::class
+            ContactMethodFixture::class,
         ];
     }
 }
@@ -261,7 +271,8 @@ class ContactFixture implements FixtureInterface, DependentFixtureInterface
 class CircularReferenceFixture implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -272,7 +283,8 @@ class CircularReferenceFixture implements FixtureInterface, DependentFixtureInte
 class CircularReferenceFixture2 implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -283,7 +295,8 @@ class CircularReferenceFixture2 implements FixtureInterface, DependentFixtureInt
 class CircularReferenceFixture3 implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -294,18 +307,20 @@ class CircularReferenceFixture3 implements FixtureInterface, DependentFixtureInt
 class FixtureWithItselfAsParent implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
-        return [FixtureWithItselfAsParent::class];
+        return [self::class];
     }
 }
 
 class FixtureWithUnexistentDependency implements FixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getDependencies()
     {
@@ -316,7 +331,8 @@ class FixtureWithUnexistentDependency implements FixtureInterface, DependentFixt
 class FixtureImplementingBothOrderingInterfaces implements FixtureInterface, OrderedFixtureInterface, DependentFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getOrder()
     {
@@ -332,7 +348,8 @@ class FixtureImplementingBothOrderingInterfaces implements FixtureInterface, Ord
 class OrderedByNumberFixture1 implements FixtureInterface, OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getOrder()
     {
@@ -343,7 +360,8 @@ class OrderedByNumberFixture1 implements FixtureInterface, OrderedFixtureInterfa
 class OrderedByNumberFixture2 implements FixtureInterface, OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getOrder()
     {
@@ -354,7 +372,8 @@ class OrderedByNumberFixture2 implements FixtureInterface, OrderedFixtureInterfa
 class OrderedByNumberFixture3 implements FixtureInterface, OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
-    {}
+    {
+    }
 
     public function getOrder()
     {

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Doctrine\Test\DataFixtures\Sorter;
 
@@ -7,6 +8,7 @@ use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
+use RuntimeException;
 
 /**
  * TopologicalSorter tests.
@@ -14,8 +16,6 @@ use Doctrine\Tests\Common\DataFixtures\BaseTest;
  * Note: When writing tests here consider that a lot of graph
  *       constellations can have many valid orderings, so you may want to
  *       build a graph that has only 1 valid order to simplify your tests
- *
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  *
  * @covers \Doctrine\Common\DataFixtures\Sorter\TopologicalSorter
  */
@@ -159,7 +159,7 @@ class TopologicalSorterTest extends BaseTest
 
         $sorter->addDependency('1', '2');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $sorter->sort();
     }
