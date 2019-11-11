@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use PHPUnit\Framework\TestCase;
 
@@ -40,5 +41,25 @@ abstract class BaseTest extends TestCase
         $config   = Setup::createAnnotationMetadataConfiguration([__DIR__ . '/TestEntity'], true, null, null, false);
 
         return EntityManager::create($dbParams, $config);
+    }
+
+    /**
+     * Prepare the database schema
+     * 
+     * @param EntityManager $em
+     * @param array         $entities
+     */
+    protected function prepareSchema(EntityManager $em, array $entities)
+    {
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema(array());
+        $schemaTool->createSchema(
+            array_map(
+                function ($entity) use ($em) {
+                    return $em->getClassMetadata($entity);
+                },
+                $entities
+            )
+        );
     }
 }

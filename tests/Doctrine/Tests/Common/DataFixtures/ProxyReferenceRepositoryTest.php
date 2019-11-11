@@ -9,6 +9,8 @@ use Doctrine\Common\DataFixtures\ProxyReferenceRepository;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
+use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+use Doctrine\Tests\Common\DataFixtures\TestEntity\UserRole;
 
 /**
  * Test ProxyReferenceRepository.
@@ -16,6 +18,8 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 class ProxyReferenceRepositoryTest extends BaseTest
 {
     public const TEST_ENTITY_ROLE = Role::class;
+    public const TEST_ENTITY_USER = User::class;
+    public const TEST_ENTITY_USER_ROLE = UserRole::class;
 
     public function testReferenceEntry()
     {
@@ -132,5 +136,42 @@ class ProxyReferenceRepositoryTest extends BaseTest
 
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin'));
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate'));
+    }
+
+    public function testCompositeForeignKeysReconstruction()
+    {
+        $em = $this->getMockSqliteEntityManager();
+        $this->prepareSchema(
+            $em,
+            array(
+                self::TEST_ENTITY_ROLE,
+                self::TEST_ENTITY_USER,
+                self::TEST_ENTITY_USER_ROLE
+            )
+        );
+
+        $referenceRepository = new ProxyReferenceRepository($em);
+
+        $roleFixture = new TestFixtures\RoleFixture;
+        $roleFixture->setReferenceRepository($referenceRepository);
+        $roleFixture->load($em);
+
+        $userFixture = new TestFixtures\UserFixture;
+        $userFixture->setReferenceRepository($referenceRepository);
+        $userFixture->load($em);
+
+        $userFixture = new TestFixtures\UserRoleFixture;
+        $userFixture->setReferenceRepository($referenceRepository);
+        $userFixture->load($em);
+
+        $em->clear();
+
+        $data = $referenceRepository->serialize();
+
+        $referenceRepository = new ProxyReferenceRepository($em);
+        $referenceRepository->unserialize($data);
+
+        $compositeKey = $referenceRepository->getReference('composite-key');
+        $this->assertInstanceOf('Doctrine\ORM\Proxy\Proxy', $compositeKey);
     }
 }
