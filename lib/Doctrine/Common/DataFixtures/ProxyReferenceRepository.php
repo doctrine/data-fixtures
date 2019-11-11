@@ -1,35 +1,24 @@
 <?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+
+declare(strict_types=1);
 
 namespace Doctrine\Common\DataFixtures;
 
-use Doctrine\Common\Version;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Version;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function get_class;
+use function json_decode;
+use function json_encode;
+use function substr;
 
 /**
  * Proxy reference repository
  *
  * Allow data fixture references and identities to be persisted when cached data fixtures
  * are pre-loaded, for example, by LiipFunctionalTestBundle\Test\WebTestCase loadFixtures().
- *
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Anthon Pang <anthonp@nationalfibre.net>
  */
 class ProxyReferenceRepository extends ReferenceRepository
 {
@@ -61,20 +50,18 @@ class ProxyReferenceRepository extends ReferenceRepository
     public function serialize()
     {
         $unitOfWork       = $this->getManager()->getUnitOfWork();
-        $simpleReferences = array();
+        $simpleReferences = [];
 
         foreach ($this->getReferences() as $name => $reference) {
             $className = $this->getRealClass(get_class($reference));
 
-            $simpleReferences[$name] = array($className, $this->getIdentifier($reference, $unitOfWork));
+            $simpleReferences[$name] = [$className, $this->getIdentifier($reference, $unitOfWork)];
         }
 
-        $serializedData = json_encode(array(
+        return json_encode([
             'references' => $simpleReferences,
             'identities' => $this->getIdentities(),
-        ));
-
-        return $serializedData;
+        ]);
     }
 
     /**
@@ -109,13 +96,19 @@ class ProxyReferenceRepository extends ReferenceRepository
      *
      * @param string $baseCacheName Base cache name
      *
-     * @return boolean
+     * @return bool
      */
     public function load($baseCacheName)
     {
         $filename = $baseCacheName . '.ser';
 
-        if ( ! file_exists($filename) || ($serializedData = file_get_contents($filename)) === false) {
+        if (! file_exists($filename)) {
+            return false;
+        }
+
+        $serializedData = file_get_contents($filename);
+
+        if ($serializedData === false) {
             return false;
         }
 

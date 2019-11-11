@@ -1,81 +1,67 @@
 <?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+
+declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use PHPUnit_Framework_TestCase;
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
 /**
  * Test Fixture executor.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ORMExecutorTest extends BaseTest
 {
     public function testExecuteWithNoPurge()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('setEntityManager')
             ->with($em);
         $executor = new ORMExecutor($em, $purger);
-        $fixture = $this->getMockFixture($em);
+        $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
-        $executor->execute(array($fixture), true);
+        $executor->execute([$fixture], true);
     }
 
     public function testExecuteWithPurge()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('purge')
             ->will($this->returnValue(null));
         $executor = new ORMExecutor($em, $purger);
-        $fixture = $this->getMockFixture($em);
+        $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
-        $executor->execute(array($fixture), false);
+        $executor->execute([$fixture], false);
     }
 
     public function testExecuteTransaction()
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $executor = new ORMExecutor($em);
-        $fixture = $this->getMockFixture($em);
-        $executor->execute(array($fixture), true);
+        $fixture  = $this->getMockFixture();
+        $fixture->expects($this->once())
+            ->method('load')
+            ->with($em);
+        $executor->execute([$fixture], true);
     }
 
-    private function getMockFixture($em)
+    private function getMockFixture()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\FixtureInterface');
+        return $this->createMock(FixtureInterface::class);
     }
 
     private function getMockPurger()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\Purger\ORMPurger');
+        return $this->createMock(ORMPurger::class);
     }
 }

@@ -1,48 +1,33 @@
 <?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+
+declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Common\DataFixtures\SharedFixtureInterface;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+use function extension_loaded;
 
 /**
  * Test referenced fixture execution
- *
- * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  */
 class ORMExecutorSharedFixtureTest extends BaseTest
 {
-    const TEST_ENTITY_ROLE = 'Doctrine\Tests\Common\DataFixtures\TestEntity\Role';
-    const TEST_ENTITY_USER = 'Doctrine\Tests\Common\DataFixtures\TestEntity\User';
+    public const TEST_ENTITY_ROLE = Role::class;
+    public const TEST_ENTITY_USER = User::class;
 
     public function testFixtureExecution()
     {
-        $em = $this->getMockAnnotationReaderEntityManager();
-        $purger = new ORMPurger();
+        $em       = $this->getMockAnnotationReaderEntityManager();
+        $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
         $referenceRepository = $executor->getReferenceRepository();
-        $fixture = $this->getMockFixture();
+        $fixture             = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
             ->with($em);
@@ -51,45 +36,45 @@ class ORMExecutorSharedFixtureTest extends BaseTest
             ->method('setReferenceRepository')
             ->with($referenceRepository);
 
-        $executor->execute(array($fixture), true);
+        $executor->execute([$fixture], true);
     }
 
     public function testSharedFixtures()
     {
-        if (!extension_loaded('pdo_sqlite')) {
+        if (! extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped('Missing pdo_sqlite extension.');
         }
 
-        $em = $this->getMockSqliteEntityManager();
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-        $schemaTool->dropSchema(array());
-        $schemaTool->createSchema(array(
+        $em         = $this->getMockSqliteEntityManager();
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema([]);
+        $schemaTool->createSchema([
             $em->getClassMetadata(self::TEST_ENTITY_ROLE),
-            $em->getClassMetadata(self::TEST_ENTITY_USER)
-        ));
+            $em->getClassMetadata(self::TEST_ENTITY_USER),
+        ]);
 
-        $purger = new ORMPurger();
+        $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
-        $userFixture = new TestFixtures\UserFixture;
-        $roleFixture = new TestFixtures\RoleFixture;
-        $executor->execute(array($roleFixture, $userFixture), true);
+        $userFixture = new TestFixtures\UserFixture();
+        $roleFixture = new TestFixtures\RoleFixture();
+        $executor->execute([$roleFixture, $userFixture], true);
 
         $referenceRepository = $executor->getReferenceRepository();
-        $references = $referenceRepository->getReferences();
+        $references          = $referenceRepository->getReferences();
 
-        $this->assertEquals(2, count($references));
+        $this->assertCount(2, $references);
         $roleReference = $referenceRepository->getReference('admin-role');
-        $this->assertTrue($roleReference instanceof Role);
+        $this->assertInstanceOf(Role::class, $roleReference);
         $this->assertEquals('admin', $roleReference->getName());
 
         $userReference = $referenceRepository->getReference('admin');
-        $this->assertTrue($userReference instanceof User);
+        $this->assertInstanceOf(User::class, $userReference);
         $this->assertEquals('admin@example.com', $userReference->getEmail());
     }
 
     private function getMockFixture()
     {
-        return $this->getMock('Doctrine\Common\DataFixtures\SharedFixtureInterface');
+        return $this->createMock(SharedFixtureInterface::class);
     }
 }

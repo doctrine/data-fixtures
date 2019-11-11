@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TestFixtures;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;

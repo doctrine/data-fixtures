@@ -1,21 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @Entity
+ * @ORM\Entity
  */
 class Role
 {
     /**
-     * @Column(type="integer")
-     * @Id
-     * @GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     *
+     * @var int|null
      */
     private $id;
 
     /**
-     * @Column(length=50)
+     * @ORM\Column(length=50)
+     *
+     * @var string|null
      */
     private $name;
 

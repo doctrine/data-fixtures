@@ -7,12 +7,30 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - hhvm
+  - 7.2
+  - 7.3
+  - 7.4snapshot
 
-install: composer install
+services: mongodb
 
-script: phpunit -v
+before_install:
+  - pecl install -f mongodb
+  - composer validate --strict
+
+install:
+  - composer update --prefer-stable --prefer-dist ${COMPOSER_FLAGS}
+
+script:
+  - ./vendor/bin/phpunit -v
+
+jobs:
+  include:
+    # Tests the lowest set of dependencies
+    - php: 7.2
+      env: LOWEST COMPOSER_FLAGS="--prefer-lowest"
+
+    - stage: Code Quality
+      env: CODING_STANDARDS
+      php: 7.2
+      script:
+        - ./vendor/bin/phpcs

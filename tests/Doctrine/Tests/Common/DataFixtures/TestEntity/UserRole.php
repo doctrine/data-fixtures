@@ -1,21 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use function md5;
+
 /**
- * @Entity
+ * @ORM\Entity
  */
 class UserRole
 {
     /**
-     * @ManyToOne(targetEntity="User")
-     * @Id
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\Id
      */
     private $user;
 
     /**
-     * @ManyToOne(targetEntity="Role")
-     * @Id
+     * @ORM\ManyToOne(targetEntity="Role")
+     * @ORM\Id
      */
     private $role;
     

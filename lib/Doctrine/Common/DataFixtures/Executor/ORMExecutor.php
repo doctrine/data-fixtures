@@ -1,42 +1,28 @@
 <?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
+
+declare(strict_types=1);
 
 namespace Doctrine\Common\DataFixtures\Executor;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class responsible for executing data fixtures.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ORMExecutor extends AbstractExecutor
 {
+    /** @var EntityManagerInterface */
+    private $em;
+
     /**
      * Construct new fixtures loader instance.
      *
      * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
      */
-    public function __construct(EntityManagerInterface $em, ORMPurger $purger = null)
+    public function __construct(EntityManagerInterface $em, ?ORMPurger $purger = null)
     {
         $this->em = $em;
         if ($purger !== null) {
@@ -51,7 +37,7 @@ class ORMExecutor extends AbstractExecutor
     /**
      * Retrieve the EntityManagerInterface instance this executor instance is using.
      *
-     * @return \Doctrine\ORM\EntityManagerInterface
+     * @return EntityManagerInterface
      */
     public function getObjectManager()
     {
@@ -67,7 +53,7 @@ class ORMExecutor extends AbstractExecutor
         );
 
         $this->referenceRepository = $referenceRepository;
-        $this->listener = new ORMReferenceListener($this->referenceRepository);
+        $this->listener            = new ORMReferenceListener($this->referenceRepository);
         $this->em->getEventManager()->addEventSubscriber($this->listener);
     }
 
@@ -75,7 +61,7 @@ class ORMExecutor extends AbstractExecutor
     public function execute(array $fixtures, $append = false)
     {
         $executor = $this;
-        $this->em->transactional(function(EntityManagerInterface $em) use ($executor, $fixtures, $append) {
+        $this->em->transactional(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
             if ($append === false) {
                 $executor->purge();
             }

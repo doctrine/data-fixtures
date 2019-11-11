@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<ruleset>
+    <arg name="basepath" value="."/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="80"/>
+    <arg name="cache" value=".phpcs-cache"/>
+    <arg name="colors" />
+
+    <!-- Ignore warnings and show progress of the run -->
+    <arg value="nps"/>
+
+    <file>lib</file>
+    <file>tests</file>
+
+    <rule ref="Doctrine">
+        <!-- Traversable type hints often end up as mixed[], so we skip them for now -->
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversablePropertyTypeHintSpecification" />
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableParameterTypeHintSpecification" />
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableReturnTypeHintSpecification" />
+
+        <!-- Will cause BC breaks to method signatures - disabled for now -->
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint" />
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint" />
+    </rule>
+
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming">
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/AbstractFixture.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Executor/AbstractExecutor.php</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming">
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Exception/CircularReferenceException.php</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming">
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/DependentFixtureInterface.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/FixtureInterface.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Purger/PurgerInterface.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/OrderedFixtureInterface.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/SharedFixtureInterface.php</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Classes.ClassFileName.NoMatch">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+</ruleset>
