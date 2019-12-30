@@ -15,7 +15,8 @@
     ],
     "require": {
         "php": "^7.2",
-        "doctrine/common": "^2.11"
+        "doctrine/common": "^2.11",
+        "doctrine/persistence": "^1.3.3"
     },
     "conflict": {
         "doctrine/phpcr-odm": "<1.3.0"

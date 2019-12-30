@@ -9,8 +9,8 @@ by implementing the [`Doctrine\Common\DataFixtures\FixtureInterface`](lib/Doctri
 ```php
 namespace MyDataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class UserFixtureLoader implements FixtureInterface
 {
@@ -82,7 +82,7 @@ a relation. Here is an example fixtures for **Role** and **User** relation
 namespace MyDataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class UserRoleDataLoader extends AbstractFixture
 {
@@ -110,7 +110,7 @@ And the **User** data loading fixture:
 namespace MyDataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class UserDataLoader extends AbstractFixture
 {
@@ -145,7 +145,7 @@ namespace MyDataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class MyFixture extends AbstractFixture implements OrderedFixtureInterface
 {
@@ -168,7 +168,7 @@ namespace MyDataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class MyFixture extends AbstractFixture implements DependentFixtureInterface
 {

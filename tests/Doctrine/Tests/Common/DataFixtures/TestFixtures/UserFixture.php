@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures\TestFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
 
 class UserFixture extends AbstractFixture
