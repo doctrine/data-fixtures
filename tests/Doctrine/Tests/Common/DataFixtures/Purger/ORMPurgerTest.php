@@ -26,7 +26,7 @@ class ORMPurgerTest extends BaseTest
         $method   = $class->getMethod('getAssociationTables');
         $method->setAccessible(true);
         $associationTables = $method->invokeArgs($purger, [[$metadata], $platform]);
-        $this->assertEquals($associationTables[0], 'readers.author_reader');
+        $this->assertEquals($associationTables[0], 'readers__author_reader');
     }
 
     public function testGetAssociationTablesQuoted()
