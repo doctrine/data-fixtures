@@ -13,7 +13,7 @@
         "doctrine/common": "~2.2"
     },
     "require-dev": {
-        "doctrine/orm": "^2.5.4",
+        "doctrine/orm": "^2.7.0",
         "doctrine/dbal": "^2.5.4",
         "phpunit/phpunit": "^7.0",
         "alcaeus/mongo-php-adapter": "^1.1",
