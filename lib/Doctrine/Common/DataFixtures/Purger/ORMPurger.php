@@ -6,11 +6,13 @@ namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use function array_reverse;
 use function array_search;
 use function count;
+use function implode;
 use function is_callable;
 use function method_exists;
 use function preg_match;
@@ -246,11 +248,15 @@ class ORMPurger implements PurgerInterface
      */
     private function getTableName($class, $platform)
     {
-        if (isset($class->table['schema']) && ! method_exists($class, 'getSchemaName')) {
-            return $class->table['schema'] . '.' . $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+        if (method_exists($class, 'getSchemaName')) {
+            $identifier[] = $class->getSchemaName();
+        } elseif (isset($class->table['schema'])) {
+            $identifier[] = $class->table['schema'];
         }
 
-        return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+        $identifier[] = $class->getTableName();
+
+        return (new Identifier(implode('.', $identifier)))->getQuotedName($platform);
     }
 
     /**
