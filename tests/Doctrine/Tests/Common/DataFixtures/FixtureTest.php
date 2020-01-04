@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 /**
  * Test Fixture interface.

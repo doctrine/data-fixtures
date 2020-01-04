@@ -6,7 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestFixtures;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 
 class RoleFixture implements SharedFixtureInterface
