@@ -6,9 +6,13 @@ namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ProxyReferenceRepository;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\Tests\Common\DataFixtures\TestEntity\Link;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
+use Doctrine\Tests\Common\DataFixtures\TestTypes\UuidType;
+use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
 
 /**
  * Test ProxyReferenceRepository.
@@ -16,6 +20,18 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 class ProxyReferenceRepositoryTest extends BaseTest
 {
     public const TEST_ENTITY_ROLE = Role::class;
+    public const TEST_ENTITY_LINK = Link::class;
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+
+        if (Type::hasType('uuid')) {
+            return;
+        }
+
+        Type::addType('uuid', UuidType::class);
+    }
 
     public function testReferenceEntry()
     {
@@ -111,6 +127,35 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $ref = $proxyReferenceRepository->getReference('admin-role');
 
         $this->assertInstanceOf(Proxy::class, $ref);
+    }
+
+    public function testReconstructionOfCustomTypedId() : void
+    {
+        $em                  = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ProxyReferenceRepository($em);
+        $listener            = new ORMReferenceListener($referenceRepository);
+        $em->getEventManager()->addEventSubscriber($listener);
+
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema([]);
+        $schemaTool->createSchema([$em->getClassMetadata(self::TEST_ENTITY_LINK)]);
+
+        $link = new TestEntity\Link(new Uuid('5e48c0d7-78c2-44f5-bed0-e7970b2822b8'));
+        $link->setUrl('http://example.com');
+
+        $referenceRepository->addReference('home-link', $link);
+        $em->persist($link);
+        $em->flush();
+        $em->clear();
+
+        $serializedData           = $referenceRepository->serialize();
+        $proxyReferenceRepository = new ProxyReferenceRepository($em);
+        $proxyReferenceRepository->unserialize($serializedData);
+
+        $this->assertInstanceOf(
+            'Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid',
+            $proxyReferenceRepository->getReference('home-link')->getId()
+        );
     }
 
     public function testReferenceMultipleEntries()
