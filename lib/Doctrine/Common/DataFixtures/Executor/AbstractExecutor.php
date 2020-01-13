@@ -9,9 +9,10 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Exception;
 use function get_class;
+use function interface_exists;
 use function sprintf;
 
 /**
@@ -139,3 +140,5 @@ abstract class AbstractExecutor
      */
     abstract public function execute(array $fixtures, $append = false);
 }
+
+interface_exists(ObjectManager::class);

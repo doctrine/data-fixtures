@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures;
 
 use BadMethodCallException;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
+use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
 use function array_key_exists;
 use function array_keys;
