@@ -15,6 +15,7 @@ class ORMPurgerTest extends BaseTest
     public const TEST_ENTITY_USER             = TestEntity\User::class;
     public const TEST_ENTITY_USER_WITH_SCHEMA = TestEntity\UserWithSchema::class;
     public const TEST_ENTITY_QUOTED           = TestEntity\Quoted::class;
+    public const TEST_ENTITY_GROUP            = TestEntity\Group::class;
 
     public function testGetAssociationTables()
     {
@@ -53,5 +54,19 @@ class ORMPurgerTest extends BaseTest
         $method->setAccessible(true);
         $tableName = $method->invokeArgs($purger, [$metadata, $platform]);
         $this->assertStringStartsWith('test_schema', $tableName);
+    }
+
+    public function testGetTableNameQuoted() : void
+    {
+        $em       = $this->getMockAnnotationReaderEntityManager();
+        $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP);
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $purger   = new ORMPurger($em);
+        $class    = new ReflectionClass(ORMPurger::class);
+        $method   = $class->getMethod('getTableName');
+        $method->setAccessible(true);
+        $tableName = $method->invokeArgs($purger, [$metadata, $platform]);
+        $this->assertStringStartsWith('"', $tableName);
+        $this->assertStringEndsWith('"', $tableName);
     }
 }
