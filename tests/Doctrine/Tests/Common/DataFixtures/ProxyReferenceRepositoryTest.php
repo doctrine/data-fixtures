@@ -22,7 +22,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
     public const TEST_ENTITY_ROLE = Role::class;
     public const TEST_ENTITY_LINK = Link::class;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
