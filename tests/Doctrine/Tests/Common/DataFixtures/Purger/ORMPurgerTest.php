@@ -12,10 +12,11 @@ use ReflectionClass;
  */
 class ORMPurgerTest extends BaseTest
 {
-    public const TEST_ENTITY_USER             = TestEntity\User::class;
-    public const TEST_ENTITY_USER_WITH_SCHEMA = TestEntity\UserWithSchema::class;
-    public const TEST_ENTITY_QUOTED           = TestEntity\Quoted::class;
-    public const TEST_ENTITY_GROUP            = TestEntity\Group::class;
+    public const TEST_ENTITY_USER              = TestEntity\User::class;
+    public const TEST_ENTITY_USER_WITH_SCHEMA  = TestEntity\UserWithSchema::class;
+    public const TEST_ENTITY_QUOTED            = TestEntity\Quoted::class;
+    public const TEST_ENTITY_GROUP             = TestEntity\Group::class;
+    public const TEST_ENTITY_GROUP_WITH_SCHEMA = TestEntity\GroupWithSchema::class;
 
     public function testGetAssociationTables()
     {
@@ -56,7 +57,7 @@ class ORMPurgerTest extends BaseTest
         $this->assertStringStartsWith('test_schema', $tableName);
     }
 
-    public function testGetTableNameQuoted() : void
+    public function testGetDeleteFromTableSQL() : void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP);
@@ -66,7 +67,25 @@ class ORMPurgerTest extends BaseTest
         $method   = $class->getMethod('getTableName');
         $method->setAccessible(true);
         $tableName = $method->invokeArgs($purger, [$metadata, $platform]);
-        $this->assertStringStartsWith('"', $tableName);
-        $this->assertStringEndsWith('"', $tableName);
+        $method    = $class->getMethod('getDeleteFromTableSQL');
+        $method->setAccessible(true);
+        $sql = $method->invokeArgs($purger, [$tableName, $platform]);
+        $this->assertEquals('DELETE FROM "Group"', $sql);
+    }
+
+    public function testGetDeleteFromTableSQLWithSchema() : void
+    {
+        $em       = $this->getMockAnnotationReaderEntityManager();
+        $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP_WITH_SCHEMA);
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $purger   = new ORMPurger($em);
+        $class    = new ReflectionClass(ORMPurger::class);
+        $method   = $class->getMethod('getTableName');
+        $method->setAccessible(true);
+        $tableName = $method->invokeArgs($purger, [$metadata, $platform]);
+        $method    = $class->getMethod('getDeleteFromTableSQL');
+        $method->setAccessible(true);
+        $sql = $method->invokeArgs($purger, [$tableName, $platform]);
+        $this->assertEquals('DELETE FROM test_schema__group', $sql);
     }
 }
