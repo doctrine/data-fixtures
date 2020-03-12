@@ -13,7 +13,7 @@ interface DependentFixtureInterface
      * This method must return an array of fixtures classes
      * on which the implementing class depends on
      *
-     * @return class-string[]
+     * @return string[]
      */
     public function getDependencies();
 }
