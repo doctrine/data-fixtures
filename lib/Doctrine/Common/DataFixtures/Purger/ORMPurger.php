@@ -20,7 +20,7 @@ use function preg_match;
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
  */
-class ORMPurger implements PurgerInterface
+class ORMPurger implements PurgerInterface, ORMPurgerInterface
 {
     public const PURGE_MODE_DELETE   = 1;
     public const PURGE_MODE_TRUNCATE = 2;
@@ -76,9 +76,7 @@ class ORMPurger implements PurgerInterface
         return $this->purgeMode;
     }
 
-    /**
-     * Set the EntityManagerInterface instance this purger instance should use.
-     */
+    /** @inheritDoc */
     public function setEntityManager(EntityManagerInterface $em)
     {
         $this->em = $em;
