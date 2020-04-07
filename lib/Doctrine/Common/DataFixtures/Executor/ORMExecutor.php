@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\DataFixtures\Purger\ORMPurgerInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -22,7 +22,7 @@ class ORMExecutor extends AbstractExecutor
      *
      * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
      */
-    public function __construct(EntityManagerInterface $em, ?ORMPurger $purger = null)
+    public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null)
     {
         $this->em = $em;
         if ($purger !== null) {
