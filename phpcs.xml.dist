@@ -39,6 +39,7 @@
     <rule ref="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming">
         <exclude-pattern>lib/Doctrine/Common/DataFixtures/DependentFixtureInterface.php</exclude-pattern>
         <exclude-pattern>lib/Doctrine/Common/DataFixtures/FixtureInterface.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Purger/ORMPurgerInterface.php</exclude-pattern>
         <exclude-pattern>lib/Doctrine/Common/DataFixtures/Purger/PurgerInterface.php</exclude-pattern>
         <exclude-pattern>lib/Doctrine/Common/DataFixtures/OrderedFixtureInterface.php</exclude-pattern>
         <exclude-pattern>lib/Doctrine/Common/DataFixtures/SharedFixtureInterface.php</exclude-pattern>
