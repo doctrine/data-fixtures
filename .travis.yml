@@ -24,7 +24,13 @@ script:
   - ./vendor/bin/phpunit -v
 
 jobs:
+  allow_failures:
+    - php: nightly
   include:
+    -   stage: Test
+        php: nightly
+        before_install:
+            - composer config platform.php 7.4.99
     # Tests the lowest set of dependencies
     - php: 7.2
       env: LOWEST COMPOSER_FLAGS="--prefer-lowest"
