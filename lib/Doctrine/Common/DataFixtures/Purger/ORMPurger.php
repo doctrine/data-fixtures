@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use function array_reverse;
 use function array_search;
 use function count;
-use function implode;
 use function is_callable;
 use function method_exists;
 use function preg_match;
@@ -150,7 +149,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
             }
 
             if ($this->purgeMode === self::PURGE_MODE_DELETE) {
-                $connection->executeUpdate('DELETE FROM ' . $tbl);
+                $connection->executeUpdate($this->getDeleteFromTableSQL($tbl, $platform));
             } else {
                 $connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
             }
@@ -238,23 +237,13 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         return $associationTables;
     }
 
-    /**
-     * @param ClassMetadata    $class
-     * @param AbstractPlatform $platform
-     *
-     * @return string
-     */
-    private function getTableName($class, $platform)
+    private function getTableName(ClassMetadata $class, AbstractPlatform $platform) : string
     {
-        if (method_exists($class, 'getSchemaName')) {
-            $identifier[] = $class->getSchemaName();
-        } elseif (isset($class->table['schema'])) {
-            $identifier[] = $class->table['schema'];
+        if (isset($class->table['schema']) && ! method_exists($class, 'getSchemaName')) {
+            return $class->table['schema'] . '.' . $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
         }
 
-        $identifier[] = $class->getTableName();
-
-        return (new Identifier(implode('.', $identifier)))->getQuotedName($platform);
+        return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
     }
 
     /**
@@ -271,5 +260,12 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         }
 
         return $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
+    }
+
+    private function getDeleteFromTableSQL(string $tableName, AbstractPlatform $platform) : string
+    {
+        $tableIdentifier = new Identifier($tableName);
+
+        return 'DELETE FROM ' . $tableIdentifier->getQuotedName($platform);
     }
 }
