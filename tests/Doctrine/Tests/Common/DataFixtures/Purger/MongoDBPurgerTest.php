@@ -11,9 +11,12 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 use Doctrine\Tests\Common\DataFixtures\TestDocument\Role;
+use MongoCollection;
 use MongoDB\Collection;
+use MongoDB\Driver\Exception\ConnectionTimeoutException;
 use function class_exists;
 use function dirname;
+use function method_exists;
 
 class MongoDBPurgerTest extends BaseTest
 {
@@ -36,7 +39,11 @@ class MongoDBPurgerTest extends BaseTest
 
         AnnotationRegistry::registerLoader('class_exists');
 
-        return DocumentManager::create(null, $config);
+        $dm = DocumentManager::create(null, $config);
+
+        $this->skipIfMongoDBUnavailable($dm);
+
+        return $dm;
     }
 
     private function getPurger()
@@ -66,7 +73,8 @@ class MongoDBPurgerTest extends BaseTest
         $this->assertIndexCount(2, $collection);
     }
 
-    private function assertIndexCount(int $expectedCount, $collection)
+    /** @var Collection|MongoCollection $collection */
+    private function assertIndexCount(int $expectedCount, $collection) : void
     {
         if ($collection instanceof Collection) {
             $indexes = $collection->listIndexes();
@@ -75,5 +83,24 @@ class MongoDBPurgerTest extends BaseTest
         }
 
         $this->assertCount($expectedCount, $indexes);
+    }
+
+    private function skipIfMongoDBUnavailable(DocumentManager $documentManager) : void
+    {
+        if (method_exists($documentManager, 'getClient')) {
+            try {
+                $documentManager->getClient()->selectDatabase('admin')->command(['ping' => 1]);
+            } catch (ConnectionTimeoutException $driverException) {
+                $this->markTestSkipped('Unable to connect to MongoDB');
+            }
+
+            return;
+        }
+
+        if ($documentManager->getConnection()->connect()) {
+            return;
+        }
+
+        $this->markTestSkipped('Unable to connect to MongoDB');
     }
 }
