@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures\Purger;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 use Doctrine\Tests\Common\DataFixtures\TestDocument\Role;
+use MongoDB\Collection;
 use function class_exists;
 use function dirname;
 
@@ -31,14 +33,10 @@ class MongoDBPurgerTest extends BaseTest
         $config->setHydratorDir($root . '/generate/hydrators');
         $config->setHydratorNamespace('Hydrators');
         $config->setMetadataDriverImpl(AnnotationDriver::create(dirname(__DIR__) . '/TestDocument'));
-        AnnotationDriver::registerAnnotationClasses();
 
-        $dm = DocumentManager::create(null, $config);
-        if (! $dm->getConnection()->connect()) {
-            $this->markTestSkipped('Unable to connect to MongoDB');
-        }
+        AnnotationRegistry::registerLoader('class_exists');
 
-        return $dm;
+        return DocumentManager::create(null, $config);
     }
 
     private function getPurger()
@@ -54,17 +52,28 @@ class MongoDBPurgerTest extends BaseTest
         $collection = $dm->getDocumentCollection(self::TEST_DOCUMENT_ROLE);
         $collection->drop();
 
-        $this->assertCount(0, $collection->getIndexInfo());
+        $this->assertIndexCount(0, $collection);
 
         $role = new Role();
         $role->setName('role');
         $dm->persist($role);
         $dm->flush();
 
-        $schema = $dm->getSchemaManager()->ensureDocumentIndexes(self::TEST_DOCUMENT_ROLE);
-        $this->assertCount(2, $collection->getIndexInfo());
+        $dm->getSchemaManager()->ensureDocumentIndexes(self::TEST_DOCUMENT_ROLE);
+        $this->assertIndexCount(2, $collection);
 
         $purger->purge();
-        $this->assertCount(2, $collection->getIndexInfo());
+        $this->assertIndexCount(2, $collection);
+    }
+
+    private function assertIndexCount(int $expectedCount, $collection)
+    {
+        if ($collection instanceof Collection) {
+            $indexes = $collection->listIndexes();
+        } else {
+            $indexes = $collection->getIndexInfo();
+        }
+
+        $this->assertCount($expectedCount, $indexes);
     }
 }

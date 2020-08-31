@@ -22,23 +22,19 @@
         "doctrine/phpcr-odm": "<1.3.0"
     },
     "require-dev": {
-        "alcaeus/mongo-php-adapter": "^1.1",
         "doctrine/coding-standard": "^6.0",
         "doctrine/dbal": "^2.5.4",
-        "doctrine/mongodb-odm": "^1.3.0",
+        "doctrine/mongodb-odm": "^1.3.0 || ^2.0.0",
         "doctrine/orm": "^2.7.0",
         "phpunit/phpunit": "^7.0"
     },
     "suggest": {
-        "alcaeus/mongo-php-adapter": "For using MongoDB ODM with PHP 7",
+        "alcaeus/mongo-php-adapter": "For using MongoDB ODM 1.3 with PHP 7 (deprecated)",
         "doctrine/mongodb-odm": "For loading MongoDB ODM fixtures",
         "doctrine/orm": "For loading ORM fixtures",
         "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
     },
     "config": {
-        "platform": {
-            "ext-mongo": "1.6.16"
-        },
         "sort-packages": true
     },
     "extra": {
