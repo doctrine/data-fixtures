@@ -35,7 +35,7 @@ class ORMPurger implements PurgerInterface
     private $purgeMode = self::PURGE_MODE_DELETE;
 
     /**
-     * Table/view names to be excleded from purge
+     * Table/view names to be excluded from purge
      *
      * @var string[]
      */
@@ -45,7 +45,7 @@ class ORMPurger implements PurgerInterface
      * Construct new purger instance.
      *
      * @param EntityManagerInterface $em       EntityManagerInterface instance used for persistence.
-     * @param string[]               $excluded array of table/view names to be excleded from purge
+     * @param string[]               $excluded array of table/view names to be excluded from purge
      */
     public function __construct(?EntityManagerInterface $em = null, array $excluded = [])
     {
