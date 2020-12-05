@@ -12,7 +12,7 @@ namespace MyDataFixtures;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserFixtureLoader implements FixtureInterface
+class UserDataLoader implements FixtureInterface
 {
     public function load(ObjectManager $manager)
     {
