@@ -18,6 +18,12 @@ jobs:
     name: "PHPUnit"
     runs-on: "ubuntu-20.04"
 
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
     strategy:
       matrix:
         php-version:
