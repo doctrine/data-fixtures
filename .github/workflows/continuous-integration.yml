@@ -35,7 +35,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          extensions: "mongodb"
+          extensions: "mongodb, sqlite3"
           coverage: "pcov"
           ini-values: "zend.assertions=1"
 

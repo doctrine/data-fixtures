@@ -29,7 +29,7 @@ jobs:
         with:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
-          extensions: "mongodb"
+          extensions: "mongodb, sqlite3"
           tools: "cs2pr"
 
       - name: "Cache dependencies installed with Composer"
