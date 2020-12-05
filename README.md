@@ -1,6 +1,6 @@
 # Doctrine Data Fixtures Extension
 
-[![Build Status](https://travis-ci.org/doctrine/data-fixtures.svg?branch=master)](https://travis-ci.org/doctrine/data-fixtures)
+[![Build Status](https://github.com/doctrine/data-fixtures/workflows/Continuous%20Integration/badge.svg)](https://github.com/doctrine/data-fixtures/actions)
 
 This extension aims to provide a simple way to manage and execute the loading of data fixtures
 for the [Doctrine ORM or ODM](http://www.doctrine-project.org/). You can write fixture classes
