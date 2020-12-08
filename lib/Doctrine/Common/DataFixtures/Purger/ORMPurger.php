@@ -192,7 +192,7 @@ class ORMPurger implements PurgerInterface
                 }
 
                 /** @var ClassMetadata $targetClass */
-                $targetClass = $em->getClassMetadata($assoc['targetEntity']);
+                $targetClass     = $em->getClassMetadata($assoc['targetEntity']);
                 $targetClassName = $targetClass->getName();
 
                 if (! $sorter->hasNode($targetClassName)) {

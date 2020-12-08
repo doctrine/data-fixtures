@@ -14,10 +14,10 @@ class UuidType extends Type
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        $field_declaration['length'] = 36;
-        $field_declaration['fixed']  = true;
+        $fieldDeclaration['length'] = 36;
+        $fieldDeclaration['fixed']  = true;
 
-        return $platform->getVarcharTypeDeclarationSQL($field_declaration);
+        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
