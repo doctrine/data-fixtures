@@ -50,7 +50,7 @@ jobs:
           coverage: "pcov"
           ini-values: "zend.assertions=1"
 
-      - name: "Install dependencies with composer"
+      - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v1"
         with:
           dependency-versions: "${{ matrix.dependencies }}"
