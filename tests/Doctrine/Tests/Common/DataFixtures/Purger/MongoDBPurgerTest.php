@@ -14,6 +14,7 @@ use Doctrine\Tests\Common\DataFixtures\TestDocument\Role;
 use MongoCollection;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\ConnectionTimeoutException;
+
 use function class_exists;
 use function dirname;
 use function method_exists;
@@ -74,7 +75,7 @@ class MongoDBPurgerTest extends BaseTest
     }
 
     /** @var Collection|MongoCollection $collection */
-    private function assertIndexCount(int $expectedCount, $collection) : void
+    private function assertIndexCount(int $expectedCount, $collection): void
     {
         if ($collection instanceof Collection) {
             $indexes = $collection->listIndexes();
@@ -85,7 +86,7 @@ class MongoDBPurgerTest extends BaseTest
         $this->assertCount($expectedCount, $indexes);
     }
 
-    private function skipIfMongoDBUnavailable(DocumentManager $documentManager) : void
+    private function skipIfMongoDBUnavailable(DocumentManager $documentManager): void
     {
         if (method_exists($documentManager, 'getClient')) {
             try {

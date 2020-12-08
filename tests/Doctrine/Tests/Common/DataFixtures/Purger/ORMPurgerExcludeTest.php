@@ -10,6 +10,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\ExcludedEntity;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity;
+
 use function count;
 use function extension_loaded;
 use function method_exists;
@@ -115,9 +116,9 @@ class ORMPurgerExcludeTest extends BaseTest
         $this->executeTestPurge(null, ['ExcludedEntity'], null);
     }
 
-    public function testPurgeExcludeUsingFilterCallable() : void
+    public function testPurgeExcludeUsingFilterCallable(): void
     {
-        $this->executeTestPurge(null, [], static function (string $table) : bool {
+        $this->executeTestPurge(null, [], static function (string $table): bool {
             return (bool) preg_match('~^(?!ExcludedEntity)~', $table);
         });
     }

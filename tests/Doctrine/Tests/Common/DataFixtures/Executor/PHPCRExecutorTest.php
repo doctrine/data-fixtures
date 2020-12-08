@@ -12,6 +12,7 @@ use Doctrine\Tests\Common\DataFixtures\BaseTest;
 use Exception;
 use PHPUnit_Framework_MockObject_MockObject;
 use Throwable;
+
 use function class_exists;
 
 /**

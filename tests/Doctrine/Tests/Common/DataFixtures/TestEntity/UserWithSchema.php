@@ -6,6 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 use function md5;
 
 /**
@@ -74,7 +75,7 @@ class UserWithSchema
         $this->id = $id;
     }
 
-    public function getId() : ?int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -84,7 +85,7 @@ class UserWithSchema
         $this->code = $code;
     }
 
-    public function getCode() : ?string
+    public function getCode(): ?string
     {
         return $this->code;
     }

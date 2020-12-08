@@ -12,6 +12,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use InvalidArgumentException;
 use RuntimeException;
+
 use function array_search;
 use function array_shift;
 

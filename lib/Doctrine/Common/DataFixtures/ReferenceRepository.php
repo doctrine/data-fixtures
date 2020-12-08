@@ -8,6 +8,7 @@ use BadMethodCallException;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
 use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
+
 use function array_key_exists;
 use function array_keys;
 use function get_class;

@@ -22,7 +22,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
     public const TEST_ENTITY_ROLE = Role::class;
     public const TEST_ENTITY_LINK = Link::class;
 
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -129,7 +129,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Proxy::class, $ref);
     }
 
-    public function testReconstructionOfCustomTypedId() : void
+    public function testReconstructionOfCustomTypedId(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ProxyReferenceRepository($em);

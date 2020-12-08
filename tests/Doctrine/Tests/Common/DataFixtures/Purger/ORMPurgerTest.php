@@ -57,7 +57,7 @@ class ORMPurgerTest extends BaseTest
         $this->assertStringStartsWith('test_schema', $tableName);
     }
 
-    public function testGetDeleteFromTableSQL() : void
+    public function testGetDeleteFromTableSQL(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP);
@@ -73,7 +73,7 @@ class ORMPurgerTest extends BaseTest
         $this->assertEquals('DELETE FROM "Group"', $sql);
     }
 
-    public function testGetDeleteFromTableSQLWithSchema() : void
+    public function testGetDeleteFromTableSQLWithSchema(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP_WITH_SCHEMA);

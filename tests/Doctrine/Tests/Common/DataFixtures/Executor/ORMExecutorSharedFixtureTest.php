@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+
 use function extension_loaded;
 
 /**
