@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 
 use function array_reverse;
 use function array_search;
+use function assert;
 use function count;
 use function is_callable;
 use function method_exists;
@@ -191,8 +192,8 @@ class ORMPurger implements PurgerInterface
                     continue;
                 }
 
-                /** @var ClassMetadata $targetClass */
-                $targetClass     = $em->getClassMetadata($assoc['targetEntity']);
+                $targetClass = $em->getClassMetadata($assoc['targetEntity']);
+                assert($targetClass instanceof ClassMetadata);
                 $targetClassName = $targetClass->getName();
 
                 if (! $sorter->hasNode($targetClassName)) {

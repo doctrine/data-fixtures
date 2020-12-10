@@ -17,6 +17,8 @@ use OutOfBoundsException;
 use Prophecy\Prophecy\ProphecyInterface;
 use stdClass;
 
+use function assert;
+
 class ReferenceRepositoryTest extends BaseTest
 {
     public function testReferenceEntry()
@@ -185,16 +187,16 @@ class ReferenceRepositoryTest extends BaseTest
         $role               = new Role();
         $identitiesExpected = ['id' => 1];
 
-        /** @var UnitOfWork | ProphecyInterface $uow */
         $uow = $this->prophesize(UnitOfWork::class);
+        assert($uow instanceof UnitOfWork || $uow instanceof ProphecyInterface);
         $uow->isInIdentityMap($role)->shouldBeCalledTimes(2)->willReturn(true, false);
 
-        /** @var ClassMetadata $classMetadata */
         $classMetadata = $this->prophesize(ClassMetadata::class);
+        assert($classMetadata instanceof ClassMetadata);
         $classMetadata->getIdentifierValues($role)->shouldBeCalled()->willReturn($identitiesExpected);
 
-        /** @var EntityManagerInterface | ProphecyInterface $em */
         $em = $this->prophesize(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface || $em instanceof ProphecyInterface);
         $em->getUnitOfWork()->shouldBeCalled()->willReturn($uow);
         $em->getClassMetadata(Role::class)->shouldBeCalled()->willReturn($classMetadata);
 
