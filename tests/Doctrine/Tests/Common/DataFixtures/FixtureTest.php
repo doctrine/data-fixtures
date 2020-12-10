@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectManager;
  */
 class FixtureTest extends BaseTest
 {
-    public function testFixtureInterface()
+    public function testFixtureInterface(): void
     {
         $em      = $this->createMock(ObjectManager::class);
         $fixture = new MyFixture2();
@@ -27,7 +27,7 @@ class MyFixture2 implements FixtureInterface
     /** @var bool */
     public $loaded = false;
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->loaded = true;
     }

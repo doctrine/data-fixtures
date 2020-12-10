@@ -21,7 +21,7 @@ use function assert;
 
 class ReferenceRepositoryTest extends BaseTest
 {
-    public function testReferenceEntry()
+    public function testReferenceEntry(): void
     {
         $em = $this->getMockAnnotationReaderEntityManager();
 
@@ -42,7 +42,7 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Role::class, $references['test']);
     }
 
-    public function testReferenceIdentityPopulation()
+    public function testReferenceIdentityPopulation(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = $this->getMockBuilder(ReferenceRepository::class)
@@ -73,7 +73,7 @@ class ReferenceRepositoryTest extends BaseTest
         $roleFixture->load($em);
     }
 
-    public function testReferenceReconstruction()
+    public function testReferenceReconstruction(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
@@ -99,7 +99,7 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Proxy::class, $ref);
     }
 
-    public function testReferenceMultipleEntries()
+    public function testReferenceMultipleEntries(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
@@ -120,7 +120,7 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate'));
     }
 
-    public function testUndefinedReference()
+    public function testUndefinedReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
@@ -130,7 +130,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->getReference('foo');
     }
 
-    public function testThrowsExceptionAddingDuplicatedReference()
+    public function testThrowsExceptionAddingDuplicatedReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
         $referenceRepository->addReference('duplicated_reference', new stdClass());
@@ -141,7 +141,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->addReference('duplicated_reference', new stdClass());
     }
 
-    public function testThrowsExceptionTryingToGetWrongReference()
+    public function testThrowsExceptionTryingToGetWrongReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
@@ -151,7 +151,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->getReference('missing_reference');
     }
 
-    public function testHasIdentityCheck()
+    public function testHasIdentityCheck(): void
     {
         $role                = new Role();
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
@@ -162,7 +162,7 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertEquals(['entity' => $role], $referenceRepository->getIdentities());
     }
 
-    public function testSetReferenceHavingIdentifier()
+    public function testSetReferenceHavingIdentifier(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
@@ -182,7 +182,7 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertArrayHasKey('entity', $identities);
     }
 
-    public function testGetIdentifierWhenHasNotBeenManagedYetByUnitOfWork()
+    public function testGetIdentifierWhenHasNotBeenManagedYetByUnitOfWork(): void
     {
         $role               = new Role();
         $identitiesExpected = ['id' => 1];
@@ -192,7 +192,6 @@ class ReferenceRepositoryTest extends BaseTest
         $uow->isInIdentityMap($role)->shouldBeCalledTimes(2)->willReturn(true, false);
 
         $classMetadata = $this->prophesize(ClassMetadata::class);
-        assert($classMetadata instanceof ClassMetadata);
         $classMetadata->getIdentifierValues($role)->shouldBeCalled()->willReturn($identitiesExpected);
 
         $em = $this->prophesize(EntityManagerInterface::class);

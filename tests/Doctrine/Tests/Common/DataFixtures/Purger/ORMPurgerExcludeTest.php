@@ -66,7 +66,7 @@ class ORMPurgerExcludeTest extends BaseTest
      * @param string|null $expression
      * @param array       $list
      */
-    public function executeTestPurge($expression, array $list, ?callable $filter = null)
+    public function executeTestPurge($expression, array $list, ?callable $filter = null): void
     {
         $em                 = $this->loadTestData();
         $excludedRepository = $em->getRepository(self::TEST_ENTITY_EXCLUDED);
@@ -103,7 +103,7 @@ class ORMPurgerExcludeTest extends BaseTest
     /**
      * Test for purge exclusion usig dbal filter expression regexp.
      */
-    public function testPurgeExcludeUsingFilterExpression()
+    public function testPurgeExcludeUsingFilterExpression(): void
     {
         $this->executeTestPurge('~^(?!ExcludedEntity)~', [], null);
     }
@@ -111,7 +111,7 @@ class ORMPurgerExcludeTest extends BaseTest
     /**
      * Test for purge exclusion usig explicit exclution list.
      */
-    public function testPurgeExcludeUsingList()
+    public function testPurgeExcludeUsingList(): void
     {
         $this->executeTestPurge(null, ['ExcludedEntity'], null);
     }

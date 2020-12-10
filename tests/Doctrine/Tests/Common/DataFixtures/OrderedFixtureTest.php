@@ -14,7 +14,7 @@ use Doctrine\Persistence\ObjectManager;
  */
 class OrderedFixtureTest extends BaseTest
 {
-    public function testFixtureOrder()
+    public function testFixtureOrder(): void
     {
         $loader = new Loader();
         $loader->addFixture(new OrderedFixture1());
@@ -34,11 +34,11 @@ class OrderedFixtureTest extends BaseTest
 
 class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 5;
     }
@@ -46,11 +46,11 @@ class OrderedFixture1 implements FixtureInterface, OrderedFixtureInterface
 
 class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 2;
     }
@@ -58,11 +58,11 @@ class OrderedFixture2 implements FixtureInterface, OrderedFixtureInterface
 
 class OrderedFixture3 implements FixtureInterface, OrderedFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 8;
     }
@@ -70,7 +70,7 @@ class OrderedFixture3 implements FixtureInterface, OrderedFixtureInterface
 
 class BaseFixture1 implements FixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
     }
 }

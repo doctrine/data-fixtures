@@ -27,7 +27,7 @@ class Group
      */
     private $code;
 
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -37,7 +37,7 @@ class Group
         return $this->id;
     }
 
-    public function setCode($code): void
+    public function setCode(string $code): void
     {
         $this->code = $code;
     }

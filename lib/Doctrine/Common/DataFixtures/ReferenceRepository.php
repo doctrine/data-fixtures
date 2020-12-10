@@ -199,6 +199,8 @@ class ReferenceRepository
      * Checks if reference has identity stored
      *
      * @param string $name
+     *
+     * @return bool
      */
     public function hasIdentity($name)
     {

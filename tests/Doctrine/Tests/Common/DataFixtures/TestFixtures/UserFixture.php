@@ -10,7 +10,7 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
 
 class UserFixture extends AbstractFixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $admin = new User();
         $admin->setId(4);

@@ -69,7 +69,7 @@ class User
      */
     private $authors;
 
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -79,7 +79,7 @@ class User
         return $this->id;
     }
 
-    public function setCode($code)
+    public function setCode(string $code): void
     {
         $this->code = $code;
     }
@@ -89,32 +89,32 @@ class User
         return $this->code;
     }
 
-    public function setPassword($password)
+    public function setPassword(string $password): void
     {
         $this->password = md5($password);
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setEmail($email)
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setRole(Role $role)
+    public function setRole(Role $role): void
     {
         $this->role = $role;
     }
 
-    public function getRole()
+    public function getRole(): ?Role
     {
         return $this->role;
     }

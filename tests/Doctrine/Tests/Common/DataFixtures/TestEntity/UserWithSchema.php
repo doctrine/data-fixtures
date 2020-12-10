@@ -59,18 +59,18 @@ class UserWithSchema
      *      inverseJoinColumns={@ORM\JoinColumn(name="reader_id", referencedColumnName="id")}
      * )
      *
-     * @var UserWithSchema[]|Collection
+     * @psalm-var Collection<int, self>
      */
     private $readers;
 
     /**
      * @ORM\ManyToMany(targetEntity=UserWithSchema::class, mappedBy="readers")
      *
-     * @var UserWithSchema[]|Collection
+     * @psalm-var Collection<int, self>
      */
     private $authors;
 
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -80,7 +80,7 @@ class UserWithSchema
         return $this->id;
     }
 
-    public function setCode($code)
+    public function setCode(string $code): void
     {
         $this->code = $code;
     }
@@ -90,50 +90,48 @@ class UserWithSchema
         return $this->code;
     }
 
-    public function setPassword($password)
+    public function setPassword(string $password): void
     {
         $this->password = md5($password);
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setEmail($email)
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setRole(Role $role)
+    public function setRole(Role $role): void
     {
         $this->role = $role;
     }
 
-    public function getRole()
+    public function getRole(): ?Role
     {
         return $this->role;
     }
 
     /**
-     * @return UserWithSchema[]|Collection
+     * @psalm-return Collection<int, self>
      */
-    public function getReaders()
+    public function getReaders(): Collection
     {
         return $this->readers;
     }
 
     /**
-     * @param UserWithSchema[]|Collection $readers
-     *
-     * @return UserWithSchema
+     * @psalm-param Collection<int, self> $readers
      */
-    public function setReaders($readers)
+    public function setReaders($readers): self
     {
         $this->readers = $readers;
 
@@ -141,7 +139,7 @@ class UserWithSchema
     }
 
     /**
-     * @return UserWithSchema[]|Collection
+     * @psalm-return Collection<int, self>
      */
     public function getAuthors()
     {
@@ -149,11 +147,9 @@ class UserWithSchema
     }
 
     /**
-     * @param UserWithSchema[]|Collection $authors
-     *
-     * @return UserWithSchema
+     * @param Collection<int, self> $authors
      */
-    public function setAuthors($authors)
+    public function setAuthors($authors): self
     {
         $this->authors = $authors;
 

@@ -22,7 +22,7 @@ use function class_exists;
  */
 class PHPCRExecutorTest extends BaseTest
 {
-    public function testExecuteSingleFixtureWithNoPurge()
+    public function testExecuteSingleFixtureWithNoPurge(): void
     {
         $dm       = $this->getDocumentManager();
         $executor = new PHPCRExecutor($dm);
@@ -40,7 +40,7 @@ class PHPCRExecutorTest extends BaseTest
         $executor->execute([$fixture], true);
     }
 
-    public function testExecuteMultipleFixturesWithNoPurge()
+    public function testExecuteMultipleFixturesWithNoPurge(): void
     {
         $dm       = $this->getDocumentManager();
         $executor = new PHPCRExecutor($dm);
@@ -60,7 +60,7 @@ class PHPCRExecutorTest extends BaseTest
         $executor->execute([$fixture1, $fixture2], true);
     }
 
-    public function testExecuteFixtureWithPurge()
+    public function testExecuteFixtureWithPurge(): void
     {
         $dm       = $this->getDocumentManager();
         $purger   = $this->getPurger();
@@ -80,7 +80,7 @@ class PHPCRExecutorTest extends BaseTest
         $executor->execute([$fixture], false);
     }
 
-    public function testExecuteFixtureWithoutPurge()
+    public function testExecuteFixtureWithoutPurge(): void
     {
         $dm       = $this->getDocumentManager();
         $purger   = $this->getPurger();
@@ -100,7 +100,7 @@ class PHPCRExecutorTest extends BaseTest
         $executor->execute([$fixture], true);
     }
 
-    public function testFailedTransactionalStopsPurgingAndFixtureLoading()
+    public function testFailedTransactionalStopsPurgingAndFixtureLoading(): void
     {
         $dm        = $this->getDocumentManager();
         $purger    = $this->getPurger();

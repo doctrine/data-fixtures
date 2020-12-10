@@ -14,7 +14,7 @@ use Doctrine\Tests\Common\DataFixtures\BaseTest;
  */
 class ORMExecutorTest extends BaseTest
 {
-    public function testExecuteWithNoPurge()
+    public function testExecuteWithNoPurge(): void
     {
         $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
@@ -29,7 +29,7 @@ class ORMExecutorTest extends BaseTest
         $executor->execute([$fixture], true);
     }
 
-    public function testExecuteWithPurge()
+    public function testExecuteWithPurge(): void
     {
         $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
@@ -44,7 +44,7 @@ class ORMExecutorTest extends BaseTest
         $executor->execute([$fixture], false);
     }
 
-    public function testExecuteTransaction()
+    public function testExecuteTransaction(): void
     {
         $em       = $this->getMockSqliteEntityManager();
         $executor = new ORMExecutor($em);
@@ -55,12 +55,12 @@ class ORMExecutorTest extends BaseTest
         $executor->execute([$fixture], true);
     }
 
-    private function getMockFixture()
+    private function getMockFixture(): FixtureInterface
     {
         return $this->createMock(FixtureInterface::class);
     }
 
-    private function getMockPurger()
+    private function getMockPurger(): ORMPurger
     {
         return $this->createMock(ORMPurger::class);
     }

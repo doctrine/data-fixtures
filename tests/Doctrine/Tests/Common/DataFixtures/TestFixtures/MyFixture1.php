@@ -9,7 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class MyFixture1 implements FixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
     }
 }

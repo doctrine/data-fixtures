@@ -252,14 +252,13 @@ class ORMPurger implements PurgerInterface
     }
 
     /**
-     * @param array            $association
-     * @param ClassMetadata    $class
-     * @param AbstractPlatform $platform
-     *
-     * @return string
+     * @param mixed[] $assoc
      */
-    private function getJoinTableName($assoc, $class, $platform)
-    {
+    private function getJoinTableName(
+        array $assoc,
+        ClassMetadata $class,
+        AbstractPlatform $platform
+    ): string {
         if (isset($assoc['joinTable']['schema']) && ! method_exists($class, 'getSchemaName')) {
             return $assoc['joinTable']['schema'] . '.' . $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
         }

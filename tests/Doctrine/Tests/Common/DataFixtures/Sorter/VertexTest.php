@@ -13,7 +13,7 @@ use Doctrine\Tests\Common\DataFixtures\BaseTest;
  */
 class VertexTest extends BaseTest
 {
-    public function testNode()
+    public function testNode(): void
     {
         $value = new ClassMetadata('\Sample\Entity');
         $node  = new Vertex($value);
