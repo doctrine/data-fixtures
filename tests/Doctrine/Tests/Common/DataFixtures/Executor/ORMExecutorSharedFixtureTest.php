@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+
 use function extension_loaded;
 
 /**
@@ -20,7 +21,7 @@ class ORMExecutorSharedFixtureTest extends BaseTest
     public const TEST_ENTITY_ROLE = Role::class;
     public const TEST_ENTITY_USER = User::class;
 
-    public function testFixtureExecution()
+    public function testFixtureExecution(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $purger   = new ORMPurger();
@@ -39,7 +40,7 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $executor->execute([$fixture], true);
     }
 
-    public function testSharedFixtures()
+    public function testSharedFixtures(): void
     {
         if (! extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped('Missing pdo_sqlite extension.');
@@ -73,7 +74,7 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $this->assertEquals('admin@example.com', $userReference->getEmail());
     }
 
-    private function getMockFixture()
+    private function getMockFixture(): SharedFixtureInterface
     {
         return $this->createMock(SharedFixtureInterface::class);
     }

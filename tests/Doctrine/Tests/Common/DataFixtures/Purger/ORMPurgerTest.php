@@ -18,7 +18,7 @@ class ORMPurgerTest extends BaseTest
     public const TEST_ENTITY_GROUP             = TestEntity\Group::class;
     public const TEST_ENTITY_GROUP_WITH_SCHEMA = TestEntity\GroupWithSchema::class;
 
-    public function testGetAssociationTables()
+    public function testGetAssociationTables(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_USER);
@@ -31,7 +31,7 @@ class ORMPurgerTest extends BaseTest
         $this->assertEquals($associationTables[0], 'readers__author_reader');
     }
 
-    public function testGetAssociationTablesQuoted()
+    public function testGetAssociationTablesQuoted(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_QUOTED);
@@ -44,7 +44,7 @@ class ORMPurgerTest extends BaseTest
         $this->assertEquals($associationTables[0], '"INSERT"');
     }
 
-    public function testTableNameWithSchema()
+    public function testTableNameWithSchema(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_USER_WITH_SCHEMA);
@@ -57,7 +57,7 @@ class ORMPurgerTest extends BaseTest
         $this->assertStringStartsWith('test_schema', $tableName);
     }
 
-    public function testGetDeleteFromTableSQL() : void
+    public function testGetDeleteFromTableSQL(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP);
@@ -73,7 +73,7 @@ class ORMPurgerTest extends BaseTest
         $this->assertEquals('DELETE FROM "Group"', $sql);
     }
 
-    public function testGetDeleteFromTableSQLWithSchema() : void
+    public function testGetDeleteFromTableSQLWithSchema(): void
     {
         $em       = $this->getMockAnnotationReaderEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP_WITH_SCHEMA);

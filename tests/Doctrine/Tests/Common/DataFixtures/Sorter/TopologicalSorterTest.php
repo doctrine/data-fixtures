@@ -21,7 +21,7 @@ use RuntimeException;
  */
 class TopologicalSorterTest extends BaseTest
 {
-    public function testSuccessSortLinearDependency()
+    public function testSuccessSortLinearDependency(): void
     {
         $sorter = new TopologicalSorter();
 
@@ -48,7 +48,7 @@ class TopologicalSorterTest extends BaseTest
         self::assertSame($correctList, $sortedList);
     }
 
-    public function testSuccessSortMultiDependency()
+    public function testSuccessSortMultiDependency(): void
     {
         $sorter = new TopologicalSorter();
 
@@ -76,7 +76,7 @@ class TopologicalSorterTest extends BaseTest
         self::assertSame($correctList, $sortedList);
     }
 
-    public function testSortCyclicDependency()
+    public function testSortCyclicDependency(): void
     {
         $sorter = new TopologicalSorter();
 
@@ -100,7 +100,7 @@ class TopologicalSorterTest extends BaseTest
         $sorter->sort();
     }
 
-    public function testFailureSortCyclicDependency()
+    public function testFailureSortCyclicDependency(): void
     {
         $sorter = new TopologicalSorter(false);
 
@@ -121,7 +121,7 @@ class TopologicalSorterTest extends BaseTest
         $sorter->sort();
     }
 
-    public function testNoFailureOnSelfReferencingDependency()
+    public function testNoFailureOnSelfReferencingDependency(): void
     {
         $sorter = new TopologicalSorter();
 
@@ -149,7 +149,7 @@ class TopologicalSorterTest extends BaseTest
         self::assertSame($correctList, $sortedList);
     }
 
-    public function testFailureSortMissingDependency()
+    public function testFailureSortMissingDependency(): void
     {
         $sorter = new TopologicalSorter();
 

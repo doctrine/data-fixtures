@@ -14,6 +14,7 @@ use Doctrine\Tests\Common\DataFixtures\TestDocument\Role;
 use MongoCollection;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\ConnectionTimeoutException;
+
 use function class_exists;
 use function dirname;
 use function method_exists;
@@ -22,7 +23,7 @@ class MongoDBPurgerTest extends BaseTest
 {
     public const TEST_DOCUMENT_ROLE = Role::class;
 
-    private function getDocumentManager()
+    private function getDocumentManager(): DocumentManager
     {
         if (! class_exists('Doctrine\ODM\MongoDB\DocumentManager')) {
             $this->markTestSkipped('Missing doctrine/mongodb-odm');
@@ -46,12 +47,12 @@ class MongoDBPurgerTest extends BaseTest
         return $dm;
     }
 
-    private function getPurger()
+    private function getPurger(): MongoDBPurger
     {
         return new MongoDBPurger($this->getDocumentManager());
     }
 
-    public function testPurgeKeepsIndices()
+    public function testPurgeKeepsIndices(): void
     {
         $purger = $this->getPurger();
         $dm     = $purger->getObjectManager();
@@ -73,8 +74,10 @@ class MongoDBPurgerTest extends BaseTest
         $this->assertIndexCount(2, $collection);
     }
 
-    /** @var Collection|MongoCollection $collection */
-    private function assertIndexCount(int $expectedCount, $collection) : void
+    /**
+     * @param Collection|MongoCollection $collection
+     */
+    private function assertIndexCount(int $expectedCount, $collection): void
     {
         if ($collection instanceof Collection) {
             $indexes = $collection->listIndexes();
@@ -85,7 +88,7 @@ class MongoDBPurgerTest extends BaseTest
         $this->assertCount($expectedCount, $indexes);
     }
 
-    private function skipIfMongoDBUnavailable(DocumentManager $documentManager) : void
+    private function skipIfMongoDBUnavailable(DocumentManager $documentManager): void
     {
         if (method_exists($documentManager, 'getClient')) {
             try {

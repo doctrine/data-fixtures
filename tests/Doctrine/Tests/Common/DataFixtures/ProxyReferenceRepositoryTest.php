@@ -22,7 +22,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
     public const TEST_ENTITY_ROLE = Role::class;
     public const TEST_ENTITY_LINK = Link::class;
 
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -33,7 +33,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         Type::addType('uuid', UuidType::class);
     }
 
-    public function testReferenceEntry()
+    public function testReferenceEntry(): void
     {
         $em   = $this->getMockAnnotationReaderEntityManager();
         $role = new TestEntity\Role();
@@ -51,7 +51,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
     }
 
-    public function testReferenceIdentityPopulation()
+    public function testReferenceIdentityPopulation(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = $this->getMockBuilder(ProxyReferenceRepository::class)
@@ -81,7 +81,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $roleFixture->load($em);
     }
 
-    public function testReferenceReconstruction()
+    public function testReferenceReconstruction(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ProxyReferenceRepository($em);
@@ -129,7 +129,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Proxy::class, $ref);
     }
 
-    public function testReconstructionOfCustomTypedId() : void
+    public function testReconstructionOfCustomTypedId(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ProxyReferenceRepository($em);
@@ -158,7 +158,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         );
     }
 
-    public function testReferenceMultipleEntries()
+    public function testReferenceMultipleEntries(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ProxyReferenceRepository($em);

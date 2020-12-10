@@ -40,22 +40,22 @@ class Quoted
      */
     private $selects;
 
-    public function getId() : ?int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id) : void
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }
 
-    public function getSelect() : ?string
+    public function getSelect(): ?string
     {
         return $this->select;
     }
 
-    public function setSelect(?string $select) : void
+    public function setSelect(?string $select): void
     {
         $this->select = $select;
     }
@@ -63,7 +63,7 @@ class Quoted
     /**
      * @return Collection|null
      */
-    public function getSelects() : ?Collection
+    public function getSelects(): ?Collection
     {
         return $this->selects;
     }
@@ -71,7 +71,7 @@ class Quoted
     /**
      * @param Collection|null $selects
      */
-    public function setSelects(?Collection $selects) : void
+    public function setSelects(?Collection $selects): void
     {
         $this->selects = $selects;
     }

@@ -23,7 +23,7 @@ class Link
     /**
      * @ORM\Column(length=150)
      *
-     * @var string
+     * @var string|null
      */
     private $url;
 
@@ -32,17 +32,17 @@ class Link
         $this->id = $id;
     }
 
-    public function getId()
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    public function setUrl($url)
+    public function setUrl(string $url): void
     {
         $this->url = $url;
     }

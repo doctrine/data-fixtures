@@ -13,6 +13,7 @@ use RecursiveIteratorIterator;
 use ReflectionClass;
 use RuntimeException;
 use SplFileInfo;
+
 use function array_keys;
 use function array_merge;
 use function asort;
@@ -39,14 +40,14 @@ class Loader
     /**
      * Array of fixture object instances to execute.
      *
-     * @var array
+     * @psalm-var array<class-string<FixtureInterface>, FixtureInterface>
      */
     private $fixtures = [];
 
     /**
      * Array of ordered fixture object instances.
      *
-     * @var array
+     * @psalm-var array<class-string<OrderedFixtureInterface>, OrderedFixtureInterface>
      */
     private $orderedFixtures = [];
 
@@ -206,6 +207,8 @@ class Loader
      * class.
      *
      * @return bool
+     *
+     * @psalm-param class-string<object> $className
      */
     public function isTransient($className)
     {
@@ -234,14 +237,12 @@ class Loader
     /**
      * Orders fixtures by number
      *
-     * @return void
-     *
      * @todo maybe there is a better way to handle reordering
      */
-    private function orderFixturesByNumber()
+    private function orderFixturesByNumber(): void
     {
         $this->orderedFixtures = $this->fixtures;
-        usort($this->orderedFixtures, static function ($a, $b) {
+        usort($this->orderedFixtures, static function (FixtureInterface $a, FixtureInterface $b): int {
             if ($a instanceof OrderedFixtureInterface && $b instanceof OrderedFixtureInterface) {
                 if ($a->getOrder() === $b->getOrder()) {
                     return 0;
@@ -269,6 +270,7 @@ class Loader
      */
     private function orderFixturesByDependencies()
     {
+        /** @psalm-var array<class-string<DependentFixtureInterface>, int> */
         $sequenceForClasses = [];
 
         // If fixtures were already ordered by number then we need
@@ -362,7 +364,10 @@ class Loader
         $this->orderedFixtures = array_merge($this->orderedFixtures, $orderedFixtures);
     }
 
-    private function validateDependencies($dependenciesClasses)
+    /**
+     * @psalm-param iterable<class-string> $dependenciesClasses
+     */
+    private function validateDependencies(iterable $dependenciesClasses): bool
     {
         $loadedFixtureClasses = array_keys($this->fixtures);
 
@@ -375,7 +380,12 @@ class Loader
         return true;
     }
 
-    private function getUnsequencedClasses($sequences, $classes = null)
+    /**
+     * @psalm-param array<class-string<DependentFixtureInterface>, int> $sequences
+     * @psalm-param iterable<class-string<FixtureInterface>>|null       $classes
+     * @psalm-return array<class-string<FixtureInterface>>
+     */
+    private function getUnsequencedClasses(array $sequences, ?iterable $classes = null): array
     {
         $unsequencedClasses = [];
 
@@ -397,11 +407,11 @@ class Loader
     /**
      * Load fixtures from files contained in iterator.
      *
-     * @param Iterator $iterator Iterator over files from which fixtures should be loaded.
-     *
-     * @return array $fixtures Array of loaded fixture object instances.
+     * @psalm-param Iterator<SplFileInfo> $iterator Iterator over files from
+     *                                              which fixtures should be loaded.
+     * @psalm-return list<FixtureInterface> $fixtures Array of loaded fixture object instances.
      */
-    private function loadFromIterator(Iterator $iterator)
+    private function loadFromIterator(Iterator $iterator): array
     {
         $includedFiles = [];
         foreach ($iterator as $file) {
