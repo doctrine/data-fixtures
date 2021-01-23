@@ -42,7 +42,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - [568: Add `ConfigurationHelperInterface` to allow overriding internal class](https://github.com/doctrine/migrations/pull/568) - @alcaeus
   - [571: Allow changing migration class template in diff command](https://github.com/doctrine/migrations/pull/571) - @alcaeus
 
-## [1.5.0] - 2016-12-25
+## [1.5.0] - 2021-01-23
 
 ### Fixed
   - [447: Fix typo in error code](https://github.com/doctrine/migrations/pull/447) thanks to @funivan
@@ -75,6 +75,23 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - [497: Show the content of the generated file on the console](https://github.com/doctrine/migrations/pull/497) thanks to @ErikTrapman
   - [480: Don't prompt the user for confirmation when there is nothing to do](https://github.com/doctrine/migrations/pull/480) thanks to @chrisguitarguy
 
+
+
+-----
+
+### Release Notes for [1.5.0](https://github.com/doctrine/data-fixtures/milestone/16)
+
+
+
+### 1.5.0
+
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
+
+#### Improvement
+
+ - [347: Allow Custom ORMPurger](https://github.com/doctrine/data-fixtures/pull/347) thanks to @kissifrot
 
 ## [1.4.1] - 2016-03-14
 ### Fixed
