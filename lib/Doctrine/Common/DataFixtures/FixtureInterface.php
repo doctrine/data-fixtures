@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
+
 use function interface_exists;
 
 /**

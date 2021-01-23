@@ -14,12 +14,12 @@ class RoleFixture implements SharedFixtureInterface
     /** @var ReferenceRepository|null */
     private $referenceRepository;
 
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {
         $this->referenceRepository = $referenceRepository;
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $adminRole = new Role();
         $adminRole->setName('admin');

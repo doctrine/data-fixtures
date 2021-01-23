@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\DataFixtures;
 
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\Common\Version;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
@@ -31,10 +29,6 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     protected function getRealClass($className)
     {
-        if (Version::compare('2.2.0') <= 0) {
-            return ClassUtils::getRealClass($className);
-        }
-
         if (substr($className, -5) === 'Proxy') {
             return substr($className, 0, -5);
         }

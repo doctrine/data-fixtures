@@ -15,7 +15,7 @@ use TestFixtures\NotAFixture;
  */
 class LoaderTest extends BaseTest
 {
-    public function testLoadFromDirectory()
+    public function testLoadFromDirectory(): void
     {
         $loader = new Loader();
         $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock1')->getMock());
@@ -30,7 +30,7 @@ class LoaderTest extends BaseTest
         $this->assertFalse($loader->isTransient(MyFixture1::class));
     }
 
-    public function testLoadFromFile()
+    public function testLoadFromFile(): void
     {
         $loader = new Loader();
         $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock1')->getMock());
@@ -49,7 +49,7 @@ class LoaderTest extends BaseTest
         $this->assertFalse($loader->isTransient(MyFixture1::class));
     }
 
-    public function testGetFixture()
+    public function testGetFixture(): void
     {
         $loader = new Loader();
         $loader->loadFromFile(__DIR__ . '/TestFixtures/MyFixture1.php');

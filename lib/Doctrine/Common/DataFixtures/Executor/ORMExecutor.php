@@ -29,6 +29,7 @@ class ORMExecutor extends AbstractExecutor
             $this->purger = $purger;
             $this->purger->setEntityManager($em);
         }
+
         parent::__construct($em);
         $this->listener = new ORMReferenceListener($this->referenceRepository);
         $em->getEventManager()->addEventSubscriber($this->listener);
@@ -65,6 +66,7 @@ class ORMExecutor extends AbstractExecutor
             if ($append === false) {
                 $executor->purge();
             }
+
             foreach ($fixtures as $fixture) {
                 $executor->load($em, $fixture);
             }

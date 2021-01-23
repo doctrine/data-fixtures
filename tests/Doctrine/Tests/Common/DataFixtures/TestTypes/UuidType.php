@@ -12,25 +12,34 @@ class UuidType extends Type
 {
     public const NAME = 'uuid';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    /**
+     * @param mixed[] $fieldDeclaration
+     */
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
-        $field_declaration['length'] = 36;
-        $field_declaration['fixed']  = true;
+        $fieldDeclaration['length'] = 36;
+        $fieldDeclaration['fixed']  = true;
 
-        return $platform->getVarcharTypeDeclarationSQL($field_declaration);
+        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    /**
+     * @param ?string $value
+     */
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Uuid
     {
         return $value === null ? null : new Uuid($value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    /**
+     * @param ?Uuid $value
+     */
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         return $value === null ? null : (string) $value;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
