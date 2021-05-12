@@ -79,9 +79,9 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @throws BadMethodCallException - if repository already has a reference by $name.
      */
-    public function addReference($name, $object)
+    public function addReference($name, $object, $tag = null)
     {
-        $this->referenceRepository->addReference($name, $object);
+        $this->referenceRepository->addReference($name, $object, $tag);
     }
 
     /**
@@ -101,7 +101,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @throws BadMethodCallException - if repository already has a reference by $name.
      */
-    public function addUniqueReference($name, $object, $tag)
+    public function addUniqueReference($name, $object, $tag = null)
     {
         $this->referenceRepository->addUniqueReference($name, $object, $tag);
     }
@@ -122,15 +122,31 @@ abstract class AbstractFixture implements SharedFixtureInterface
     }
 
     /**
-     * Load an unique reference tagged by $tag
+     * Loads an object using stored unique reference
+     * named by $name
+     *
+     * @see Doctrine\Common\DataFixtures\ReferenceRepository::getUniqueReference
+     *
+     * @param string $name
+     * @param string $tag
+     *
+     * @return object
+     */
+    public function getUniqueReference($name, $tag)
+    {
+        return $this->referenceRepository->getUniqueReference($name, $tag);
+    }
+
+    /**
+     * Load a random unique reference tagged by $tag
      *
      * @param string $tag
      *
      * @return object
      */
-    public function getUniqueReference($tag)
+    public function getRandomReference($tag)
     {
-        return $this->referenceRepository->getUniqueReference($tag);
+        return $this->referenceRepository->getRandomReference($tag);
     }
 
     /**

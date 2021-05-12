@@ -132,6 +132,132 @@ class UserDataLoader extends AbstractFixture
 }
 ```
 
+### Random references
+You can call a reference randomly. To do this, you will need to 
+define a set of references with a common tag. 
+
+For instance:
+```php
+namespace MyDataFixtures;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Persistence\ObjectManager;
+
+class UserRoleDataLoader extends AbstractFixture
+{
+    public function load(ObjectManager $manager)
+    {
+        for ($i=0; $i < 10; $i++) {
+            $role = new Role();
+            $role->setName('name-'.$i);
+
+            $manager->persist($role);
+            
+            // store tagged Reference of current role for other Fixtures
+            $this->addReference('role-'.$i, $role, 'role');
+        }
+
+        $manager->flush();
+    }
+}
+```
+
+Get a random **Role** reference for **User**.
+
+```php
+namespace MyDataFixtures;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Persistence\ObjectManager;
+
+class UserDataLoader extends AbstractFixture
+{
+    public function load(ObjectManager $manager)
+    {
+        $user = new User();
+        $user->setUsername('jwage');
+        $user->setPassword('test');
+        $user->setRole(
+            $this->getRandomReference('role') // load the stored reference
+        );
+
+        $manager->persist($user);
+        $manager->flush();
+    }
+}
+```
+
+### Unique references
+You can generate unique references that are destroyed after use.
+Unique references are always tagged and invalidated only within the 
+scope of the assigned tag:
+
+```php
+$this->addUniqueReference('ref-a', $refa, 'tag-a');
+$this->addUniqueReference('ref-a', $refa, 'tag-b');
+
+$this->getUniqueReference('ref-a', 'tag-a');
+
+// ->getUniqueReference('ref-a', 'tag-a'); // obsolete
+// ->getUniqueReference('ref-a', 'tag-b')  // still valid
+```
+
+Calling `->getRandomReference` for a tag marking unique references returns 
+a unique reference immediately made obsolete. Of course, you must create enough 
+unique references for your needs, otherwise an exception will be thrown.
+
+Usage example: You want to generate Actor and Role fixtures. A role cannot 
+be assigned to several actors, so your references must be unique.
+
+```php
+namespace MyDataFixtures;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Persistence\ObjectManager;
+
+class ActorRoleDataLoader extends AbstractFixture
+{
+    public function load(ObjectManager $manager)
+    {
+        for ($i=0; $i < 10; $i++) {
+            $role = new Role();
+            $role->setName('name-'.$i);
+
+            $manager->persist($role);
+            
+            // store unique Reference of current role for other Fixtures
+            // you just have to tag it
+            $this->addUniqueReference('role-'.$i, $role, 'role');
+        }
+
+        $manager->flush();
+    }
+}
+```
+Actors fixtures:
+```php
+namespace MyDataFixtures;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Persistence\ObjectManager;
+
+class ActorDataLoader extends AbstractFixture
+{
+    public function load(ObjectManager $manager)
+    {
+        $actor = new Actor();
+        $actor->setUsername('Franck');
+        $actor->setRole(
+            $this->getUniqueReference('role-1', 'role')
+            // or $this->getRandomReference('role')
+        );
+
+        $manager->persist($actor);
+        $manager->flush();
+    }
+}
+```
+
 ## Fixture ordering
 **Notice** that the fixture loading order is important! To handle it manually
 implement one of the following interfaces:

@@ -21,18 +21,28 @@ class RoleFixture implements SharedFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $adminRole = new Role();
-        $adminRole->setName('admin');
-
-        $manager->persist($adminRole);
+        $adminRole = $this->persistNewRole('admin', $manager);
         $this->referenceRepository->addReference('admin-role', $adminRole);
 
-        $uniqueAdminRole = new Role();
-        $uniqueAdminRole->setName('admin-unique');
+        $taggedAdminRole = $this->persistNewRole('admin-role-tagged', $manager);
+        $this->referenceRepository->addReference('admin-role-tagged', $taggedAdminRole, 'tag');
 
-        $manager->persist($uniqueAdminRole);
+        $uniqueAdminRole = $this->persistNewRole('admin-role-unique', $manager);
         $this->referenceRepository->addUniqueReference('admin-role-unique', $uniqueAdminRole, 'role');
 
+        $uniqueAdminRole = $this->persistNewRole('admin-role-unique-2', $manager);
+        $this->referenceRepository->addUniqueReference('admin-role-unique-2', $uniqueAdminRole, 'role');
+
         $manager->flush();
+    }
+
+    private function persistNewRole($name, $manager)
+    {
+        $role = new Role();
+        $role->setName($name);
+
+        $manager->persist($role);
+
+        return $role;
     }
 }

@@ -36,10 +36,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
     public function testReferenceEntry(): void
     {
         $em   = $this->getMockAnnotationReaderEntityManager();
-        $role = new TestEntity\Role();
-        $role->setName('admin');
-        $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
-        $meta->getReflectionProperty('id')->setValue($role, 1);
+        $role = $this->createRole('admin', 1, $em);
 
         $referenceRepo = new ProxyReferenceRepository($em);
         $referenceRepo->addReference('test', $role);
@@ -51,18 +48,30 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
     }
 
+    public function testTaggedReferenceEntry(): void
+    {
+        $em   = $this->getMockAnnotationReaderEntityManager();
+        $role = $this->createRole('admin', 1, $em);
+
+        $referenceRepo = new ProxyReferenceRepository($em);
+        $referenceRepo->addReference('test', $role, 'tag');
+
+        $references = $referenceRepo->getReferencesByTag('tag');
+
+        $this->assertCount(1, $references);
+        $this->assertArrayHasKey('test', $references);
+        $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
+    }
+
     public function testUniqueReferenceEntry(): void
     {
         $em   = $this->getMockAnnotationReaderEntityManager();
-        $role = new TestEntity\Role();
-        $role->setName('admin');
-        $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
-        $meta->getReflectionProperty('id')->setValue($role, 1);
+        $role = $this->createRole('admin', 1, $em);
 
         $referenceRepo = new ProxyReferenceRepository($em);
         $referenceRepo->addUniqueReference('test', $role, 'role');
 
-        $references = $referenceRepo->getUniqueReferences('role');
+        $references = $referenceRepo->getUniqueReferences();
 
         $this->assertCount(1, $references);
         $this->assertArrayHasKey('test', $references);
@@ -82,19 +91,33 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $schemaTool->dropSchema([]);
         $schemaTool->createSchema([$em->getClassMetadata(self::TEST_ENTITY_ROLE)]);
 
-        $referenceRepository->expects($this->once())
+        $referenceRepository->expects($this->exactly(2))
             ->method('addReference')
-            ->with('admin-role');
+            ->withConsecutive(['admin-role'], ['admin-role-tagged']);
 
         $referenceRepository->expects($this->exactly(2))
+            ->method('addUniqueReference')
+            ->withConsecutive(
+                ['admin-role-unique'],
+                ['admin-role-unique-2']
+            );
+
+        $referenceRepository->expects($this->exactly(4))
             ->method('getReferenceNames')
-            ->will($this->onConsecutiveCalls(['admin-role'], ['admin-role-unique']));
+            ->will($this->onConsecutiveCalls(
+                ['admin-role'],
+                ['admin-role-tagged'],
+                ['admin-role-unique'],
+                ['admin-role-unique-2']
+            ));
 
-        $referenceRepository->expects($this->exactly(2))
+        $referenceRepository->expects($this->exactly(4))
             ->method('setReferenceIdentity')
             ->withConsecutive(
                 ['admin-role', ['id' => 1]],
-                ['admin-role-unique', ['id' => 2]]
+                ['admin-role-tagged', ['id' => 2]],
+                ['admin-role-unique', ['id' => 3]],
+                ['admin-role-unique-2', ['id' => 4]]
             );
 
         $roleFixture = new TestFixtures\RoleFixture();
@@ -217,7 +240,18 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $em->flush();
         $em->clear();
 
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('role'));
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('role'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getRandomReference('role'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getRandomReference('role'));
+    }
+
+    private function createRole($name, $id, $em)
+    {
+        $role = new TestEntity\Role();
+        $role->setName($name);
+
+        $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
+        $meta->getReflectionProperty('id')->setValue($role, $id);
+
+        return $role;
     }
 }

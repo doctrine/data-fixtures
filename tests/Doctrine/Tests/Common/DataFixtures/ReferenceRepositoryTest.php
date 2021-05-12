@@ -25,12 +25,7 @@ class ReferenceRepositoryTest extends BaseTest
     public function testReferenceEntry(): void
     {
         $em = $this->getMockAnnotationReaderEntityManager();
-
-        $role = new TestEntity\Role();
-        $role->setName('admin');
-
-        $meta = $em->getClassMetadata(Role::class);
-        $meta->getReflectionProperty('id')->setValue($role, 1);
+        $role = $this->createRole('admin', 1, $em);
 
         $referenceRepo = new ReferenceRepository($em);
         $this->assertSame($em, $referenceRepo->getManager());
@@ -46,19 +41,26 @@ class ReferenceRepositoryTest extends BaseTest
     public function testUniqueReferenceEntry(): void
     {
         $em = $this->getMockAnnotationReaderEntityManager();
-
-        $role = new TestEntity\Role();
-        $role->setName('admin');
-
-        $meta = $em->getClassMetadata(Role::class);
-        $meta->getReflectionProperty('id')->setValue($role, 1);
+        $role = $this->createRole('admin', 1, $em);
 
         $referenceRepo = new ReferenceRepository($em);
-        $this->assertSame($em, $referenceRepo->getManager());
-
         $referenceRepo->addUniqueReference('test', $role, 'tag');
 
-        $references = $referenceRepo->getUniqueReferences('tag');
+        $references = $referenceRepo->getUniqueReferences();
+        $this->assertCount(1, $references);
+        $this->assertArrayHasKey('test', $references);
+        $this->assertInstanceOf(Role::class, $references['test']);
+    }
+
+    public function testTaggedReferenceEntry(): void
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+        $role = $this->createRole('admin', 1, $em);
+
+        $referenceRepo = new ReferenceRepository($em);
+        $referenceRepo->addReference('test', $role, 'tag');
+
+        $references = $referenceRepo->getReferencesByTag('tag');
         $this->assertCount(1, $references);
         $this->assertArrayHasKey('test', $references);
         $this->assertInstanceOf(Role::class, $references['test']);
@@ -77,23 +79,33 @@ class ReferenceRepositoryTest extends BaseTest
         $schemaTool->dropSchema([]);
         $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
 
-        $referenceRepository->expects($this->once())
+        $referenceRepository->expects($this->exactly(2))
             ->method('addReference')
-            ->with('admin-role');
+            ->withConsecutive(['admin-role'], ['admin-role-tagged']);
 
-        $referenceRepository->expects($this->once())
+        $referenceRepository->expects($this->exactly(2))
             ->method('addUniqueReference')
-            ->with('admin-role-unique');
+            ->withConsecutive(
+                ['admin-role-unique'],
+                ['admin-role-unique-2']
+            );
 
-        $referenceRepository->expects($this->exactly(2))
+        $referenceRepository->expects($this->exactly(4))
             ->method('getReferenceNames')
-            ->will($this->onConsecutiveCalls(['admin-role'], ['admin-role-unique']));
+            ->will($this->onConsecutiveCalls(
+                ['admin-role'],
+                ['admin-role-tagged'],
+                ['admin-role-unique'],
+                ['admin-role-unique-2']
+            ));
 
-        $referenceRepository->expects($this->exactly(2))
+        $referenceRepository->expects($this->exactly(4))
             ->method('setReferenceIdentity')
             ->withConsecutive(
                 ['admin-role', ['id' => 1]],
-                ['admin-role-unique', ['id' => 2]]
+                ['admin-role-tagged', ['id' => 2]],
+                ['admin-role-unique', ['id' => 3]],
+                ['admin-role-unique-2', ['id' => 4]]
             );
 
         $roleFixture = new TestFixtures\RoleFixture();
@@ -166,8 +178,8 @@ class ReferenceRepositoryTest extends BaseTest
         $em->flush();
         $em->clear();
 
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('tag'));
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('tag'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getRandomReference('tag'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getRandomReference('tag'));
     }
 
     public function testUndefinedReference(): void
@@ -180,15 +192,28 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->getReference('foo');
     }
 
-
     public function testUndefinedUniqueReferenceForTag(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('There are no unique references tagged as "invalid-tag".');
+        $this->expectExceptionMessage('There are no unique reference tagged as "invalid-tag".');
 
-        $referenceRepository->getUniqueReference('invalid-tag');
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+        $referenceRepository->addUniqueReference('test', $role, 'tag');
+
+        $referenceRepository->getUniqueReference('test', 'invalid-tag');
+    }
+
+    public function testUndefinedUniqueReferenceForTagWhenCallingRandomReference(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('There are no unique reference tagged as "invalid-tag".');
+
+        $referenceRepository->getRandomReference('invalid-tag');
     }
 
     public function testThrowsExceptionAddingDuplicatedReference(): void
@@ -215,46 +240,58 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->addUniqueReference('duplicated_reference', new stdClass(), 'tag');
     }
 
-    public function testThrowsExceptionTryingToGetWrongReference(): void
-    {
-        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
-
-        $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Reference to "missing_reference" does not exist');
-
-        $referenceRepository->getReference('missing_reference');
-    }
-
     public function testThrowsExceptionTryingToGetWrongUniqueReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('There are no unique references tagged as "tag".');
+        $referenceRepository->addUniqueReference('reference', new stdClass(), 'tag');
+        $this->expectExceptionMessage('Unique reference to "missing_reference" tagged with "tag" does not exist.');
 
-        $referenceRepository->getUniqueReference('tag');
+        $referenceRepository->getUniqueReference('missing_reference', 'tag');
     }
 
-    public function testThrowsExceptionTryingToGetUniqueReferenceWhenStockExhausted(): void
+    public function testThrowsExceptionTryingToGetRandomReferenceWithWrongTag(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+        $referenceRepository->addUniqueReference('reference', new stdClass(), 'tag');
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('There are no unique reference tagged as "invalid-tag".');
+
+        $referenceRepository->getRandomReference('invalid-tag');
+    }
+
+    public function testThrowsExceptionTryingToGetObsoleteUniqueReference(): void
     {
         $em = $this->getMockAnnotationReaderEntityManager();
-
-        $role = new TestEntity\Role();
-        $role->setName('admin');
-
-        $meta = $em->getClassMetadata(Role::class);
-        $meta->getReflectionProperty('id')->setValue($role, 1);
+        $role = $this->createRole('admin', 1, $em);
 
         $referenceRepo = new ReferenceRepository($em);
-        $this->assertSame($em, $referenceRepo->getManager());
+
+        $referenceRepo->addUniqueReference('test', $role, 'tag');
+        $referenceRepo->getUniqueReference('test', 'tag');
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('Unique reference to "test" has already been used.');
+
+        $referenceRepo->getUniqueReference('test', 'tag');
+    }
+
+    public function testThrowsExceptionTryingToGetRandomReferenceWhenStockExhausted(): void
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+        $role = $this->createRole('admin', 1, $em);
+
+        $referenceRepo = new ReferenceRepository($em);
 
         $referenceRepo->addUniqueReference('test', $role, 'role');
-        $referenceRepo->getUniqueReference('role');
+        $referenceRepo->getRandomReference('role');
 
         $this->expectException(UniqueReferencesStockExhaustedException::class);
         $this->expectExceptionMessage('The stock of unique references tagged as "role" is exhausted, create more or use less.');
 
-        $referenceRepo->getUniqueReference('role');
+        $referenceRepo->getRandomReference('role');
     }
 
     public function testHasIdentityCheck(): void
@@ -310,5 +347,16 @@ class ReferenceRepositoryTest extends BaseTest
         $identities = $referenceRepository->getIdentities();
 
         $this->assertEquals($identitiesExpected, $identities['entity']);
+    }
+
+    private function createRole($name, $id, $em)
+    {
+        $role = new TestEntity\Role();
+        $role->setName($name);
+
+        $meta = $em->getClassMetadata(Role::class);
+        $meta->getReflectionProperty('id')->setValue($role, $id);
+
+        return $role;
     }
 }

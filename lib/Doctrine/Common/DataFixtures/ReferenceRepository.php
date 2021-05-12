@@ -11,11 +11,11 @@ use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
 
 use function array_key_exists;
-use function array_key_first;
 use function array_keys;
 use function array_merge;
-use function array_shift;
+use function array_rand;
 use function get_class;
+use function in_array;
 use function method_exists;
 use function sprintf;
 
@@ -35,13 +35,29 @@ class ReferenceRepository
     private $references = [];
 
     /**
-     * List of unique named references to the
+     * List of tags that contains unique references to
+     * the fixture objects gathered during loads of
+     * fixtures
+     *
+     * @var array
+     */
+    private $uniqueReferencesTag = [];
+
+    /**
+     * List of obsolete unique references
+     *
+     * @var array
+     */
+    private $obsoleteReferences = [];
+
+    /**
+     * List of tagged references to the
      * fixture objects gathered during loads
      * of fixtures
      *
      * @var array
      */
-    private $uniqueReferences = [];
+    private $taggedReferences = [];
 
     /**
      * List of identifiers stored for references
@@ -103,9 +119,9 @@ class ReferenceRepository
      * @param string $name
      * @param object $reference
      */
-    public function setReference($name, $reference)
+    public function setReference($name, $reference, $tag = null)
     {
-        $this->doSetReference($name, $reference);
+        $this->doSetReference($name, $reference, $tag);
     }
 
     /**
@@ -116,10 +132,14 @@ class ReferenceRepository
      *
      * @param string $name
      * @param object $reference
-     * @param string $tag
+     * @param null|string $tag
      */
     public function setUniqueReference($name, $reference, $tag)
     {
+        if (!in_array($tag, $this->uniqueReferencesTag)) {
+            $this->uniqueReferencesTag[] = $tag;
+        }
+
         $this->doSetReference($name, $reference, $tag);
     }
 
@@ -150,13 +170,21 @@ class ReferenceRepository
      *
      * @throws BadMethodCallException - if repository already has a reference by $name.
      */
-    public function addReference($name, $object)
+    public function addReference($name, $object, $tag = null)
     {
         if (isset($this->references[$name])) {
             throw new BadMethodCallException(sprintf('Reference to "%s" already exists, use method setReference in order to override it.', $name));
         }
 
-        $this->setReference($name, $object);
+        if (isset($this->taggedReferences[$tag][$name])) {
+            throw new BadMethodCallException(sprintf(
+                'Reference "%s" tagged as "%s" already exists, use method setReference in order to override it.',
+                $name,
+                $tag
+            ));
+        }
+
+        $this->setReference($name, $object, $tag);
     }
 
     /**
@@ -179,7 +207,7 @@ class ReferenceRepository
      */
     public function addUniqueReference($name, $object, $tag)
     {
-        if (isset($this->uniqueReferences[$tag][$name])) {
+        if ($tag && isset($this->taggedReferences[$tag][$name])) {
             throw new BadMethodCallException(sprintf(
                 'Unique reference "%s" tagged as "%s" already exists, use method setUniqueReference in order to override it.',
                 $name,
@@ -206,31 +234,78 @@ class ReferenceRepository
             throw new OutOfBoundsException(sprintf('Reference to "%s" does not exist', $name));
         }
 
-        $reference = $this->references[$name];
-
-        return $this->consultIdentityMap($name, $reference);
+        return $this->consultIdentityMap($name, $this->references[$name]);
     }
 
     /**
-     * Get all stored references
+     * Loads an object using stored unique reference
+     * named by $name
+     *
+     * @param string $name
+     * @param string $tag
      *
      * @return object
+     *
+     * @throws OutOfBoundsException|UniqueReferencesStockExhaustedException
      */
-    public function getUniqueReference($tag)
+    public function getUniqueReference($name, $tag)
     {
-        if (! $this->hasUniqueReferences($tag)) {
-            throw new OutOfBoundsException(sprintf('There are no unique references tagged as "%s".', $tag));
+        if (!$this->hasTaggedReferences($tag)) {
+            throw new OutOfBoundsException(sprintf('There are no unique reference tagged as "%s".', $tag));
         }
 
-        if (empty($this->uniqueReferences[$tag])) {
+        if (isset($this->obsoleteReferences[$tag]) && in_array($name, $this->obsoleteReferences[$tag])) {
+            throw new OutOfBoundsException(sprintf('Unique reference to "%s" has already been used.', $name));
+        }
+
+        if (empty($this->taggedReferences[$tag])) {
             throw new UniqueReferencesStockExhaustedException(sprintf(
                 'The stock of unique references tagged as "%s" is exhausted, create more or use less.',
                 $tag
             ));
         }
 
-        $name      = array_key_first($this->uniqueReferences[$tag]);
-        $reference = array_shift($this->uniqueReferences[$tag]);
+        if (!isset($this->taggedReferences[$tag][$name])) {
+            throw new OutOfBoundsException(sprintf('Unique reference to "%s" tagged with "%s" does not exist.', $name, $tag));
+        }
+
+        $reference = $this->consultIdentityMap($name, $this->taggedReferences[$tag][$name]);
+
+        unset($this->taggedReferences[$tag][$name]);
+        $this->obsoleteReferences[$tag][] = $name;
+
+        return $reference;
+    }
+
+    /**
+     * Get a reference tagged with $tag
+     *
+     * @param string $tag
+     *
+     * @return object
+     *
+     * @throws OutOfBoundsException|UniqueReferencesStockExhaustedException
+     */
+    public function getRandomReference($tag)
+    {
+        if (! $this->hasTaggedReferences($tag)) {
+            throw new OutOfBoundsException(sprintf('There are no unique reference tagged as "%s".', $tag));
+        }
+
+        // Only possible with unique references
+        if (empty($this->taggedReferences[$tag])) {
+            throw new UniqueReferencesStockExhaustedException(sprintf(
+                'The stock of unique references tagged as "%s" is exhausted, create more or use less.',
+                $tag
+            ));
+        }
+
+        $name = array_rand($this->taggedReferences[$tag]);
+        $reference = $this->taggedReferences[$tag][$name];
+
+        if (in_array($tag, $this->uniqueReferencesTag)) {
+            unset($this->taggedReferences[$tag][$name]);
+        }
 
         return $this->consultIdentityMap($name, $reference, $tag);
     }
@@ -257,9 +332,9 @@ class ReferenceRepository
      *
      * @return bool
      */
-    public function hasUniqueReference($name, $tag)
+    public function hasTaggedReference($name, $tag)
     {
-        return isset($this->uniqueReferences[$tag][$name]);
+        return isset($this->taggedReferences[$tag][$name]);
     }
 
     /**
@@ -270,9 +345,9 @@ class ReferenceRepository
      *
      * @return bool
      */
-    public function hasUniqueReferences($tag)
+    public function hasTaggedReferences($tag)
     {
-        return isset($this->uniqueReferences[$tag]);
+        return isset($this->taggedReferences[$tag]);
     }
 
     /**
@@ -285,7 +360,7 @@ class ReferenceRepository
      */
     public function getReferenceNames($reference)
     {
-        foreach ($this->uniqueReferences as $taggedReferences) {
+        foreach ($this->taggedReferences as $taggedReferences) {
             $this->references = array_merge($this->references, $taggedReferences);
         }
 
@@ -329,18 +404,18 @@ class ReferenceRepository
      *
      * @return array
      */
-    public function allUniqueReferences()
+    public function getUniqueReferences()
     {
         $allUniqueReferences = [];
-        foreach ($this->uniqueReferences as $taggedReferences) {
-            $allUniqueReferences = array_merge($allUniqueReferences, $taggedReferences);
+        foreach ($this->uniqueReferencesTag as $tag) {
+            $allUniqueReferences = array_merge($allUniqueReferences, $this->taggedReferences[$tag]);
         }
 
         return $allUniqueReferences;
     }
 
     /**
-     * Get all unique references stored
+     * Get all references stored
      * tagged with $tag
      * Use allUniqueReferences method for
      * retrieves all unique references
@@ -349,13 +424,13 @@ class ReferenceRepository
      *
      * @var string $tag
      */
-    public function getUniqueReferences($tag)
+    public function getReferencesByTag($tag)
     {
-        if (! $this->hasUniqueReferences($tag)) {
-            throw new OutOfBoundsException(sprintf('There are no unique references for "%s".', $tag));
+        if (! $this->hasTaggedReferences($tag)) {
+            throw new OutOfBoundsException(sprintf('There are no references for "%s".', $tag));
         }
 
-        return $this->uniqueReferences[$tag];
+        return $this->taggedReferences[$tag];
     }
 
     /**
@@ -402,7 +477,7 @@ class ReferenceRepository
     private function doSetReference($name, $reference, $tag = null)
     {
         if ($tag) {
-            $this->uniqueReferences[$tag][$name] = $reference;
+            $this->taggedReferences[$tag][$name] = $reference;
         } else {
             $this->references[$name] = $reference;
         }
@@ -439,7 +514,7 @@ class ReferenceRepository
             );
 
             if ($tag) {
-                $this->uniqueReferences[$tag][$name] = $reference; // already in identity map
+                $this->taggedReferences[$tag][$name] = $reference; // already in identity map
             } else {
                 $this->references[$name] = $reference; // already in identity map
             }
