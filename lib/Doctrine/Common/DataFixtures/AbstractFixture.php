@@ -20,9 +20,6 @@ abstract class AbstractFixture implements SharedFixtureInterface
      */
     protected $referenceRepository;
 
-    /** @var array */
-    private $uniqueReferences = [];
-
     /**
      * {@inheritdoc}
      */
@@ -88,9 +85,10 @@ abstract class AbstractFixture implements SharedFixtureInterface
     }
 
     /**
-     * Set tagged reference for a unique usage
-     * $name, tagged with $tag and referenced to
-     * managed $object. If $name is already set,
+     * Set the unique reference entry tagged with
+     * $tag, identified by $name and referenced to
+     * managed $object.
+     * If $name is already set for the scope of $tag,
      * it throws a BadMethodCallException exception
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::addReference
@@ -126,7 +124,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
     /**
      * Load an unique reference tagged by $tag
      *
-     * @param string $name
+     * @param string $tag
      *
      * @return object
      */

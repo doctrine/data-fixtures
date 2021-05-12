@@ -235,26 +235,6 @@ class ReferenceRepository
         return $this->consultIdentityMap($name, $reference, $tag);
     }
 
-    private function consultIdentityMap($name, $reference, $tag = null)
-    {
-        $meta = $this->manager->getClassMetadata(get_class($reference));
-
-        if (! $this->manager->contains($reference) && isset($this->identities[$name])) {
-            $reference = $this->manager->getReference(
-                $meta->name,
-                $this->identities[$name]
-            );
-
-            if ($tag) {
-                $this->uniqueReferences[$tag][$name] = $reference; // already in identity map
-            } else {
-                $this->references[$name] = $reference; // already in identity map
-            }
-        }
-
-        return $reference;
-    }
-
     /**
      * Check if an object is stored using reference
      * named by $name
@@ -413,9 +393,11 @@ class ReferenceRepository
      * If $name is already set, it overrides it.
      * if $tag is not null create a unique reference.
      *
-     * @param $name
-     * @param $reference
-     * @param null      $tag
+     * @param string $name
+     * @param object $reference
+     * @param null tag
+     *
+     * @return void
      */
     private function doSetReference($name, $reference, $tag = null)
     {
@@ -431,5 +413,38 @@ class ReferenceRepository
 
         $uow                     = $this->manager->getUnitOfWork();
         $this->identities[$name] = $this->getIdentifier($reference, $uow);
+    }
+
+    /**
+     * If the manager does not contain $reference and
+     * identities property contains $name, consult the
+     * identity map to get the reference.
+     *
+     * See DocumentManager::getReference for more info.
+     *
+     * @param string $name
+     * @param object $reference
+     * @param null $tag
+     *
+     * @return object
+     */
+    private function consultIdentityMap($name, $reference, $tag = null)
+    {
+        $meta = $this->manager->getClassMetadata(get_class($reference));
+
+        if (! $this->manager->contains($reference) && isset($this->identities[$name])) {
+            $reference = $this->manager->getReference(
+                $meta->name,
+                $this->identities[$name]
+            );
+
+            if ($tag) {
+                $this->uniqueReferences[$tag][$name] = $reference; // already in identity map
+            } else {
+                $this->references[$name] = $reference; // already in identity map
+            }
+        }
+
+        return $reference;
     }
 }
