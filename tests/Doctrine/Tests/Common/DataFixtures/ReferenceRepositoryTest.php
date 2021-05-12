@@ -6,7 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures;
 
 use BadMethodCallException;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
-use Doctrine\Common\DataFixtures\Exception\UniqueReferencesOutOfStockException;
+use Doctrine\Common\DataFixtures\Exception\UniqueReferencesStockExhaustedException;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Proxy\Proxy;
@@ -118,14 +118,10 @@ class ReferenceRepositoryTest extends BaseTest
         $roleFixture->load($em);
         // first test against managed state
         $ref = $referenceRepository->getReference('admin-role');
-        $uniqueRef = $referenceRepository->getUniqueReference('role');
 
         $this->assertNotInstanceOf(Proxy::class, $ref);
-        $this->assertNotInstanceOf(Proxy::class, $uniqueRef);
 
         // now test reference reconstruction from identity
-        // unique references can't perform reconstruction because
-        // they are for single use only
         $em->clear();
         $ref = $referenceRepository->getReference('admin-role');
 
@@ -255,7 +251,7 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepo->addUniqueReference('test', $role, 'role');
         $referenceRepo->getUniqueReference('role');
 
-        $this->expectException(UniqueReferencesOutOfStockException::class);
+        $this->expectException(UniqueReferencesStockExhaustedException::class);
         $this->expectExceptionMessage('The stock of unique references tagged as "role" is exhausted, create more or use less.');
 
         $referenceRepo->getUniqueReference('role');

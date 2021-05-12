@@ -26,6 +26,13 @@ class RoleFixture implements SharedFixtureInterface
 
         $manager->persist($adminRole);
         $this->referenceRepository->addReference('admin-role', $adminRole);
+
+        $uniqueAdminRole = new Role();
+        $uniqueAdminRole->setName('admin-unique');
+
+        $manager->persist($uniqueAdminRole);
+        $this->referenceRepository->addUniqueReference('admin-role-unique', $uniqueAdminRole, 'role');
+
         $manager->flush();
     }
 }

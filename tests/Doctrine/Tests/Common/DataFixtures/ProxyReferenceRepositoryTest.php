@@ -51,6 +51,24 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
     }
 
+    public function testUniqueReferenceEntry(): void
+    {
+        $em   = $this->getMockAnnotationReaderEntityManager();
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+        $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
+        $meta->getReflectionProperty('id')->setValue($role, 1);
+
+        $referenceRepo = new ProxyReferenceRepository($em);
+        $referenceRepo->addUniqueReference('test', $role, 'role');
+
+        $references = $referenceRepo->getUniqueReferences('role');
+
+        $this->assertCount(1, $references);
+        $this->assertArrayHasKey('test', $references);
+        $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
+    }
+
     public function testReferenceIdentityPopulation(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
@@ -68,13 +86,16 @@ class ProxyReferenceRepositoryTest extends BaseTest
             ->method('addReference')
             ->with('admin-role');
 
-        $referenceRepository->expects($this->once())
+        $referenceRepository->expects($this->exactly(2))
             ->method('getReferenceNames')
-            ->will($this->returnValue(['admin-role']));
+            ->will($this->onConsecutiveCalls(['admin-role'], ['admin-role-unique']));
 
-        $referenceRepository->expects($this->once())
+        $referenceRepository->expects($this->exactly(2))
             ->method('setReferenceIdentity')
-            ->with('admin-role', ['id' => 1]);
+            ->withConsecutive(
+                ['admin-role', ['id' => 1]],
+                ['admin-role-unique', ['id' => 2]]
+            );
 
         $roleFixture = new TestFixtures\RoleFixture();
         $roleFixture->setReferenceRepository($referenceRepository);
@@ -177,5 +198,26 @@ class ProxyReferenceRepositoryTest extends BaseTest
 
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin'));
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate'));
+    }
+
+    public function testUniqueReferenceMultipleEntries(): void
+    {
+        $em                  = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ProxyReferenceRepository($em);
+        $em->getEventManager()->addEventSubscriber(new ORMReferenceListener($referenceRepository));
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->createSchema([$em->getClassMetadata(self::TEST_ENTITY_ROLE)]);
+
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+
+        $em->persist($role);
+        $referenceRepository->addUniqueReference('admin', $role, 'role');
+        $referenceRepository->addUniqueReference('duplicate', $role, 'role');
+        $em->flush();
+        $em->clear();
+
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('role'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('role'));
     }
 }

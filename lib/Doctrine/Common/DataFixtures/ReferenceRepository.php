@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures;
 
 use BadMethodCallException;
-use Doctrine\Common\DataFixtures\Exception\UniqueReferencesOutOfStockException;
+use Doctrine\Common\DataFixtures\Exception\UniqueReferencesStockExhaustedException;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
 use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
@@ -223,7 +223,7 @@ class ReferenceRepository
         }
 
         if (empty($this->uniqueReferences[$tag])) {
-            throw new UniqueReferencesOutOfStockException(sprintf(
+            throw new UniqueReferencesStockExhaustedException(sprintf(
                 'The stock of unique references tagged as "%s" is exhausted, create more or use less.',
                 $tag
             ));
@@ -345,8 +345,25 @@ class ReferenceRepository
     }
 
     /**
+     * Get all stored unique references
+     *
+     * @return array
+     */
+    public function allUniqueReferences()
+    {
+        $allUniqueReferences = [];
+        foreach ($this->uniqueReferences as $taggedReferences) {
+            $allUniqueReferences = array_merge($allUniqueReferences, $taggedReferences);
+        }
+
+        return $allUniqueReferences;
+    }
+
+    /**
      * Get all unique references stored
      * tagged with $tag
+     * Use allUniqueReferences method for
+     * retrieves all unique references
      *
      * @return array
      *

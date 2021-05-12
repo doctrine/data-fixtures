@@ -57,21 +57,34 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
+        $uniqueRoleUserFixture = new TestFixtures\UniqueRoleUserFixture();
         $userFixture = new TestFixtures\UserFixture();
         $roleFixture = new TestFixtures\RoleFixture();
-        $executor->execute([$roleFixture, $userFixture], true);
+        $executor->execute([$roleFixture, $userFixture, $uniqueRoleUserFixture], true);
 
         $referenceRepository = $executor->getReferenceRepository();
         $references          = $referenceRepository->getReferences();
+        $uniqueReferences    = $referenceRepository->allUniqueReferences();
 
-        $this->assertCount(2, $references);
+        $this->assertCount(3, $references);
+        $this->assertCount(2, $uniqueReferences);
+
         $roleReference = $referenceRepository->getReference('admin-role');
+        $uniqueRoleReference = $referenceRepository->getReference('admin-role-unique');
+
         $this->assertInstanceOf(Role::class, $roleReference);
+        $this->assertInstanceOf(Role::class, $uniqueRoleReference);
+
         $this->assertEquals('admin', $roleReference->getName());
+        $this->assertEquals('admin-unique', $uniqueRoleReference->getName());
 
         $userReference = $referenceRepository->getReference('admin');
         $this->assertInstanceOf(User::class, $userReference);
         $this->assertEquals('admin@example.com', $userReference->getEmail());
+
+        $userReference = $referenceRepository->getUniqueReference('user');
+        $this->assertInstanceOf(User::class, $userReference);
+        $this->assertEquals('admin-unique-role@example.com', $userReference->getEmail());
     }
 
     private function getMockFixture(): SharedFixtureInterface
