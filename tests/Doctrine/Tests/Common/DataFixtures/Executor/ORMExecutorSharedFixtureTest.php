@@ -57,9 +57,9 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
+        $userFixture           = new TestFixtures\UserFixture();
+        $roleFixture           = new TestFixtures\RoleFixture();
         $uniqueRoleUserFixture = new TestFixtures\UniqueRoleUserFixture();
-        $userFixture = new TestFixtures\UserFixture();
-        $roleFixture = new TestFixtures\RoleFixture();
         $executor->execute([$roleFixture, $userFixture, $uniqueRoleUserFixture], true);
 
         $referenceRepository = $executor->getReferenceRepository();
