@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures;
 
 use BadMethodCallException;
+use Doctrine\Common\DataFixtures\Exception\UniqueReferencesOutOfStockException;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
 use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
 
 use function array_key_exists;
+use function array_key_first;
 use function array_keys;
+use function array_merge;
+use function array_shift;
 use function get_class;
 use function method_exists;
 use function sprintf;
@@ -29,6 +33,15 @@ class ReferenceRepository
      * @var array
      */
     private $references = [];
+
+    /**
+     * List of unique named references to the
+     * fixture objects gathered during loads
+     * of fixtures
+     *
+     * @var array
+     */
+    private $uniqueReferences = [];
 
     /**
      * List of identifiers stored for references
@@ -84,23 +97,30 @@ class ReferenceRepository
 
     /**
      * Set the reference entry identified by $name
-     * and referenced to $reference. If $name
-     * already is set, it overrides it
+     * and referenced to $reference.
+     * If $name is already set, it overrides it.
      *
      * @param string $name
      * @param object $reference
      */
     public function setReference($name, $reference)
     {
-        $this->references[$name] = $reference;
+        $this->doSetReference($name, $reference);
+    }
 
-        if (! $this->hasIdentifier($reference)) {
-            return;
-        }
-
-        // in case if reference is set after flush, store its identity
-        $uow                     = $this->manager->getUnitOfWork();
-        $this->identities[$name] = $this->getIdentifier($reference, $uow);
+    /**
+     * Set the reference entry tagged with $tag,
+     * identified by $name and referenced to
+     * $reference.
+     * If $name is already set, it overrides it.
+     *
+     * @param string $name
+     * @param object $reference
+     * @param string $tag
+     */
+    public function setUniqueReference($name, $reference, $tag)
+    {
+        $this->doSetReference($name, $reference, $tag);
     }
 
     /**
@@ -117,7 +137,7 @@ class ReferenceRepository
     /**
      * Set the reference entry identified by $name
      * and referenced to managed $object. $name must
-     * not be set yet
+     * not be set yet.
      *
      * Notice: in case if identifier is generated after
      * the record is inserted, be sure tu use this method
@@ -133,10 +153,41 @@ class ReferenceRepository
     public function addReference($name, $object)
     {
         if (isset($this->references[$name])) {
-            throw new BadMethodCallException(sprintf('Reference to "%s" already exists, use method setReference in order to override it', $name));
+            throw new BadMethodCallException(sprintf('Reference to "%s" already exists, use method setReference in order to override it.', $name));
         }
 
         $this->setReference($name, $object);
+    }
+
+    /**
+     * Set the unique reference entry tagged with
+     * $tag, identified by $name and referenced
+     * to managed $object.
+     * $name must not be set yet.
+     *
+     * Notice: in case if identifier is generated after
+     * the record is inserted, be sure tu use this method
+     * after $object is flushed
+     *
+     * @param string $name
+     * @param object $object - managed object
+     * @param string $tag
+     *
+     * @return void
+     *
+     * @throws BadMethodCallException - if repository already has a unique reference by $name.
+     */
+    public function addUniqueReference($name, $object, $tag)
+    {
+        if (isset($this->uniqueReferences[$tag][$name])) {
+            throw new BadMethodCallException(sprintf(
+                'Unique reference "%s" tagged as "%s" already exists, use method setUniqueReference in order to override it.',
+                $name,
+                $tag
+            ));
+        }
+
+        $this->setUniqueReference($name, $object, $tag);
     }
 
     /**
@@ -156,14 +207,49 @@ class ReferenceRepository
         }
 
         $reference = $this->references[$name];
-        $meta      = $this->manager->getClassMetadata(get_class($reference));
+
+        return $this->consultIdentityMap($name, $reference);
+    }
+
+    /**
+     * Get all stored references
+     *
+     * @return object
+     */
+    public function getUniqueReference($tag)
+    {
+        if (! $this->hasUniqueReferences($tag)) {
+            throw new OutOfBoundsException(sprintf('There are no unique references tagged as "%s".', $tag));
+        }
+
+        if (empty($this->uniqueReferences[$tag])) {
+            throw new UniqueReferencesOutOfStockException(sprintf(
+                'The stock of unique references tagged as "%s" is exhausted, create more or use less.',
+                $tag
+            ));
+        }
+
+        $name      = array_key_first($this->uniqueReferences[$tag]);
+        $reference = array_shift($this->uniqueReferences[$tag]);
+
+        return $this->consultIdentityMap($name, $reference, $tag);
+    }
+
+    private function consultIdentityMap($name, $reference, $tag = null)
+    {
+        $meta = $this->manager->getClassMetadata(get_class($reference));
 
         if (! $this->manager->contains($reference) && isset($this->identities[$name])) {
-            $reference               = $this->manager->getReference(
+            $reference = $this->manager->getReference(
                 $meta->name,
                 $this->identities[$name]
             );
-            $this->references[$name] = $reference; // already in identity map
+
+            if ($tag) {
+                $this->uniqueReferences[$tag][$name] = $reference; // already in identity map
+            } else {
+                $this->references[$name] = $reference; // already in identity map
+            }
         }
 
         return $reference;
@@ -183,6 +269,33 @@ class ReferenceRepository
     }
 
     /**
+     * Check if an object is stored using unique
+     * reference named by $name and tagged by $tag
+     *
+     * @param string $name
+     * @param string $tag
+     *
+     * @return bool
+     */
+    public function hasUniqueReference($name, $tag)
+    {
+        return isset($this->uniqueReferences[$tag][$name]);
+    }
+
+    /**
+     * Checks if there are unique references tagged
+     * with $tag
+     *
+     * @param string $tag
+     *
+     * @return bool
+     */
+    public function hasUniqueReferences($tag)
+    {
+        return isset($this->uniqueReferences[$tag]);
+    }
+
+    /**
      * Searches for reference names in the
      * list of stored references
      *
@@ -192,6 +305,10 @@ class ReferenceRepository
      */
     public function getReferenceNames($reference)
     {
+        foreach ($this->uniqueReferences as $taggedReferences) {
+            $this->references = array_merge($this->references, $taggedReferences);
+        }
+
         return array_keys($this->references, $reference, true);
     }
 
@@ -228,6 +345,23 @@ class ReferenceRepository
     }
 
     /**
+     * Get all unique references stored
+     * tagged with $tag
+     *
+     * @return array
+     *
+     * @var string $tag
+     */
+    public function getUniqueReferences($tag)
+    {
+        if (! $this->hasUniqueReferences($tag)) {
+            throw new OutOfBoundsException(sprintf('There are no unique references for "%s".', $tag));
+        }
+
+        return $this->uniqueReferences[$tag];
+    }
+
+    /**
      * Get object manager
      *
      * @return ObjectManager
@@ -254,5 +388,31 @@ class ReferenceRepository
         }
 
         return $uow->isInIdentityMap($reference);
+    }
+
+    /**
+     * Set the reference entry identified by $name
+     * and referenced to $reference.
+     * If $name is already set, it overrides it.
+     * if $tag is not null create a unique reference.
+     *
+     * @param $name
+     * @param $reference
+     * @param null      $tag
+     */
+    private function doSetReference($name, $reference, $tag = null)
+    {
+        if ($tag) {
+            $this->uniqueReferences[$tag][$name] = $reference;
+        } else {
+            $this->references[$name] = $reference;
+        }
+
+        if (! $this->hasIdentifier($reference)) {
+            return;
+        }
+
+        $uow                     = $this->manager->getUnitOfWork();
+        $this->identities[$name] = $this->getIdentifier($reference, $uow);
     }
 }

@@ -6,6 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures;
 
 use BadMethodCallException;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
+use Doctrine\Common\DataFixtures\Exception\UniqueReferencesOutOfStockException;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Proxy\Proxy;
@@ -42,6 +43,27 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Role::class, $references['test']);
     }
 
+    public function testUniqueReferenceEntry(): void
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+
+        $meta = $em->getClassMetadata(Role::class);
+        $meta->getReflectionProperty('id')->setValue($role, 1);
+
+        $referenceRepo = new ReferenceRepository($em);
+        $this->assertSame($em, $referenceRepo->getManager());
+
+        $referenceRepo->addUniqueReference('test', $role, 'tag');
+
+        $references = $referenceRepo->getUniqueReferences('tag');
+        $this->assertCount(1, $references);
+        $this->assertArrayHasKey('test', $references);
+        $this->assertInstanceOf(Role::class, $references['test']);
+    }
+
     public function testReferenceIdentityPopulation(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
@@ -60,12 +82,19 @@ class ReferenceRepositoryTest extends BaseTest
             ->with('admin-role');
 
         $referenceRepository->expects($this->once())
-            ->method('getReferenceNames')
-            ->will($this->returnValue(['admin-role']));
+            ->method('addUniqueReference')
+            ->with('admin-role-unique');
 
-        $referenceRepository->expects($this->once())
+        $referenceRepository->expects($this->exactly(2))
+            ->method('getReferenceNames')
+            ->will($this->onConsecutiveCalls(['admin-role'], ['admin-role-unique']));
+
+        $referenceRepository->expects($this->exactly(2))
             ->method('setReferenceIdentity')
-            ->with('admin-role', ['id' => 1]);
+            ->withConsecutive(
+                ['admin-role', ['id' => 1]],
+                ['admin-role-unique', ['id' => 2]]
+            );
 
         $roleFixture = new TestFixtures\RoleFixture();
         $roleFixture->setReferenceRepository($referenceRepository);
@@ -89,10 +118,14 @@ class ReferenceRepositoryTest extends BaseTest
         $roleFixture->load($em);
         // first test against managed state
         $ref = $referenceRepository->getReference('admin-role');
+        $uniqueRef = $referenceRepository->getUniqueReference('role');
 
         $this->assertNotInstanceOf(Proxy::class, $ref);
+        $this->assertNotInstanceOf(Proxy::class, $uniqueRef);
 
         // now test reference reconstruction from identity
+        // unique references can't perform reconstruction because
+        // they are for single use only
         $em->clear();
         $ref = $referenceRepository->getReference('admin-role');
 
@@ -120,6 +153,27 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate'));
     }
 
+    public function testUniqueReferenceMultipleEntries(): void
+    {
+        $em                  = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ReferenceRepository($em);
+        $em->getEventManager()->addEventSubscriber(new ORMReferenceListener($referenceRepository));
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
+
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+
+        $em->persist($role);
+        $referenceRepository->addUniqueReference('admin', $role, 'tag');
+        $referenceRepository->addUniqueReference('duplicate', $role, 'tag');
+        $em->flush();
+        $em->clear();
+
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('tag'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('tag'));
+    }
+
     public function testUndefinedReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
@@ -128,6 +182,17 @@ class ReferenceRepositoryTest extends BaseTest
         $this->expectExceptionMessage('Reference to "foo" does not exist');
 
         $referenceRepository->getReference('foo');
+    }
+
+
+    public function testUndefinedUniqueReferenceForTag(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('There are no unique references tagged as "invalid-tag".');
+
+        $referenceRepository->getUniqueReference('invalid-tag');
     }
 
     public function testThrowsExceptionAddingDuplicatedReference(): void
@@ -141,6 +206,19 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->addReference('duplicated_reference', new stdClass());
     }
 
+    public function testThrowsExceptionAddingDuplicatedUniqueReference(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+        $referenceRepository->addUniqueReference('duplicated_reference', new stdClass(), 'tag');
+
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage(
+            'Unique reference "duplicated_reference" tagged as "tag" already exists, use method setUniqueReference in order to override it.'
+        );
+
+        $referenceRepository->addUniqueReference('duplicated_reference', new stdClass(), 'tag');
+    }
+
     public function testThrowsExceptionTryingToGetWrongReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
@@ -149,6 +227,38 @@ class ReferenceRepositoryTest extends BaseTest
         $this->expectExceptionMessage('Reference to "missing_reference" does not exist');
 
         $referenceRepository->getReference('missing_reference');
+    }
+
+    public function testThrowsExceptionTryingToGetWrongUniqueReference(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('There are no unique references tagged as "tag".');
+
+        $referenceRepository->getUniqueReference('tag');
+    }
+
+    public function testThrowsExceptionTryingToGetUniqueReferenceWhenStockExhausted(): void
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+
+        $meta = $em->getClassMetadata(Role::class);
+        $meta->getReflectionProperty('id')->setValue($role, 1);
+
+        $referenceRepo = new ReferenceRepository($em);
+        $this->assertSame($em, $referenceRepo->getManager());
+
+        $referenceRepo->addUniqueReference('test', $role, 'role');
+        $referenceRepo->getUniqueReference('role');
+
+        $this->expectException(UniqueReferencesOutOfStockException::class);
+        $this->expectExceptionMessage('The stock of unique references tagged as "role" is exhausted, create more or use less.');
+
+        $referenceRepo->getUniqueReference('role');
     }
 
     public function testHasIdentityCheck(): void

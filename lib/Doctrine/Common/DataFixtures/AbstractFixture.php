@@ -20,6 +20,9 @@ abstract class AbstractFixture implements SharedFixtureInterface
      */
     protected $referenceRepository;
 
+    /** @var array */
+    private $uniqueReferences = [];
+
     /**
      * {@inheritdoc}
      */
@@ -46,9 +49,28 @@ abstract class AbstractFixture implements SharedFixtureInterface
     }
 
     /**
+     * Set the unique reference entry tagged
+     * with $tag, identified by $name and
+     * referenced to managed $object. If $name
+     * already is set, it overrides it.
+     *
+     * @see Doctrine\Common\DataFixtures\ReferenceRepository::setUniqueReference
+     *
+     * @param string $name
+     * @param object $object - managed object
+     * @param string $tag
+     *
+     * @return void
+     */
+    public function setUniqueReference($name, $object, $tag)
+    {
+        $this->referenceRepository->setUniqueReference($name, $object, $tag);
+    }
+
+    /**
      * Set the reference entry identified by $name
      * and referenced to managed $object. If $name
-     * already is set, it throws a
+     * is already set, it throws a
      * BadMethodCallException exception
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::addReference
@@ -66,6 +88,27 @@ abstract class AbstractFixture implements SharedFixtureInterface
     }
 
     /**
+     * Set tagged reference for a unique usage
+     * $name, tagged with $tag and referenced to
+     * managed $object. If $name is already set,
+     * it throws a BadMethodCallException exception
+     *
+     * @see Doctrine\Common\DataFixtures\ReferenceRepository::addReference
+     *
+     * @param string $name
+     * @param object $object - managed object
+     * @param string $tag    - tag a group of references
+     *
+     * @return void
+     *
+     * @throws BadMethodCallException - if repository already has a reference by $name.
+     */
+    public function addUniqueReference($name, $object, $tag)
+    {
+        $this->referenceRepository->addUniqueReference($name, $object, $tag);
+    }
+
+    /**
      * Loads an object using stored reference
      * named by $name
      *
@@ -78,6 +121,18 @@ abstract class AbstractFixture implements SharedFixtureInterface
     public function getReference($name)
     {
         return $this->referenceRepository->getReference($name);
+    }
+
+    /**
+     * Load an unique reference tagged by $tag
+     *
+     * @param string $name
+     *
+     * @return object
+     */
+    public function getUniqueReference($tag)
+    {
+        return $this->referenceRepository->getUniqueReference($tag);
     }
 
     /**
