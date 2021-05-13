@@ -55,7 +55,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @param string $name
      * @param object $object - managed object
-     * @param string $tag
+     * @param null|string $tag
      *
      * @return void
      */
@@ -74,6 +74,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @param string $name
      * @param object $object - managed object
+     * @param null|string $tag
      *
      * @return void
      *
@@ -91,11 +92,11 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * If $name is already set for the scope of $tag,
      * it throws a BadMethodCallException exception
      *
-     * @see Doctrine\Common\DataFixtures\ReferenceRepository::addReference
+     * @see Doctrine\Common\DataFixtures\ReferenceRepository::addUniqueReference
      *
      * @param string $name
      * @param object $object - managed object
-     * @param string $tag    - tag a group of references
+     * @param null|string $tag    - tag a group of references
      *
      * @return void
      *
@@ -138,7 +139,10 @@ abstract class AbstractFixture implements SharedFixtureInterface
     }
 
     /**
-     * Load a random unique reference tagged by $tag
+     * Load a random reference tagged by $tag
+     * Reference can be unique
+     *
+     * @see Doctrine\Common\DataFixtures\ReferenceRepository::getRandomReference
      *
      * @param string $tag
      *

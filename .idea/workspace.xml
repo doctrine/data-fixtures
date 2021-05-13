@@ -20,14 +20,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0bf04a80-d0f4-40ea-8370-9c841d56b5ce" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/Doctrine/Common/DataFixtures/AbstractFixture.php" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Doctrine/Common/DataFixtures/AbstractFixture.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Doctrine/Common/DataFixtures/ReferenceRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Doctrine/Common/DataFixtures/ReferenceRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/Executor/ORMExecutorSharedFixtureTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/Executor/ORMExecutorSharedFixtureTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/LoaderTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/LoaderTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/ProxyReferenceRepositoryTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/ProxyReferenceRepositoryTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/ReferenceRepositoryTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/ReferenceRepositoryTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/TestFixtures/RoleFixture.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/TestFixtures/RoleFixture.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/TestFixtures/UniqueRoleUserFixture.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/TestFixtures/UserFixture.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Doctrine/Tests/Common/DataFixtures/TestFixtures/UserFixture.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
   </component>
@@ -110,17 +120,10 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
-  </component>
-  <component name="RunManager">
-    <configuration name="phpunit.xml.dist" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <TestRunner scope="XML" />
-      <method v="2" />
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -130,8 +133,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1620736347266</updated>
-      <workItem from="1620736348336" duration="57648000" />
-      <workItem from="1620891004730" duration="705000" />
+      <workItem from="1620736348336" duration="57006000" />
     </task>
     <servers />
   </component>
@@ -159,9 +161,9 @@
       <screen x="1920" y="0" width="2560" height="1440" />
     </state>
     <state x="2786" y="439" width="921" height="582" key="NewPhpClassDialog/72.27.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1620824334263" />
-    <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup" timestamp="1620827600239">
+    <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup" timestamp="1620893288361">
       <screen x="1920" y="0" width="2560" height="1440" />
     </state>
-    <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup/72.27.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1620827600239" />
+    <state x="2863" y="329" width="672" height="678" key="search.everywhere.popup/72.27.1848.1053/1920.0.2560.1440@1920.0.2560.1440" timestamp="1620893288361" />
   </component>
 </project>

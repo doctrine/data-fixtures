@@ -22,13 +22,13 @@ use function sprintf;
 /**
  * ReferenceRepository class manages references for
  * fixtures in order to easily support the relations
- * between fixtures
+ * between fixtures.
  */
 class ReferenceRepository
 {
     /**
      * List of named references to the fixture objects
-     * gathered during loads of fixtures
+     * gathered during loads of fixtures.
      *
      * @var array
      */
@@ -37,14 +37,14 @@ class ReferenceRepository
     /**
      * List of tags that contains unique references to
      * the fixture objects gathered during loads of
-     * fixtures
+     * fixtures.
      *
      * @var array
      */
     private $uniqueReferencesTag = [];
 
     /**
-     * List of obsolete unique references
+     * List of obsolete unique references.
      *
      * @var array
      */
@@ -53,7 +53,7 @@ class ReferenceRepository
     /**
      * List of tagged references to the
      * fixture objects gathered during loads
-     * of fixtures
+     * of fixtures.
      *
      * @var array
      */
@@ -62,14 +62,14 @@ class ReferenceRepository
     /**
      * List of identifiers stored for references
      * in case if reference gets unmanaged, it will
-     * use a proxy referenced by this identity
+     * use a proxy referenced by this identity.
      *
      * @var array
      */
     private $identities = [];
 
     /**
-     * Currently used object manager
+     * Currently used object manager.
      *
      * @var ObjectManager
      */
@@ -81,7 +81,7 @@ class ReferenceRepository
     }
 
     /**
-     * Get identifier for a unit of work
+     * Get identifier for a unit of work.
      *
      * @param object $reference Reference object
      * @param object $uow       Unit of work
@@ -114,10 +114,12 @@ class ReferenceRepository
     /**
      * Set the reference entry identified by $name
      * and referenced to $reference.
+     * If $tag is not null, create a tagged reference
      * If $name is already set, it overrides it.
      *
      * @param string $name
      * @param object $reference
+     * @param null|string $tag
      */
     public function setReference($name, $reference, $tag = null)
     {
@@ -132,7 +134,7 @@ class ReferenceRepository
      *
      * @param string $name
      * @param object $reference
-     * @param null|string $tag
+     * @param string $tag
      */
     public function setUniqueReference($name, $reference, $tag)
     {
@@ -144,7 +146,7 @@ class ReferenceRepository
     }
 
     /**
-     * Store the identifier of a reference
+     * Store the identifier of a reference.
      *
      * @param string $name
      * @param mixed  $identity
@@ -165,6 +167,7 @@ class ReferenceRepository
      *
      * @param string $name
      * @param object $object - managed object
+     * @param null|string $name
      *
      * @return void
      *
@@ -173,7 +176,7 @@ class ReferenceRepository
     public function addReference($name, $object, $tag = null)
     {
         if (isset($this->references[$name])) {
-            throw new BadMethodCallException(sprintf('Reference to "%s" already exists, use method setReference in order to override it.', $name));
+            throw new BadMethodCallException(sprintf('Reference to "%s" already exists, use method setReference in order to override it', $name));
         }
 
         if (isset($this->taggedReferences[$tag][$name])) {
@@ -220,7 +223,7 @@ class ReferenceRepository
 
     /**
      * Loads an object using stored reference
-     * named by $name
+     * named by $name.
      *
      * @param string $name
      *
@@ -239,7 +242,7 @@ class ReferenceRepository
 
     /**
      * Loads an object using stored unique reference
-     * named by $name
+     * named by $name.
      *
      * @param string $name
      * @param string $tag
@@ -270,15 +273,15 @@ class ReferenceRepository
         }
 
         $reference = $this->consultIdentityMap($name, $this->taggedReferences[$tag][$name]);
-
         unset($this->taggedReferences[$tag][$name]);
+        // Keeps record of obsolete references to indicate more precise errors to users.
         $this->obsoleteReferences[$tag][] = $name;
 
         return $reference;
     }
 
     /**
-     * Get a reference tagged with $tag
+     * Get a reference tagged with $tag.
      *
      * @param string $tag
      *
@@ -312,7 +315,7 @@ class ReferenceRepository
 
     /**
      * Check if an object is stored using reference
-     * named by $name
+     * named by $name.
      *
      * @param string $name
      *
@@ -325,7 +328,7 @@ class ReferenceRepository
 
     /**
      * Check if an object is stored using unique
-     * reference named by $name and tagged by $tag
+     * reference named by $name and tagged by $tag.
      *
      * @param string $name
      * @param string $tag
@@ -339,7 +342,7 @@ class ReferenceRepository
 
     /**
      * Checks if there are unique references tagged
-     * with $tag
+     * with $tag.
      *
      * @param string $tag
      *
@@ -352,7 +355,7 @@ class ReferenceRepository
 
     /**
      * Searches for reference names in the
-     * list of stored references
+     * list of stored references.
      *
      * @param object $reference
      *
@@ -368,7 +371,7 @@ class ReferenceRepository
     }
 
     /**
-     * Checks if reference has identity stored
+     * Checks if reference has identity stored.
      *
      * @param string $name
      *
@@ -380,7 +383,7 @@ class ReferenceRepository
     }
 
     /**
-     * Get all stored identities
+     * Get all stored identities.
      *
      * @return array
      */
@@ -390,7 +393,7 @@ class ReferenceRepository
     }
 
     /**
-     * Get all stored references
+     * Get all stored references.
      *
      * @return array
      */
@@ -400,7 +403,7 @@ class ReferenceRepository
     }
 
     /**
-     * Get all stored unique references
+     * Get all stored unique references.
      *
      * @return array
      */
@@ -416,9 +419,9 @@ class ReferenceRepository
 
     /**
      * Get all references stored
-     * tagged with $tag
+     * tagged with $tag.
      * Use allUniqueReferences method for
-     * retrieves all unique references
+     * retrieves all unique references.
      *
      * @return array
      *
@@ -434,7 +437,7 @@ class ReferenceRepository
     }
 
     /**
-     * Get object manager
+     * Get object manager.
      *
      * @return ObjectManager
      */
@@ -465,12 +468,12 @@ class ReferenceRepository
     /**
      * Set the reference entry identified by $name
      * and referenced to $reference.
-     * If $name is already set, it overrides it.
      * if $tag is not null create a unique reference.
+     * If $name is already set, it overrides it.
      *
      * @param string $name
      * @param object $reference
-     * @param null tag
+     * @param null|string tag
      *
      * @return void
      */
@@ -495,7 +498,7 @@ class ReferenceRepository
      * identities property contains $name, consult the
      * identity map to get the reference.
      *
-     * See DocumentManager::getReference for more info.
+     * @see Doctrine\ORM\EntityManager::getReference
      *
      * @param string $name
      * @param object $reference

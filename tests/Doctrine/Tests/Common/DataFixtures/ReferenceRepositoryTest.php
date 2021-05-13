@@ -46,6 +46,9 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepo = new ReferenceRepository($em);
         $referenceRepo->addUniqueReference('test', $role, 'tag');
 
+        $this->assertTrue($referenceRepo->hasTaggedReference('test', 'tag'));
+        $this->assertTrue($referenceRepo->hasTaggedReferences('tag'));
+
         $references = $referenceRepo->getUniqueReferences();
         $this->assertCount(1, $references);
         $this->assertArrayHasKey('test', $references);
@@ -60,10 +63,24 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepo = new ReferenceRepository($em);
         $referenceRepo->addReference('test', $role, 'tag');
 
+        $this->assertTrue($referenceRepo->hasTaggedReference('test', 'tag'));
+        $this->assertTrue($referenceRepo->hasTaggedReferences('tag'));
+
         $references = $referenceRepo->getReferencesByTag('tag');
         $this->assertCount(1, $references);
         $this->assertArrayHasKey('test', $references);
         $this->assertInstanceOf(Role::class, $references['test']);
+    }
+
+    public function testRandomReferenceEntry(): void
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+        $role = $this->createRole('admin', 1, $em);
+
+        $referenceRepo = new ReferenceRepository($em);
+        $referenceRepo->addReference('test', $role, 'tag');
+
+        $this->assertInstanceOf(Role::class, $referenceRepo->getRandomReference('tag'));
     }
 
     public function testReferenceIdentityPopulation(): void

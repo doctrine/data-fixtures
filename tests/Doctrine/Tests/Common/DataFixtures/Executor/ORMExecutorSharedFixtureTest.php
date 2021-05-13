@@ -57,8 +57,8 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
-        $roleFixture           = new TestFixtures\RoleFixture();
         $userFixture           = new TestFixtures\UserFixture();
+        $roleFixture           = new TestFixtures\RoleFixture();
         $executor->execute([$roleFixture, $userFixture], true);
 
         $referenceRepository = $executor->getReferenceRepository();
@@ -81,6 +81,7 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $this->assertInstanceOf(User::class, $userReference);
         $this->assertEquals('admin-unique@example.com', $userReference->getEmail());
 
+        // test get last unique reference generated with ->getRandomReference
         $userReference = $referenceRepository->getRandomReference('user');
         $this->assertInstanceOf(User::class, $userReference);
         $this->assertEquals('admin-unique-2@example.com', $userReference->getEmail());

@@ -56,11 +56,25 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $referenceRepo = new ProxyReferenceRepository($em);
         $referenceRepo->addReference('test', $role, 'tag');
 
+        $this->assertTrue($referenceRepo->hasTaggedReference('test', 'tag'));
+        $this->assertTrue($referenceRepo->hasTaggedReferences('tag'));
+
         $references = $referenceRepo->getReferencesByTag('tag');
 
         $this->assertCount(1, $references);
         $this->assertArrayHasKey('test', $references);
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $references['test']);
+    }
+
+    public function testRandomReferenceEntry(): void
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+        $role = $this->createRole('admin', 1, $em);
+
+        $referenceRepo = new ProxyReferenceRepository($em);
+        $referenceRepo->addReference('test', $role, 'tag');
+
+        $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $referenceRepo->getRandomReference('tag'));
     }
 
     public function testUniqueReferenceEntry(): void
@@ -240,7 +254,7 @@ class ProxyReferenceRepositoryTest extends BaseTest
         $em->flush();
         $em->clear();
 
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getRandomReference('role'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getUniqueReference('admin', 'role'));
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getRandomReference('role'));
     }
 
