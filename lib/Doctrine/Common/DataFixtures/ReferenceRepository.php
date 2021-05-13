@@ -35,6 +35,15 @@ class ReferenceRepository
     private $references = [];
 
     /**
+     * List of tags that contains not unique references
+     * to the fixture objects gathered during loads of
+     * fixtures.
+     *
+     * @var array
+     */
+    private $notUniqueReferencesTag = [];
+
+    /**
      * List of tags that contains unique references to
      * the fixture objects gathered during loads of
      * fixtures.
@@ -120,9 +129,21 @@ class ReferenceRepository
      * @param string $name
      * @param object $reference
      * @param null|string $tag
+     * 
+     * @throws OutOfBoundsException
      */
     public function setReference($name, $reference, $tag = null)
     {
+        if (in_array($tag, $this->uniqueReferencesTag)) {
+            throw new OutOfBoundsException(sprintf(
+                'Tag "%s" is already used for uniques references.', $tag
+            ));
+        }
+
+        if (!in_array($tag, $this->notUniqueReferencesTag)) {
+            $this->notUniqueReferencesTag[] = $tag;
+        }
+
         $this->doSetReference($name, $reference, $tag);
     }
 
@@ -138,6 +159,12 @@ class ReferenceRepository
      */
     public function setUniqueReference($name, $reference, $tag)
     {
+        if (in_array($tag, $this->notUniqueReferencesTag)) {
+            throw new OutOfBoundsException(sprintf(
+                'Tag "%s" is already used for not unique references.', $tag
+            ));
+        }
+
         if (!in_array($tag, $this->uniqueReferencesTag)) {
             $this->uniqueReferencesTag[] = $tag;
         }

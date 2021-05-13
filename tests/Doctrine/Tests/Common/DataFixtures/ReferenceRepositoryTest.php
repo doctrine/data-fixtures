@@ -287,6 +287,32 @@ class ReferenceRepositoryTest extends BaseTest
         $referenceRepository->getUniqueReference('missing_reference', 'tag');
     }
 
+    public function testThrowsExceptionSetReferenceCantOverrideTagForNotUniqueReferences(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+        $referenceRepository->addReference('ref-a', new stdClass(), 'tag-a');
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage(
+            'Tag "tag-a" is already used for not unique references.'
+        );
+
+        $referenceRepository->addUniqueReference('ref-b', new stdClass(), 'tag-a');
+    }
+
+    public function testThrowsExceptionSetReferenceCantOverrideTagForUniqueReferences(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+        $referenceRepository->addUniqueReference('ref-a', new stdClass(), 'tag-a');
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage(
+            'Tag "tag-a" is already used for uniques references.'
+        );
+
+        $referenceRepository->addReference('ref-b', new stdClass(), 'tag-a');
+    }
+
     public function testThrowsExceptionTryingToGetRandomReferenceWithWrongTag(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());

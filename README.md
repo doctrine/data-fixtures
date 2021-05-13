@@ -133,7 +133,7 @@ class UserDataLoader extends AbstractFixture
 ```
 
 ### Random references
-You can call a reference randomly. To do this, you will need to 
+You can call a random reference. To do this, you will need to 
 define a set of references with a common tag. 
 
 For instance:
@@ -188,14 +188,14 @@ class UserDataLoader extends AbstractFixture
 ```
 
 ### Unique references
-You can generate unique references that made obsolete after use.
-This ensures that you do not reuse single-use references for a given 
+You can generate unique references made obsolete after use.
+This ensures that you do not reuse unique references for a given 
 context (tag). Unique references are invalidated only within the 
 scope of the assigned tag:
 
 ```php
-$this->addUniqueReference('ref-a', $refa, 'tag-a');
-$this->addUniqueReference('ref-a', $refa, 'tag-b');
+$this->addUniqueReference('ref-a', $ref, 'tag-a');
+$this->addUniqueReference('ref-a', $ref, 'tag-b');
 
 $this->getUniqueReference('ref-a', 'tag-a');
 
@@ -203,11 +203,14 @@ $this->getUniqueReference('ref-a', 'tag-a');
 // ->getUniqueReference('ref-a', 'tag-b')  // still valid
 ```
 
-Calling `->getRandomReference` for a tag marking unique references returns 
-a unique reference immediately made obsolete. Of course, you must create enough 
-unique references for your needs, otherwise an exception will be thrown.
+> You can't assign a tag to unique references already assigned to non-unique 
+> references and vice versa.
 
-Usage example: You want to generate Actor and Role fixtures. A role cannot 
+> Calling `->getRandomReference` for a tag assigned to unique references returns 
+> a unique reference immediately made obsolete. Of course, you must create enough 
+> unique references for your needs, otherwise an exception will be thrown.
+
+Usage example: You want to generate **Actor** and **Role** fixtures. A role cannot 
 be assigned to several actors, so your references must be unique.
 
 ```php
