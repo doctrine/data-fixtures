@@ -199,6 +199,25 @@ class ReferenceRepositoryTest extends BaseTest
         $this->assertInstanceOf(Proxy::class, $referenceRepository->getRandomReference('tag'));
     }
 
+    public function testUndefinedUniqueReferenceMadeObsoleteOnlyForTagContext(): void
+    {
+        $em = $this->getMockAnnotationReaderEntityManager();
+        $role = $this->createRole('admin', 1, $em);
+
+        $referenceRepo = new ReferenceRepository($em);
+
+        $referenceRepo->addUniqueReference('test', $role, 'tag-a');
+        $referenceRepo->addUniqueReference('test', $role, 'tag-b');
+
+        $referenceRepo->getUniqueReference('test', 'tag-a'); // made obsolete test with tag-a
+        $this->assertInstanceOf(Role::class, $referenceRepo->getUniqueReference('test', 'tag-b'));
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('Unique reference to "test" has already been used.');
+
+        $referenceRepo->getUniqueReference('test', 'tag-a');
+    }
+
     public function testUndefinedReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());

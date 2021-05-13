@@ -188,8 +188,9 @@ class UserDataLoader extends AbstractFixture
 ```
 
 ### Unique references
-You can generate unique references that are destroyed after use.
-Unique references are always tagged and invalidated only within the 
+You can generate unique references that made obsolete after use.
+This ensures that you do not reuse single-use references for a given 
+context (tag). Unique references are invalidated only within the 
 scope of the assigned tag:
 
 ```php
