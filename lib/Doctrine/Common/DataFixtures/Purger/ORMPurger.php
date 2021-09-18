@@ -130,7 +130,10 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         }
 
         $connection            = $this->em->getConnection();
-        $filterExpr            = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
+        $filterExpr            = method_exists(
+            $connection->getConfiguration(),
+            'getFilterSchemaAssetsExpression'
+        ) ? $connection->getConfiguration()->getFilterSchemaAssetsExpression() : null;
         $emptyFilterExpression = empty($filterExpr);
 
         $schemaAssetsFilter = method_exists(
