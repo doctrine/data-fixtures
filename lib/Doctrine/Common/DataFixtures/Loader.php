@@ -305,11 +305,18 @@ class Loader
                 $this->validateDependencies($dependenciesClasses);
 
                 if (! is_array($dependenciesClasses) || empty($dependenciesClasses)) {
-                    throw new InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.', 'getDependencies', $fixtureClass));
+                    throw new InvalidArgumentException(sprintf(
+                        'Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.',
+                        'getDependencies',
+                        $fixtureClass
+                    ));
                 }
 
                 if (in_array($fixtureClass, $dependenciesClasses)) {
-                    throw new InvalidArgumentException(sprintf('Class "%s" can\'t have itself as a dependency', $fixtureClass));
+                    throw new InvalidArgumentException(sprintf(
+                        'Class "%s" can\'t have itself as a dependency',
+                        $fixtureClass
+                    ));
                 }
 
                 // We mark this class as unsequenced
@@ -373,7 +380,10 @@ class Loader
 
         foreach ($dependenciesClasses as $class) {
             if (! in_array($class, $loadedFixtureClasses)) {
-                throw new RuntimeException(sprintf('Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.', $class));
+                throw new RuntimeException(sprintf(
+                    'Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.',
+                    $class
+                ));
             }
         }
 

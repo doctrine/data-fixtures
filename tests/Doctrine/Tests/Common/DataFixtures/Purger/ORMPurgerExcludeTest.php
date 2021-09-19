@@ -33,7 +33,13 @@ class ORMPurgerExcludeTest extends BaseTest
         }
 
         $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
-        $config   = Setup::createAnnotationMetadataConfiguration([__DIR__ . '/../TestPurgeEntity'], true, null, null, false);
+        $config   = Setup::createAnnotationMetadataConfiguration(
+            [__DIR__ . '/../TestPurgeEntity'],
+            true,
+            null,
+            null,
+            false
+        );
         $em       = EntityManager::create($dbParams, $config);
 
         $connection    = $em->getConnection();
