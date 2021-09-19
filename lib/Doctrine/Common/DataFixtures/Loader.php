@@ -206,9 +206,9 @@ class Loader
      * Check if a given fixture is transient and should not be considered a data fixtures
      * class.
      *
-     * @return bool
-     *
      * @psalm-param class-string<object> $className
+     *
+     * @return bool
      */
     public function isTransient($className)
     {
@@ -383,6 +383,7 @@ class Loader
     /**
      * @psalm-param array<class-string<DependentFixtureInterface>, int> $sequences
      * @psalm-param iterable<class-string<FixtureInterface>>|null       $classes
+     *
      * @psalm-return array<class-string<FixtureInterface>>
      */
     private function getUnsequencedClasses(array $sequences, ?iterable $classes = null): array
@@ -409,6 +410,7 @@ class Loader
      *
      * @psalm-param Iterator<SplFileInfo> $iterator Iterator over files from
      *                                              which fixtures should be loaded.
+     *
      * @psalm-return list<FixtureInterface> $fixtures Array of loaded fixture object instances.
      */
     private function loadFromIterator(Iterator $iterator): array
