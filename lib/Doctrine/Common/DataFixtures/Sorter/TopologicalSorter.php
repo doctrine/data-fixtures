@@ -158,10 +158,13 @@ class TopologicalSorter
                     if (! $this->allowCyclicDependencies) {
                         throw new CircularReferenceException(
                             sprintf(
-                                'Graph contains cyclic dependency between the classes "%s" and'
-                                . ' "%s". An example of this problem would be the following: '
-                                . 'Class C has class B as its dependency. Then, class B has class A has its dependency. '
-                                . 'Finally, class A has class C as its dependency.',
+                                <<<'EXCEPTION'
+Graph contains cyclic dependency between the classes "%s" and
+ "%s". An example of this problem would be the following:
+Class C has class B as its dependency. Then, class B has class A has its dependency.
+Finally, class A has class C as its dependency.
+EXCEPTION
+                                ,
                                 $definition->value->getName(),
                                 $childDefinition->value->getName()
                             )

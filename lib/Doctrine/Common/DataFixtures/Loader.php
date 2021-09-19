@@ -206,9 +206,9 @@ class Loader
      * Check if a given fixture is transient and should not be considered a data fixtures
      * class.
      *
-     * @return bool
-     *
      * @psalm-param class-string<object> $className
+     *
+     * @return bool
      */
     public function isTransient($className)
     {
@@ -305,11 +305,18 @@ class Loader
                 $this->validateDependencies($dependenciesClasses);
 
                 if (! is_array($dependenciesClasses) || empty($dependenciesClasses)) {
-                    throw new InvalidArgumentException(sprintf('Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.', 'getDependencies', $fixtureClass));
+                    throw new InvalidArgumentException(sprintf(
+                        'Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.',
+                        'getDependencies',
+                        $fixtureClass
+                    ));
                 }
 
                 if (in_array($fixtureClass, $dependenciesClasses)) {
-                    throw new InvalidArgumentException(sprintf('Class "%s" can\'t have itself as a dependency', $fixtureClass));
+                    throw new InvalidArgumentException(sprintf(
+                        'Class "%s" can\'t have itself as a dependency',
+                        $fixtureClass
+                    ));
                 }
 
                 // We mark this class as unsequenced
@@ -373,7 +380,10 @@ class Loader
 
         foreach ($dependenciesClasses as $class) {
             if (! in_array($class, $loadedFixtureClasses)) {
-                throw new RuntimeException(sprintf('Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.', $class));
+                throw new RuntimeException(sprintf(
+                    'Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.',
+                    $class
+                ));
             }
         }
 
@@ -383,6 +393,7 @@ class Loader
     /**
      * @psalm-param array<class-string<DependentFixtureInterface>, int> $sequences
      * @psalm-param iterable<class-string<FixtureInterface>>|null       $classes
+     *
      * @psalm-return array<class-string<FixtureInterface>>
      */
     private function getUnsequencedClasses(array $sequences, ?iterable $classes = null): array
@@ -409,6 +420,7 @@ class Loader
      *
      * @psalm-param Iterator<SplFileInfo> $iterator Iterator over files from
      *                                              which fixtures should be loaded.
+     *
      * @psalm-return list<FixtureInterface> $fixtures Array of loaded fixture object instances.
      */
     private function loadFromIterator(Iterator $iterator): array

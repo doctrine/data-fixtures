@@ -128,7 +128,10 @@ abstract class AbstractExecutor
     public function purge()
     {
         if ($this->purger === null) {
-            throw new Exception('Doctrine\Common\DataFixtures\Purger\PurgerInterface instance is required if you want to purge the database before loading your data fixtures.');
+            throw new Exception(
+                PurgerInterface::class .
+                 ' instance is required if you want to purge the database before loading your data fixtures.'
+            );
         }
 
         if ($this->logger) {
