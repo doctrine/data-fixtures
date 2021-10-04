@@ -133,7 +133,10 @@ class ReferenceRepository
     public function addReference($name, $object)
     {
         if (isset($this->references[$name])) {
-            throw new BadMethodCallException(sprintf('Reference to "%s" already exists, use method setReference in order to override it', $name));
+            throw new BadMethodCallException(sprintf(
+                'Reference to "%s" already exists, use method setReference in order to override it',
+                $name
+            ));
         }
 
         $this->setReference($name, $object);

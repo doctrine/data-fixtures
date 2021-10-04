@@ -130,10 +130,16 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         }
 
         $connection            = $this->em->getConnection();
-        $filterExpr            = $connection->getConfiguration()->getFilterSchemaAssetsExpression();
+        $filterExpr            = method_exists(
+            $connection->getConfiguration(),
+            'getFilterSchemaAssetsExpression'
+        ) ? $connection->getConfiguration()->getFilterSchemaAssetsExpression() : null;
         $emptyFilterExpression = empty($filterExpr);
 
-        $schemaAssetsFilter = method_exists($connection->getConfiguration(), 'getSchemaAssetsFilter') ? $connection->getConfiguration()->getSchemaAssetsFilter() : null;
+        $schemaAssetsFilter = method_exists(
+            $connection->getConfiguration(),
+            'getSchemaAssetsFilter'
+        ) ? $connection->getConfiguration()->getSchemaAssetsFilter() : null;
 
         foreach ($orderedTables as $tbl) {
             // If we have a filter expression, check it and skip if necessary
@@ -243,7 +249,10 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     private function getTableName(ClassMetadata $class, AbstractPlatform $platform): string
     {
         if (isset($class->table['schema']) && ! method_exists($class, 'getSchemaName')) {
-            return $class->table['schema'] . '.' . $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
+            return $class->table['schema'] . '.' .
+                $this->em->getConfiguration()
+                ->getQuoteStrategy()
+                ->getTableName($class, $platform);
         }
 
         return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
@@ -258,7 +267,10 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         AbstractPlatform $platform
     ): string {
         if (isset($assoc['joinTable']['schema']) && ! method_exists($class, 'getSchemaName')) {
-            return $assoc['joinTable']['schema'] . '.' . $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
+            return $assoc['joinTable']['schema'] . '.' .
+                $this->em->getConfiguration()
+                ->getQuoteStrategy()
+                ->getJoinTableName($assoc, $class, $platform);
         }
 
         return $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
