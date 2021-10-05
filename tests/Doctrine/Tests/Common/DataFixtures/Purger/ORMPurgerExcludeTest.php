@@ -44,7 +44,9 @@ class ORMPurgerExcludeTest extends BaseTest
 
         $connection    = $em->getConnection();
         $configuration = $connection->getConfiguration();
-        $configuration->setFilterSchemaAssetsExpression(null);
+        if (method_exists($configuration, 'setFilterSchemaAssetsExpression')) {
+            $configuration->setFilterSchemaAssetsExpression(null);
+        }
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropDatabase();
@@ -86,7 +88,13 @@ class ORMPurgerExcludeTest extends BaseTest
 
         $connection    = $em->getConnection();
         $configuration = $connection->getConfiguration();
-        $configuration->setFilterSchemaAssetsExpression($expression);
+        if ($expression !== null) {
+            if (! method_exists($configuration, 'setFilterSchemaAssetsExpression')) {
+                $this->markTestSkipped('DBAL 2 is required to test schema assets filters');
+            }
+
+            $configuration->setFilterSchemaAssetsExpression($expression);
+        }
 
         if ($filter !== null) {
             if (! method_exists($configuration, 'setSchemaAssetsFilter')) {
