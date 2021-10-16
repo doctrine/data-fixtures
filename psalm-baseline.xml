@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.10.0@916b098b008f6de4543892b1e0651c1c3b92cbfa">
+  <file src="lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php">
+    <UndefinedClass occurrences="1">
+      <code>DocumentManagerInterface</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="2">
+      <code>DocumentManagerInterface</code>
+      <code>DocumentManagerInterface</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php">
+    <UndefinedClass occurrences="3">
+      <code>?DocumentManagerInterface</code>
+      <code>DocumentManager</code>
+      <code>NodeHelper</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="3">
+      <code>$this-&gt;dm</code>
+      <code>DocumentManagerInterface|null</code>
+      <code>DocumentManagerInterface|null</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Doctrine/Common/DataFixtures/ReferenceRepository.php">
+    <UndefinedClass occurrences="2">
+      <code>PhpcrDocumentManager</code>
+      <code>PhpcrDocumentManager</code>
+    </UndefinedClass>
+  </file>
+</files>
