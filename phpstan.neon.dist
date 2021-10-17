@@ -1,0 +1,10 @@
+parameters:
+    phpVersion: 70100
+    level: 3
+    paths:
+        - lib
+        - tests
+
+includes:
+    - phpstan-baseline.neon
+    - vendor/jangregor/phpstan-prophecy/extension.neon

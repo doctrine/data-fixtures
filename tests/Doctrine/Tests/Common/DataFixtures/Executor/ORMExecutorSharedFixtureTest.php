@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+use PHPUnit\Framework\MockObject\MockObject;
 
 use function extension_loaded;
 
@@ -74,6 +75,9 @@ class ORMExecutorSharedFixtureTest extends BaseTest
         $this->assertEquals('admin@example.com', $userReference->getEmail());
     }
 
+    /**
+     * @return SharedFixtureInterface&MockObject
+     */
     private function getMockFixture(): SharedFixtureInterface
     {
         return $this->createMock(SharedFixtureInterface::class);

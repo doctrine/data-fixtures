@@ -8,6 +8,7 @@ use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test Fixture executor.
@@ -55,11 +56,17 @@ class ORMExecutorTest extends BaseTest
         $executor->execute([$fixture], true);
     }
 
+    /**
+     * @return FixtureInterface&MockObject
+     */
     private function getMockFixture(): FixtureInterface
     {
         return $this->createMock(FixtureInterface::class);
     }
 
+    /**
+     * @return ORMPurger&MockObject
+     */
     private function getMockPurger(): ORMPurger
     {
         return $this->createMock(ORMPurger::class);

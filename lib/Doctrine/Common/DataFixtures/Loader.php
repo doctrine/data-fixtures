@@ -47,7 +47,7 @@ class Loader
     /**
      * Array of ordered fixture object instances.
      *
-     * @psalm-var array<class-string<OrderedFixtureInterface>, OrderedFixtureInterface>
+     * @psalm-var array<class-string<OrderedFixtureInterface>, OrderedFixtureInterface>|list<OrderedFixtureInterface>
      */
     private $orderedFixtures = [];
 
