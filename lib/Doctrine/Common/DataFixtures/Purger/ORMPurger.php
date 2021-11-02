@@ -114,6 +114,9 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         // Drop association tables first
         $orderedTables = $this->getAssociationTables($commitOrder, $platform);
 
+        // If platform uses sequences for autoincrement, we need to reset it
+        $tableToSequences = [];
+
         // Drop tables in reverse commit order
         for ($i = count($commitOrder) - 1; $i >= 0; --$i) {
             $class = $commitOrder[$i];
@@ -126,7 +129,12 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
                 continue;
             }
 
-            $orderedTables[] = $this->getTableName($class, $platform);
+            $tableName = $this->getTableName($class, $platform);
+            if ($platform->prefersSequences() && $class->sequenceGeneratorDefinition !== null) {
+                $tableToSequences[$tableName] = $class->getSequenceName($platform);
+            }
+
+            $orderedTables[] = $tableName;
         }
 
         $connection            = $this->em->getConnection();
@@ -160,6 +168,12 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
             if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                 $connection->executeUpdate($this->getDeleteFromTableSQL($tbl, $platform));
             } else {
+                if (isset($tableToSequences[$tbl])) {
+                    $sequence = new Sequence($tableToSequences[$tbl]);
+                    $connection->executeQuery($platform->getDropSequenceSQL($sequence));
+                    $connection->executeQuery($platform->getCreateSequenceSQL($sequence));
+                }
+
                 $connection->executeUpdate($platform->getTruncateTableSQL($tbl, true));
             }
         }
