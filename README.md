@@ -177,7 +177,7 @@ class MyFixture extends AbstractFixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return ['MyDataFixtures\MyOtherFixture']; // fixture classes fixture is dependent on
+        return [MyOtherFixture::class]; // fixture classes fixture is dependent on
     }
 }
 
