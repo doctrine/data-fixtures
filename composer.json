@@ -40,7 +40,11 @@
         "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "autoload": {
         "psr-4": {
