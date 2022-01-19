@@ -41,16 +41,6 @@ parameters:
 			path: lib/Doctrine/Common/DataFixtures/ProxyReferenceRepository.php
 
 		-
-			message: "#^Access to an undefined property Doctrine\\\\Persistence\\\\Mapping\\\\ClassMetadata\\:\\:\\$isMappedSuperclass\\.$#"
-			count: 1
-			path: lib/Doctrine/Common/DataFixtures/Purger/MongoDBPurger.php
-
-		-
-			message: "#^Access to an undefined property Doctrine\\\\Persistence\\\\Mapping\\\\ClassMetadata\\:\\:\\$name\\.$#"
-			count: 1
-			path: lib/Doctrine/Common/DataFixtures/Purger/MongoDBPurger.php
-
-		-
 			message: "#^Call to method getPhpcrSession\\(\\) on an unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
 			count: 1
 			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
