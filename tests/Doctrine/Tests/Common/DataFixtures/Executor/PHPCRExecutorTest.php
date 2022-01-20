@@ -138,7 +138,7 @@ class PHPCRExecutorTest extends BaseTest
 
         return $this
             ->getMockBuilder(DocumentManager::class)
-            ->setMethods([
+            ->addMethods([
                 'transactional',
                 'flush',
                 'clear',
