@@ -14,7 +14,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserDataLoader implements FixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $user = new User();
         $user->setUsername('jwage');
@@ -86,7 +86,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserRoleDataLoader extends AbstractFixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $adminRole = new Role();
         $adminRole->setName('admin');
@@ -114,7 +114,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserDataLoader extends AbstractFixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $user = new User();
         $user->setUsername('jwage');
@@ -149,10 +149,10 @@ use Doctrine\Persistence\ObjectManager;
 
 class MyFixture extends AbstractFixture implements OrderedFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {}
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return 10; // number in which order to load fixtures
     }
@@ -172,18 +172,18 @@ use Doctrine\Persistence\ObjectManager;
 
 class MyFixture extends AbstractFixture implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {}
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return array('MyDataFixtures\MyOtherFixture'); // fixture classes fixture is dependent on
+        return [MyOtherFixture::class]; // fixture classes fixture is dependent on
     }
 }
 
 class MyOtherFixture extends AbstractFixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {}
 }
 ```

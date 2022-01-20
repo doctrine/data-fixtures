@@ -14,6 +14,12 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  */
 class MongoDBExecutor extends AbstractExecutor
 {
+    /** @var DocumentManager */
+    private $dm;
+
+    /** @var MongoDBReferenceListener */
+    private $listener;
+
     /**
      * Construct new fixtures loader instance.
      *

@@ -1,0 +1,117 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to method transactional\\(\\) on an unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
+
+		-
+			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:__construct\\(\\) has invalid typehint type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 2
+			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
+
+		-
+			message: "#^Property Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:\\$dm has unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface as its type\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
+
+		-
+			message: "#^Return typehint of method Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:getObjectManager\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\Common\\\\DataFixtures\\\\FixtureInterface\\:\\:getDependencies\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Loader.php
+
+		-
+			message: "#^Property Doctrine\\\\Common\\\\DataFixtures\\\\Loader\\:\\:\\$orderedFixtures \\(array\\<class\\-string\\<Doctrine\\\\Common\\\\DataFixtures\\\\OrderedFixtureInterface\\>\\|int, Doctrine\\\\Common\\\\DataFixtures\\\\OrderedFixtureInterface\\>\\) does not accept array\\<class\\-string\\<Doctrine\\\\Common\\\\DataFixtures\\\\FixtureInterface\\>, Doctrine\\\\Common\\\\DataFixtures\\\\FixtureInterface\\>\\.$#"
+			count: 2
+			path: lib/Doctrine/Common/DataFixtures/Loader.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\Persistence\\\\ObjectManager\\:\\:getReference\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/ProxyReferenceRepository.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\Persistence\\\\ObjectManager\\:\\:getUnitOfWork\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/ProxyReferenceRepository.php
+
+		-
+			message: "#^Call to method getPhpcrSession\\(\\) on an unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Call to static method purgeWorkspace\\(\\) on an unknown class PHPCR\\\\Util\\\\NodeHelper\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:__construct\\(\\) has invalid typehint type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:setDocumentManager\\(\\) has invalid typehint type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Property Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:\\$dm \\(Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\|null\\) does not accept Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Property Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:\\$dm has unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface as its type\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Return typehint of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:getObjectManager\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Access to an undefined property Doctrine\\\\Persistence\\\\Mapping\\\\ClassMetadata\\<object\\>\\:\\:\\$name\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/ReferenceRepository.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\Persistence\\\\ObjectManager\\:\\:getReference\\(\\)\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/ReferenceRepository.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\Persistence\\\\ObjectManager\\:\\:getUnitOfWork\\(\\)\\.$#"
+			count: 2
+			path: lib/Doctrine/Common/DataFixtures/ReferenceRepository.php
+
+		-
+			message: "#^Class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager not found\\.$#"
+			count: 2
+			path: lib/Doctrine/Common/DataFixtures/ReferenceRepository.php
+
+		-
+			message: "#^Method Doctrine\\\\Tests\\\\Common\\\\DataFixtures\\\\FixtureWithUnexistentDependency\\:\\:getDependencies\\(\\) should return array\\<class\\-string\\<Doctrine\\\\Common\\\\DataFixtures\\\\FixtureInterface\\>\\> but returns array\\<int, string\\>\\.$#"
+			count: 1
+			path: tests/Doctrine/Tests/Common/DataFixtures/DependentFixtureTest.php
+
+		-
+			message: "#^Call to method expects\\(\\) on an unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
+			count: 5
+			path: tests/Doctrine/Tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
+
+		-
+			message: "#^Return typehint of method Doctrine\\\\Tests\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutorTest\\:\\:getDocumentManager\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
+			count: 1
+			path: tests/Doctrine/Tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\ODM\\\\MongoDB\\\\DocumentManager\\:\\:getConnection\\(\\)\\.$#"
+			count: 1
+			path: tests/Doctrine/Tests/Common/DataFixtures/Purger/MongoDBPurgerTest.php
+

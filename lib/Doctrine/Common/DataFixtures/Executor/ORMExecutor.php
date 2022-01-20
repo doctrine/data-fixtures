@@ -17,6 +17,9 @@ class ORMExecutor extends AbstractExecutor
     /** @var EntityManagerInterface */
     private $em;
 
+    /** @var ORMReferenceListener */
+    private $listener;
+
     /**
      * Construct new fixtures loader instance.
      *

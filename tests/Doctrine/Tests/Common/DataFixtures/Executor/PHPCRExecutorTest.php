@@ -10,7 +10,7 @@ use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 use Exception;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use Throwable;
 
 use function class_exists;
@@ -120,7 +120,7 @@ class PHPCRExecutorTest extends BaseTest
     }
 
     /**
-     * @return PHPCRPurger|PHPUnit_Framework_MockObject_MockObject
+     * @return PHPCRPurger&MockObject
      */
     private function getPurger()
     {
@@ -128,7 +128,7 @@ class PHPCRExecutorTest extends BaseTest
     }
 
     /**
-     * @return DocumentManager|PHPUnit_Framework_MockObject_MockObject
+     * @return DocumentManager&MockObject
      */
     private function getDocumentManager()
     {
@@ -138,7 +138,7 @@ class PHPCRExecutorTest extends BaseTest
 
         return $this
             ->getMockBuilder(DocumentManager::class)
-            ->setMethods([
+            ->addMethods([
                 'transactional',
                 'flush',
                 'clear',
@@ -148,7 +148,7 @@ class PHPCRExecutorTest extends BaseTest
     }
 
     /**
-     * @return FixtureInterface|PHPUnit_Framework_MockObject_MockObject
+     * @return FixtureInterface&MockObject
      */
     private function getMockFixture()
     {
