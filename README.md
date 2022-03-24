@@ -8,7 +8,7 @@ for the [Doctrine ORM or ODM](http://www.doctrine-project.org/).
 ## More resources:
 
 * [Website](http://www.doctrine-project.org)
-* [Documentation](./docs/en)
+* [Documentation](https://www.doctrine-project.org/projects/doctrine-data-fixtures/en/latest/index.html)
 
 ## Running the tests:
 
