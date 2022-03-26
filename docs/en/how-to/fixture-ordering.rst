@@ -58,14 +58,14 @@ fixtures, or being careful to leave big gaps, you can declare that your
 fixture must be loaded after some other fixtures, and let the package
 figure out what to do.
 
-namespace MyDataFixtures;
-
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
-
 .. code-block:: php
+
     <?php
+    namespace MyDataFixtures;
+
+    use Doctrine\Common\DataFixtures\AbstractFixture;
+    use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+    use Doctrine\Persistence\ObjectManager;
 
     class MyFixture extends AbstractFixture implements DependentFixtureInterface
     {
