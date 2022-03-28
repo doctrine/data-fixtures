@@ -5,10 +5,10 @@ There are two interfaces you can implement in your fixtures to control
 in which order they are going to be loaded.
 
 * By implementing ``OrderedFixtureInterface``, you will be able to
-  specify a priority for each fixture.
+  manually specify a priority for each fixture.
 * By implementing ``DependencyFixtureInterface``, you will be able to
-  which class must be loaded after which classes (note the plural), and
-  let the package figure out the order for you.
+  declare which class must be loaded after which classes (note the
+  plural), and let the package figure out the order for you.
 
 .. note::
     You may implement an interface in a fixture, and another interface
@@ -16,8 +16,8 @@ in which order they are going to be loaded.
     ``FixtureInterface``) in a third one. Implementing both in the same
     fixture is an error.
 
-Controlling the order manually with ``OrderedFixtureInterface``
----------------------------------------------------------------
+Option 1: Controlling the order manually
+----------------------------------------
 
 .. code-block:: php
     <?php
@@ -47,8 +47,8 @@ Controlling the order manually with ``OrderedFixtureInterface``
     loading in a specific order because of references from one fixture
     to the other.
 
-Declaring dependencies with ``DependencyFixtureInterface``
-----------------------------------------------------------
+Option 2: Declaring dependencies
+--------------------------------
 
 If you have many models, and a project that evolves, there may be
 several correct orders. Using ``OrderedFixtureInterface`` may become
@@ -58,14 +58,14 @@ fixtures, or being careful to leave big gaps, you can declare that your
 fixture must be loaded after some other fixtures, and let the package
 figure out what to do.
 
-namespace MyDataFixtures;
-
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
-
 .. code-block:: php
+
     <?php
+    namespace MyDataFixtures;
+
+    use Doctrine\Common\DataFixtures\AbstractFixture;
+    use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+    use Doctrine\Persistence\ObjectManager;
 
     class MyFixture extends AbstractFixture implements DependentFixtureInterface
     {

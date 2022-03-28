@@ -12,9 +12,10 @@ Creating a fixture class
 ------------------------
 
 Fixture classes have two requirements:
-- They must implement ``Doctrine\Common\DataFixtures\FixtureInterface``.
-- If they have a constructor, that constructor should not accept any
-  arguments.
+
+* They must implement ``Doctrine\Common\DataFixtures\FixtureInterface``.
+* If they have a constructor, that constructor should be invokable
+  without arguments.
 
 .. code-block:: php
     <?php
@@ -65,7 +66,7 @@ It is also possible to load a fixture by providing its path:
 
 If you have many fixtures, this can get old pretty fast, and you might
 want to load a whole directory of fixtures instead of making one call
-per fixtures.
+per fixture.
 
 .. code-block:: php
     <?php
