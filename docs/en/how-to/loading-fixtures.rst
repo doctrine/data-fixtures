@@ -14,8 +14,8 @@ Creating a fixture class
 Fixture classes have two requirements:
 
 * They must implement ``Doctrine\Common\DataFixtures\FixtureInterface``.
-* If they have a constructor, that constructor should not accept any
-  arguments.
+* If they have a constructor, that constructor should be invokable
+  without arguments.
 
 .. code-block:: php
     <?php
