@@ -40,6 +40,16 @@ class Uuid implements JsonSerializable, Serializable
         $this->id = $serialized;
     }
 
+    public function __serialize(): array
+    {
+        return ['id' => $this->id];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        ['id' => $this->id] = $data;
+    }
+
     public function __toString(): string
     {
         return $this->id;
