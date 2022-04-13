@@ -6,17 +6,17 @@ parameters:
 			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
 
 		-
-			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:__construct\\(\\) has invalid typehint type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			message: "#^Method Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:getObjectManager\\(\\) has invalid return type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
+
+		-
+			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:__construct\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
 			count: 2
 			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
 
 		-
 			message: "#^Property Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:\\$dm has unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface as its type\\.$#"
-			count: 1
-			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
-
-		-
-			message: "#^Return typehint of method Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:getObjectManager\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
 			count: 1
 			path: lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php
 
@@ -51,12 +51,17 @@ parameters:
 			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
 
 		-
-			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:__construct\\(\\) has invalid typehint type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			message: "#^Method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:getObjectManager\\(\\) has invalid return type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
 			count: 1
 			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
 
 		-
-			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:setDocumentManager\\(\\) has invalid typehint type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
+			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:__construct\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
+			count: 1
+			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
+
+		-
+			message: "#^Parameter \\$dm of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:setDocumentManager\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
 			count: 1
 			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
 
@@ -67,11 +72,6 @@ parameters:
 
 		-
 			message: "#^Property Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:\\$dm has unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface as its type\\.$#"
-			count: 1
-			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
-
-		-
-			message: "#^Return typehint of method Doctrine\\\\Common\\\\DataFixtures\\\\Purger\\\\PHPCRPurger\\:\\:getObjectManager\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface\\.$#"
 			count: 1
 			path: lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php
 
@@ -106,7 +106,7 @@ parameters:
 			path: tests/Doctrine/Tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
 
 		-
-			message: "#^Return typehint of method Doctrine\\\\Tests\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutorTest\\:\\:getDocumentManager\\(\\) has invalid type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
+			message: "#^Method Doctrine\\\\Tests\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutorTest\\:\\:getDocumentManager\\(\\) has invalid return type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
 			count: 1
 			path: tests/Doctrine/Tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
 
