@@ -5,20 +5,26 @@
     "docsSlug": "doctrine-data-fixtures",
     "versions": [
         {
-            "name": "1.5",
-            "branchName": "1.5.x",
-            "slug": "latest",
+            "name": "1.6",
+            "branchName": "1.6.x",
+            "slug": "1.6",
             "upcoming": true
         },
         {
-            "name": "1.4",
-            "branchName": "1.4.x",
-            "slug": "1.4",
+            "name": "1.5",
+            "branchName": "1.5.x",
+            "slug": "latest",
             "current": true,
             "aliases": [
                 "current",
                 "stable"
             ]
+        },
+        {
+            "name": "1.4",
+            "branchName": "1.4.x",
+            "slug": "1.4",
+            "maintained": false
         },
         {
             "name": "1.3",
