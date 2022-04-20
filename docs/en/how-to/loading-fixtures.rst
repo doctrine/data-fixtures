@@ -101,8 +101,18 @@ do the following:
     disable it.
 
 If you want to append the fixtures instead of purging before loading
-then pass ``true`` to the 2nd argument of execute:
+then pass ``append: true`` to the ``execute()`` method:
 
 .. code-block:: php
     <?php
     $executor->execute($loader->getFixtures(), append: true);
+
+By default the ``ORMExecutor`` will wrap the purge and the load of fixtures
+in a single transaction, which is the recommended way, but in some cases (for
+example if loading your fixtures is too slow and causes timeouts) you may
+want to wrap the purge and the load of every fixture in its own transaction.
+To do so, you can use ``MultipleTransactionORMExecutor``.
+
+.. code-block:: php
+    <?php
+    $executor = new MultipleTransactionORMExecutor($entityManager, new ORMPurger());
