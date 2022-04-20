@@ -82,11 +82,11 @@ class ORMExecutor extends AbstractExecutor
             $executor = $this;
             $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
                 if ($append === false) {
-                    $this->purge();
+                    $executor->purge();
                 }
 
                 foreach ($fixtures as $fixture) {
-                    $this->load($em, $fixture);
+                    $executor->load($em, $fixture);
                 }
             });
         } else {
