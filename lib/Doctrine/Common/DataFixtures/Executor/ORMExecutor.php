@@ -74,17 +74,33 @@ class ORMExecutor extends AbstractExecutor
     }
 
     /** @inheritDoc */
-    public function execute(array $fixtures, $append = false)
+    public function execute(array $fixtures, $append = false /* bool $singleTransaction = false */)
     {
-        $executor = $this;
-        $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
+        $singleTransaction = func_get_args()[2] ?? true;
+
+        if ($singleTransaction) {
+            $executor = $this;
+            $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
+                if ($append === false) {
+                    $this->purge();
+                }
+
+                foreach ($fixtures as $fixture) {
+                    $this->load($em, $fixture);
+                }
+            });
+        } else {
             if ($append === false) {
-                $executor->purge();
+                $this->em->beginTransaction();
+                $this->purge();
+                $this->em->commit();
             }
 
             foreach ($fixtures as $fixture) {
-                $executor->load($em, $fixture);
+                $this->em->beginTransaction();
+                $this->load($em, $fixture);
+                $this->em->commit();
             }
-        });
+        }
     }
 }

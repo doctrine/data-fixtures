@@ -144,10 +144,11 @@ abstract class AbstractExecutor
     /**
      * Executes the given array of data fixtures.
      *
-     * @param array $fixtures Array of fixtures to execute.
-     * @param bool  $append   Whether to append the data fixtures or purge the database before loading.
+     * @param FixtureInterface[] $fixtures          Array of fixtures to execute.
+     * @param bool               $append            Whether to append the data fixtures or purge the database before loading.
+     * @param bool               $singleTransaction Whether to use a single transaction when loading fixtures.
      */
-    abstract public function execute(array $fixtures, $append = false);
+    abstract public function execute(array $fixtures, $append = false /* bool $singleTransaction = false */);
 }
 
 interface_exists(ObjectManager::class);
