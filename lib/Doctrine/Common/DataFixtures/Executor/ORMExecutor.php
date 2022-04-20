@@ -25,12 +25,14 @@ class ORMExecutor extends AbstractExecutor
     /** @var ORMReferenceListener */
     private $listener;
 
+    /** @var bool */
+    private $singleTransaction;
+
     /**
-     * Construct new fixtures loader instance.
-     *
-     * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
+     * @param EntityManagerInterface $em                EntityManagerInterface instance used for persistence.
+     * @param bool                   $singleTransaction Whether to use a single transaction when loading fixtures.
      */
-    public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null)
+    public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null, bool $singleTransaction = true)
     {
         $this->originalManager = $em;
         // Make sure, wrapInTransaction() exists on the EM.
@@ -44,6 +46,8 @@ class ORMExecutor extends AbstractExecutor
             $this->purger = $purger;
             $this->purger->setEntityManager($em);
         }
+
+        $this->singleTransaction = $singleTransaction;
 
         parent::__construct($em);
         $this->listener = new ORMReferenceListener($this->referenceRepository);
@@ -74,12 +78,10 @@ class ORMExecutor extends AbstractExecutor
     }
 
     /** @inheritDoc */
-    public function execute(array $fixtures, $append = false /* bool $singleTransaction = false */)
+    public function execute(array $fixtures, $append = false)
     {
-        $singleTransaction = func_get_args()[2] ?? true;
-
-        if ($singleTransaction) {
-            $executor = $this;
+        $executor = $this;
+        if ($this->singleTransaction) {
             $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
                 if ($append === false) {
                     $executor->purge();
@@ -91,15 +93,16 @@ class ORMExecutor extends AbstractExecutor
             });
         } else {
             if ($append === false) {
-                $this->em->beginTransaction();
-                $this->purge();
-                $this->em->commit();
+                $this->em->getConnection()->transactional(static function () use ($executor) {
+                    $executor->purge();
+                });
             }
 
+            $em = $this->em;
             foreach ($fixtures as $fixture) {
-                $this->em->beginTransaction();
-                $this->load($em, $fixture);
-                $this->em->commit();
+                $this->em->getConnection()->transactional(static function () use ($executor, $fixture, $em) {
+                    $executor->load($em, $fixture);
+                });
             }
         }
     }
