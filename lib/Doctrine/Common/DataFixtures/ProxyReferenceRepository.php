@@ -62,6 +62,8 @@ class ProxyReferenceRepository extends ReferenceRepository
      * Unserialize reference repository
      *
      * @param string $serializedData Serialized data
+     *
+     * @return void
      */
     public function unserialize($serializedData)
     {
@@ -115,6 +117,8 @@ class ProxyReferenceRepository extends ReferenceRepository
      * Save data fixture reference repository
      *
      * @param string $baseCacheName Base cache name
+     *
+     * @return void
      */
     public function save($baseCacheName)
     {
