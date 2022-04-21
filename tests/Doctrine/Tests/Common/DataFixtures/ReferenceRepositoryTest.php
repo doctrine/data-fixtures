@@ -14,6 +14,7 @@ use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use OutOfBoundsException;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
 use stdClass;
 
@@ -21,6 +22,8 @@ use function assert;
 
 class ReferenceRepositoryTest extends BaseTest
 {
+    use ProphecyTrait;
+
     public function testReferenceEntry(): void
     {
         $em = $this->getMockAnnotationReaderEntityManager();
