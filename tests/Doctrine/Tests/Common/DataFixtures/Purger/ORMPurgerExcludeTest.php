@@ -72,7 +72,7 @@ class ORMPurgerExcludeTest extends BaseTest
      * Execute test purge
      *
      * @param string|null $expression
-     * @param array       $list
+     * @param string[]    $list
      */
     public function executeTestPurge($expression, array $list, ?callable $filter = null): void
     {

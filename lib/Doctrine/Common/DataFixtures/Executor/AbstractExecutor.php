@@ -62,6 +62,8 @@ abstract class AbstractExecutor
 
     /**
      * Sets the Purger instance to use for this executor instance.
+     *
+     * @return void
      */
     public function setPurger(PurgerInterface $purger)
     {
@@ -80,6 +82,8 @@ abstract class AbstractExecutor
      * Set the logger callable to execute with the log() method.
      *
      * @param callable $logger
+     *
+     * @return void
      */
     public function setLogger($logger)
     {
@@ -90,6 +94,8 @@ abstract class AbstractExecutor
      * Logs a message using the logger.
      *
      * @param string $message
+     *
+     * @return void
      */
     public function log($message)
     {
@@ -99,6 +105,8 @@ abstract class AbstractExecutor
 
     /**
      * Load a fixture with the given persistence manager.
+     *
+     * @return void
      */
     public function load(ObjectManager $manager, FixtureInterface $fixture)
     {
@@ -123,6 +131,8 @@ abstract class AbstractExecutor
     /**
      * Purges the database before loading.
      *
+     * @return void
+     *
      * @throws Exception if the purger is not defined.
      */
     public function purge()
@@ -144,8 +154,10 @@ abstract class AbstractExecutor
     /**
      * Executes the given array of data fixtures.
      *
-     * @param array $fixtures Array of fixtures to execute.
-     * @param bool  $append   Whether to append the data fixtures or purge the database before loading.
+     * @param FixtureInterface[] $fixtures Array of fixtures to execute.
+     * @param bool               $append   Whether to append the data fixtures or purge the database before loading.
+     *
+     * @return void
      */
     abstract public function execute(array $fixtures, $append = false);
 }

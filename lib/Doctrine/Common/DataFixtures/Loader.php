@@ -181,7 +181,7 @@ class Loader
     /**
      * Returns the array of data fixtures to execute.
      *
-     * @return array $fixtures
+     * @psalm-return array<class-string<OrderedFixtureInterface>|int, OrderedFixtureInterface>
      */
     public function getFixtures()
     {

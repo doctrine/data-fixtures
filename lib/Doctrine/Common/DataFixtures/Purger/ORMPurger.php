@@ -225,9 +225,9 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     }
 
     /**
-     * @param array $classes
+     * @param ClassMetadata[] $classes
      *
-     * @return array
+     * @return string[]
      */
     private function getAssociationTables(array $classes, AbstractPlatform $platform)
     {

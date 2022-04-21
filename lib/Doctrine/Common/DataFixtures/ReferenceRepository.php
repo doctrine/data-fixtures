@@ -26,7 +26,7 @@ class ReferenceRepository
      * List of named references to the fixture objects
      * gathered during loads of fixtures
      *
-     * @var array
+     * @psalm-var array<string, object>
      */
     private $references = [];
 
@@ -35,7 +35,7 @@ class ReferenceRepository
      * in case if reference gets unmanaged, it will
      * use a proxy referenced by this identity
      *
-     * @var array
+     * @psalm-var array<string, mixed>
      */
     private $identities = [];
 
@@ -89,6 +89,8 @@ class ReferenceRepository
      *
      * @param string $name
      * @param object $reference
+     *
+     * @return void
      */
     public function setReference($name, $reference)
     {
@@ -108,6 +110,8 @@ class ReferenceRepository
      *
      * @param string $name
      * @param mixed  $identity
+     *
+     * @return void
      */
     public function setReferenceIdentity($name, $identity)
     {
@@ -213,7 +217,7 @@ class ReferenceRepository
     /**
      * Get all stored identities
      *
-     * @return array
+     * @psalm-return array<string, object>
      */
     public function getIdentities()
     {
@@ -223,7 +227,7 @@ class ReferenceRepository
     /**
      * Get all stored references
      *
-     * @return array
+     * @psalm-return array<string, object>
      */
     public function getReferences()
     {
