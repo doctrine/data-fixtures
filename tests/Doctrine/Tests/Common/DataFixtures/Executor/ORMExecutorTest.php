@@ -69,6 +69,36 @@ class ORMExecutorTest extends BaseTest
         @$executor->execute([]);
     }
 
+    public function testExecuteMultipleTransactionsWithNoPurge(): void
+    {
+        $em     = $this->getMockSqliteEntityManager();
+        $purger = $this->getMockPurger();
+        $purger->expects($this->once())
+            ->method('setEntityManager')
+            ->with($em);
+        $executor = new ORMExecutor($em, $purger, false);
+        $fixture  = $this->getMockFixture();
+        $fixture->expects($this->once())
+            ->method('load')
+            ->with($em);
+        $executor->execute([$fixture], true);
+    }
+
+    public function testExecuteMultipleTransactionsWithPurge(): void
+    {
+        $em     = $this->getMockSqliteEntityManager();
+        $purger = $this->getMockPurger();
+        $purger->expects($this->once())
+            ->method('purge')
+            ->will($this->returnValue(null));
+        $executor = new ORMExecutor($em, $purger, false);
+        $fixture  = $this->getMockFixture();
+        $fixture->expects($this->once())
+            ->method('load')
+            ->with($em);
+        $executor->execute([$fixture], false);
+    }
+
     /**
      * @return FixtureInterface&MockObject
      */
