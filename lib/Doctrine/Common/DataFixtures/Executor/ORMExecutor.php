@@ -7,6 +7,8 @@ namespace Doctrine\Common\DataFixtures\Executor;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\Purger\ORMPurgerInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\ORM\Decorator\EntityManagerDecorator;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -14,8 +16,11 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class ORMExecutor extends AbstractExecutor
 {
-    /** @var EntityManagerInterface */
+    /** @var EntityManager|EntityManagerDecorator */
     private $em;
+
+    /** @var EntityManagerInterface */
+    private $originalManager;
 
     /** @var ORMReferenceListener */
     private $listener;
@@ -27,7 +32,14 @@ class ORMExecutor extends AbstractExecutor
      */
     public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null)
     {
-        $this->em = $em;
+        $this->originalManager = $em;
+        // Make sure, wrapInTransaction() exists on the EM.
+        // To be removed when dropping support for ORM 2
+        $this->em = $em instanceof EntityManager || $em instanceof EntityManagerDecorator
+            ? $em
+            : new class ($em) extends EntityManagerDecorator {
+            };
+
         if ($purger !== null) {
             $this->purger = $purger;
             $this->purger->setEntityManager($em);
@@ -45,7 +57,7 @@ class ORMExecutor extends AbstractExecutor
      */
     public function getObjectManager()
     {
-        return $this->em;
+        return $this->originalManager;
     }
 
     /** @inheritDoc */
@@ -65,7 +77,7 @@ class ORMExecutor extends AbstractExecutor
     public function execute(array $fixtures, $append = false)
     {
         $executor = $this;
-        $this->em->transactional(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
+        $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
             if ($append === false) {
                 $executor->purge();
             }
