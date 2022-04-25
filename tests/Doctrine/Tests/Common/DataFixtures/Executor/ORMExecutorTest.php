@@ -8,6 +8,8 @@ use Closure;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
@@ -31,6 +33,24 @@ class ORMExecutorTest extends BaseTest
             ->method('load')
             ->with($em);
         $executor->execute([$fixture], true);
+    }
+
+    public function testExecuteWithNoPurgeCountTransactionalCalls(): void
+    {
+        $em          = $this->getMockEntityManager();
+        $purger      = $this->getMockPurger();
+        $eventManager = new EventManager();
+
+        $em->method('getEventManager')
+            ->willReturn($eventManager);
+
+        // We call transactional once for the pure and the fixtures (load)
+        $em->expects($this->once())
+            ->method('transactional');
+
+        $executor = new ORMExecutor($em, $purger);
+        $fixture  = $this->getMockFixture();
+        $executor->execute([$fixture, $fixture], false);
     }
 
     public function testExecuteWithPurge(): void
@@ -97,6 +117,44 @@ class ORMExecutorTest extends BaseTest
             ->method('load')
             ->with($em);
         $executor->execute([$fixture], false);
+    }
+
+    public function testExecuteMultipleTransactionsWithPurgeCountTransactionalCalls(): void
+    {
+        $em          = $this->getMockEntityManager();
+        $purger      = $this->getMockPurger();
+        $connection  = $this->getMockConnection();
+        $eventManager = new EventManager();
+
+        $em->method('getEventManager')
+            ->willReturn($eventManager);
+
+        $em->method('getConnection')
+            ->willReturn($connection);
+
+        // We call transactional once for purge and twice for the fixtures (load)
+        $connection->expects($this->exactly(3))
+            ->method('transactional');
+
+        $executor = new ORMExecutor($em, $purger, false);
+        $fixture  = $this->getMockFixture();
+        $executor->execute([$fixture, $fixture], false);
+    }
+
+    /**
+     * @return EntityManagerInterface&MockObject
+     */
+    private function getMockEntityManager(): EntityManagerInterface
+    {
+        return $this->createMock(EntityManager::class);
+    }
+
+    /**
+     * @return Connection&MockObject
+     */
+    private function getMockConnection(): Connection
+    {
+        return $this->createMock(Connection::class);
     }
 
     /**
