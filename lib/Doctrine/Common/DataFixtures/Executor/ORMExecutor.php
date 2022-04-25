@@ -93,14 +93,14 @@ class ORMExecutor extends AbstractExecutor
             });
         } else {
             if ($append === false) {
-                $this->em->getConnection()->transactional(static function () use ($executor) {
+                $this->em->wrapInTransaction(static function () use ($executor) {
                     $executor->purge();
                 });
             }
 
             $em = $this->em;
             foreach ($fixtures as $fixture) {
-                $this->em->getConnection()->transactional(static function () use ($executor, $fixture, $em) {
+                $this->em->wrapInTransaction(static function () use ($executor, $fixture, $em) {
                     $executor->load($em, $fixture);
                 });
             }
