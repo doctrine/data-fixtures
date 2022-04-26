@@ -106,3 +106,11 @@ then pass ``true`` to the 2nd argument of execute:
 .. code-block:: php
     <?php
     $executor->execute($loader->getFixtures(), append: true);
+
+By default the ``ORMExecutor`` will wrap the purge and the load of fixtures
+in a single transaction. You can pass ``false`` to the third argument
+to wrap the purge and the load of every fixture in its own transaction:
+
+.. code-block:: php
+    <?php
+    $executor->execute($loader->getFixtures(), singleTransaction: false);
