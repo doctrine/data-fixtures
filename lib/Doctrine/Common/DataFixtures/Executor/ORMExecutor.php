@@ -98,9 +98,8 @@ class ORMExecutor extends AbstractExecutor
                 });
             }
 
-            $em = $this->em;
             foreach ($fixtures as $fixture) {
-                $this->em->wrapInTransaction(static function () use ($executor, $fixture, $em) {
+                $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixture) {
                     $executor->load($em, $fixture);
                 });
             }

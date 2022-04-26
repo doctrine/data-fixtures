@@ -108,8 +108,10 @@ then pass ``true`` to the 2nd argument of execute:
     $executor->execute($loader->getFixtures(), append: true);
 
 By default the ``ORMExecutor`` will wrap the purge and the load of fixtures
-in a single transaction. You can pass ``false`` to the third argument
-to wrap the purge and the load of every fixture in its own transaction:
+in a single transaction, which is the recommended way, but in some cases (for
+example if loading your fixtures is too slow and causes timeouts) you may
+want to wrap the purge and the load of every fixture in its own transaction.
+To do so, you can pass ``false`` to the third argument:
 
 .. code-block:: php
     <?php
