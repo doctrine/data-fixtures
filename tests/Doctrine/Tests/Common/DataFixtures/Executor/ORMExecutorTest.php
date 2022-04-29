@@ -6,6 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
 use Closure;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\Executor\Strategy\MultipleTransactionsStrategy;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\EventManager;
@@ -88,7 +89,7 @@ class ORMExecutorTest extends BaseTest
         $purger->expects($this->once())
             ->method('setEntityManager')
             ->with($em);
-        $executor = new ORMExecutor($em, $purger, false);
+        $executor = new ORMExecutor($em, $purger, MultipleTransactionsStrategy::class);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
@@ -103,7 +104,7 @@ class ORMExecutorTest extends BaseTest
         $purger->expects($this->once())
             ->method('purge')
             ->will($this->returnValue(null));
-        $executor = new ORMExecutor($em, $purger, false);
+        $executor = new ORMExecutor($em, $purger, MultipleTransactionsStrategy::class);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
@@ -118,7 +119,7 @@ class ORMExecutorTest extends BaseTest
         // We call transactional once for purge and twice for the fixtures (load)
         $em->expects($this->exactly(3))->method('transactional')->with(self::isInstanceOf(Closure::class));
 
-        $executor = new ORMExecutor($em, null, false);
+        $executor = new ORMExecutor($em, null, MultipleTransactionsStrategy::class);
         $fixture  = $this->getMockFixture();
         @$executor->execute([$fixture, $fixture]);
     }
