@@ -19,7 +19,7 @@ use function sprintf;
 /**
  * Abstract fixture executor.
  */
-abstract class AbstractExecutor
+abstract class AbstractExecutor implements Executor
 {
     /**
      * Purger instance for purging database before loading data fixtures
@@ -141,12 +141,7 @@ abstract class AbstractExecutor
         $this->purger->purge();
     }
 
-    /**
-     * Executes the given array of data fixtures.
-     *
-     * @param FixtureInterface[] $fixtures Array of fixtures to execute.
-     * @param bool               $append   Whether to append the data fixtures or purge the database before loading.
-     */
+    /** @inheritDoc */
     abstract public function execute(array $fixtures, $append = false);
 }
 

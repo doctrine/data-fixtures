@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
-use Doctrine\Common\DataFixtures\Executor\Strategy\SingleTransactionStrategy;
 use Doctrine\Common\DataFixtures\Purger\ORMPurgerInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\Decorator\EntityManagerDecorator;
@@ -26,14 +25,10 @@ class ORMExecutor extends AbstractExecutor
     /** @var ORMReferenceListener */
     private $listener;
 
-    /** @var ExecutorStrategy|null */
-    private $executorStrategy;
-
     /**
      * @param EntityManagerInterface $em EntityManagerInterface instance used for persistence.
-     * @psalm-param class-string<ExecutorStrategy> $executorStrategy
      */
-    public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null, ?string $executorStrategy = null)
+    public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null)
     {
         $this->originalManager = $em;
         // Make sure, wrapInTransaction() exists on the EM.
@@ -48,8 +43,6 @@ class ORMExecutor extends AbstractExecutor
             $this->purger->setEntityManager($em);
         }
 
-        $this->executorStrategy = $executorStrategy ? new $executorStrategy($this) : new SingleTransactionStrategy($this);
-
         parent::__construct($em);
         $this->listener = new ORMReferenceListener($this->referenceRepository);
         $em->getEventManager()->addEventSubscriber($this->listener);
@@ -63,6 +56,11 @@ class ORMExecutor extends AbstractExecutor
     public function getObjectManager()
     {
         return $this->originalManager;
+    }
+
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->em;
     }
 
     /** @inheritDoc */
@@ -81,6 +79,15 @@ class ORMExecutor extends AbstractExecutor
     /** @inheritDoc */
     public function execute(array $fixtures, $append = false)
     {
-        $this->executorStrategy->execute($this->em, $fixtures, $append);
+        $executor = $this;
+        $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
+            if ($append === false) {
+                $executor->purge();
+            }
+
+            foreach ($fixtures as $fixture) {
+                $executor->load($em, $fixture);
+            }
+        });
     }
 }

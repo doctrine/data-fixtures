@@ -111,8 +111,8 @@ By default the ``ORMExecutor`` will wrap the purge and the load of fixtures
 in a single transaction, which is the recommended way, but in some cases (for
 example if loading your fixtures is too slow and causes timeouts) you may
 want to wrap the purge and the load of every fixture in its own transaction.
-To do so, construct ``ORMExecutor`` with ``singleTransaction: false``:
+To do so, you can use ``MultipleTransactionORMExecutor``.
 
 .. code-block:: php
     <?php
-    $executor = new ORMExecutor($entityManager, singleTransaction: false);
+    $executor = new MultipleTransactionORMExecutor(new ORMExecutor($entityManager));
