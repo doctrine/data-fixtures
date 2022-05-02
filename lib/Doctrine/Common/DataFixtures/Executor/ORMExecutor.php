@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class ORMExecutor extends AbstractExecutor
 {
     /** @var EntityManager|EntityManagerDecorator */
-    private $em;
+    protected $em;
 
     /** @var EntityManagerInterface */
     private $originalManager;
@@ -56,11 +56,6 @@ class ORMExecutor extends AbstractExecutor
     public function getObjectManager()
     {
         return $this->originalManager;
-    }
-
-    public function getEntityManager(): EntityManagerInterface
-    {
-        return $this->em;
     }
 
     /** @inheritDoc */

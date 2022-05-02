@@ -115,4 +115,4 @@ To do so, you can use ``MultipleTransactionORMExecutor``.
 
 .. code-block:: php
     <?php
-    $executor = new MultipleTransactionORMExecutor(new ORMExecutor($entityManager));
+    $executor = new MultipleTransactionORMExecutor($entityManager);

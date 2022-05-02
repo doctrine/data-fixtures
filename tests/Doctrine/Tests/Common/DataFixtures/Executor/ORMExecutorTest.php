@@ -89,7 +89,7 @@ class ORMExecutorTest extends BaseTest
         $purger->expects($this->once())
             ->method('setEntityManager')
             ->with($em);
-        $executor = new MultipleTransactionORMExecutor(new ORMExecutor($em, $purger));
+        $executor = new MultipleTransactionORMExecutor($em, $purger);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
@@ -104,7 +104,7 @@ class ORMExecutorTest extends BaseTest
         $purger->expects($this->once())
             ->method('purge')
             ->will($this->returnValue(null));
-        $executor = new MultipleTransactionORMExecutor(new ORMExecutor($em, $purger));
+        $executor = new MultipleTransactionORMExecutor($em, $purger);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
             ->method('load')
@@ -119,7 +119,7 @@ class ORMExecutorTest extends BaseTest
         // We call transactional once for purge and twice for the fixtures (load)
         $em->expects($this->exactly(3))->method('transactional')->with(self::isInstanceOf(Closure::class));
 
-        $executor = new MultipleTransactionORMExecutor(new ORMExecutor($em));
+        $executor = new MultipleTransactionORMExecutor($em);
         $fixture  = $this->getMockFixture();
         @$executor->execute([$fixture, $fixture]);
     }
