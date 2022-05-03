@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
 use Closure;
+use Doctrine\Common\DataFixtures\Executor\MultipleTransactionORMExecutor;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -31,6 +32,18 @@ class ORMExecutorTest extends BaseTest
             ->method('load')
             ->with($em);
         $executor->execute([$fixture], true);
+    }
+
+    public function testExecuteSingleTransactionsCountTransactionalCalls(): void
+    {
+        $em = $this->getMockEntityManager();
+        $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
+        // We call transactional once for purge and for the fixtures (load)
+        $em->expects($this->once())->method('transactional')->with(self::isInstanceOf(Closure::class));
+
+        $executor = new ORMExecutor($em);
+        $fixture  = $this->getMockFixture();
+        @$executor->execute([$fixture, $fixture]);
     }
 
     public function testExecuteWithPurge(): void
@@ -61,12 +74,62 @@ class ORMExecutorTest extends BaseTest
 
     public function testCustomLegacyEntityManager(): void
     {
-        $em = $this->createMock(EntityManagerInterface::class);
+        $em = $this->getMockEntityManager();
         $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
         $em->expects($this->once())->method('transactional')->with(self::isInstanceOf(Closure::class));
 
         $executor = new ORMExecutor($em);
         @$executor->execute([]);
+    }
+
+    public function testExecuteMultipleTransactionsWithNoPurge(): void
+    {
+        $em     = $this->getMockSqliteEntityManager();
+        $purger = $this->getMockPurger();
+        $purger->expects($this->once())
+            ->method('setEntityManager')
+            ->with($em);
+        $executor = new MultipleTransactionORMExecutor($em, $purger);
+        $fixture  = $this->getMockFixture();
+        $fixture->expects($this->once())
+            ->method('load')
+            ->with($em);
+        $executor->execute([$fixture], true);
+    }
+
+    public function testExecuteMultipleTransactionsWithPurge(): void
+    {
+        $em     = $this->getMockSqliteEntityManager();
+        $purger = $this->getMockPurger();
+        $purger->expects($this->once())
+            ->method('purge')
+            ->will($this->returnValue(null));
+        $executor = new MultipleTransactionORMExecutor($em, $purger);
+        $fixture  = $this->getMockFixture();
+        $fixture->expects($this->once())
+            ->method('load')
+            ->with($em);
+        $executor->execute([$fixture], false);
+    }
+
+    public function testExecuteMultipleTransactionsCountTransactionalCalls(): void
+    {
+        $em = $this->getMockEntityManager();
+        $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
+        // We call transactional once for purge and twice for the fixtures (load)
+        $em->expects($this->exactly(3))->method('transactional')->with(self::isInstanceOf(Closure::class));
+
+        $executor = new MultipleTransactionORMExecutor($em);
+        $fixture  = $this->getMockFixture();
+        @$executor->execute([$fixture, $fixture]);
+    }
+
+    /**
+     * @return EntityManagerInterface&MockObject
+     */
+    private function getMockEntityManager(): EntityManagerInterface
+    {
+        return $this->createMock(EntityManagerInterface::class);
     }
 
     /**
