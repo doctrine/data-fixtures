@@ -12,7 +12,7 @@ in which order they are going to be loaded.
 
 .. note::
     You may implement an interface in a fixture, and another interface
-    in another fixture, and no even interface (besides
+    in another fixture, and even no interface (besides
     ``FixtureInterface``) in a third one. Implementing both in the same
     fixture is an error.
 
