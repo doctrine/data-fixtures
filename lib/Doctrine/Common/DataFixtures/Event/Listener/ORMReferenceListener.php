@@ -17,9 +17,6 @@ final class ORMReferenceListener implements EventSubscriber
     /** @var ReferenceRepository */
     private $referenceRepository;
 
-    /**
-     * Initialize listener
-     */
     public function __construct(ReferenceRepository $referenceRepository)
     {
         $this->referenceRepository = $referenceRepository;
@@ -36,6 +33,8 @@ final class ORMReferenceListener implements EventSubscriber
 
     /**
      * Populates identities for stored references
+     *
+     * @return void
      */
     public function postPersist(LifecycleEventArgs $args)
     {
