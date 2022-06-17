@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\DataFixtures\Exception;
 
-use Doctrine\Common\CommonException;
+use LogicException;
 
-class CircularReferenceException extends CommonException
+class CircularReferenceException extends LogicException
 {
 }
