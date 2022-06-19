@@ -6,8 +6,8 @@ namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\ExcludedEntity;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity;
 
@@ -33,13 +33,7 @@ class ORMPurgerExcludeTest extends BaseTest
         }
 
         $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
-        $config   = Setup::createAnnotationMetadataConfiguration(
-            [__DIR__ . '/../TestPurgeEntity'],
-            true,
-            null,
-            null,
-            false
-        );
+        $config   = ORMSetup::createAnnotationMetadataConfiguration([__DIR__ . '/../TestPurgeEntity'], true);
         $em       = EntityManager::create($dbParams, $config);
 
         $connection    = $em->getConnection();
