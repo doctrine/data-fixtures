@@ -46,8 +46,8 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     /**
      * Construct new purger instance.
      *
-     * @param EntityManagerInterface $em       EntityManagerInterface instance used for persistence.
-     * @param string[]               $excluded array of table/view names to be excluded from purge
+     * @param EntityManagerInterface|null $em       EntityManagerInterface instance used for persistence.
+     * @param string[]                    $excluded array of table/view names to be excluded from purge
      */
     public function __construct(?EntityManagerInterface $em = null, array $excluded = [])
     {
