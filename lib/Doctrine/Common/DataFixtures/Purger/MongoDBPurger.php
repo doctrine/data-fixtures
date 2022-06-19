@@ -17,9 +17,7 @@ class MongoDBPurger implements PurgerInterface
     /**
      * Construct new purger instance.
      *
-     * @param DocumentManager $dm DocumentManager instance used for persistence.
-     *
-     * @return void
+     * @param DocumentManager|null $dm DocumentManager instance used for persistence.
      */
     public function __construct(?DocumentManager $dm = null)
     {
