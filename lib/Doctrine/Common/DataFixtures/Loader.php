@@ -259,10 +259,6 @@ class Loader
 
     /**
      * Orders fixtures by dependencies
-     *
-     * @return void
-     *
-     * @throws CircularReferenceException
      */
     private function orderFixturesByDependencies(): void
     {
@@ -458,7 +454,7 @@ class Loader
         return $fixtures;
     }
 
-    private static function requireOnce($path): void
+    private static function requireOnce(string $path): void
     {
         require_once $path;
     }
