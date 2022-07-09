@@ -6,6 +6,7 @@ namespace Doctrine\Common\DataFixtures;
 
 use ArrayIterator;
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
+use FilesystemIterator;
 use InvalidArgumentException;
 use Iterator;
 use RecursiveDirectoryIterator;
@@ -18,16 +19,13 @@ use function array_keys;
 use function array_merge;
 use function asort;
 use function class_exists;
-use function class_implements;
 use function count;
 use function get_class;
 use function get_declared_classes;
 use function implode;
 use function in_array;
-use function is_array;
 use function is_dir;
 use function is_readable;
-use function realpath;
 use function sort;
 use function sprintf;
 use function usort;
@@ -70,7 +68,7 @@ class Loader
      *
      * @var string
      */
-    private $fileExtension = '.php';
+    private $fileExtension = 'php';
 
     /**
      * Find fixtures classes in a given directory and load them.
@@ -79,14 +77,14 @@ class Loader
      *
      * @return array $fixtures Array of loaded fixture object instances.
      */
-    public function loadFromDirectory($dir)
+    public function loadFromDirectory(string $dir): array
     {
         if (! is_dir($dir)) {
             throw new InvalidArgumentException(sprintf('"%s" does not exist', $dir));
         }
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($dir),
+            new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS),
             RecursiveIteratorIterator::LEAVES_ONLY
         );
 
@@ -100,7 +98,7 @@ class Loader
      *
      * @return array $fixtures Array of loaded fixture object instances.
      */
-    public function loadFromFile($fileName)
+    public function loadFromFile(string $fileName): array
     {
         if (! is_readable($fileName)) {
             throw new InvalidArgumentException(sprintf('"%s" does not exist or is not readable', $fileName));
@@ -118,7 +116,7 @@ class Loader
      *
      * @return bool
      */
-    public function hasFixture($fixture)
+    public function hasFixture(FixtureInterface $fixture): bool
     {
         return isset($this->fixtures[get_class($fixture)]);
     }
@@ -130,7 +128,7 @@ class Loader
      *
      * @return FixtureInterface
      */
-    public function getFixture($className)
+    public function getFixture(string $className): FixtureInterface
     {
         if (! isset($this->fixtures[$className])) {
             throw new InvalidArgumentException(sprintf(
@@ -145,7 +143,7 @@ class Loader
     /**
      * Add a fixture object instance to the loader.
      */
-    public function addFixture(FixtureInterface $fixture)
+    public function addFixture(FixtureInterface $fixture): void
     {
         $fixtureClass = get_class($fixture);
 
@@ -183,7 +181,7 @@ class Loader
      *
      * @psalm-return array<class-string<OrderedFixtureInterface>|int, OrderedFixtureInterface>
      */
-    public function getFixtures()
+    public function getFixtures(): array
     {
         $this->orderedFixtures = [];
 
@@ -206,32 +204,28 @@ class Loader
      * Check if a given fixture is transient and should not be considered a data fixtures
      * class.
      *
-     * @psalm-param class-string<object> $className
+     * @param string $className
      *
      * @return bool
      */
-    public function isTransient($className)
+    public function isTransient(string $className): bool
     {
-        $rc = new ReflectionClass($className);
-        if ($rc->isAbstract()) {
-            return true;
-        }
+        $reflection = new ReflectionClass($className);
+        $interfaces = $reflection->getInterfaces();
 
-        $interfaces = class_implements($className);
-
-        return ! in_array(FixtureInterface::class, $interfaces);
+        return $reflection->isAbstract() || ! isset($interfaces[FixtureInterface::class]);
     }
 
     /**
      * Creates the fixture object from the class.
      *
-     * @param string $class
+     * @param string $className
      *
      * @return FixtureInterface
      */
-    protected function createFixture($class)
+    protected function createFixture(string $className): FixtureInterface
     {
-        return new $class();
+        return new $className();
     }
 
     /**
@@ -267,8 +261,10 @@ class Loader
      * Orders fixtures by dependencies
      *
      * @return void
+     *
+     * @throws CircularReferenceException
      */
-    private function orderFixturesByDependencies()
+    private function orderFixturesByDependencies(): void
     {
         /** @psalm-var array<class-string<DependentFixtureInterface>, int> */
         $sequenceForClasses = [];
@@ -304,7 +300,7 @@ class Loader
 
                 $this->validateDependencies($dependenciesClasses);
 
-                if (! is_array($dependenciesClasses) || empty($dependenciesClasses)) {
+                if (count($dependenciesClasses) < 1) {
                     throw new InvalidArgumentException(sprintf(
                         'Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.',
                         'getDependencies',
@@ -312,7 +308,7 @@ class Loader
                     ));
                 }
 
-                if (in_array($fixtureClass, $dependenciesClasses)) {
+                if (in_array($fixtureClass, $dependenciesClasses, true)) {
                     throw new InvalidArgumentException(sprintf(
                         'Class "%s" can\'t have itself as a dependency',
                         $fixtureClass
@@ -349,7 +345,7 @@ class Loader
 
         $orderedFixtures = [];
 
-        // If there're fixtures unsequenced left and they couldn't be sequenced,
+        // If there are unsequenced fixtures left and they couldn't be sequenced,
         // it means we have a circular reference
         if ($count > 0) {
             $msg  = 'Classes "%s" have produced a CircularReferenceException. ';
@@ -358,14 +354,14 @@ class Loader
             $msg .= 'This case would produce a CircularReferenceException.';
 
             throw new CircularReferenceException(sprintf($msg, implode(',', $unsequencedClasses)));
-        } else {
-            // We order the classes by sequence
-            asort($sequenceForClasses);
+        }
 
-            foreach ($sequenceForClasses as $class => $sequence) {
-                // If fixtures were ordered
-                $orderedFixtures[] = $this->fixtures[$class];
-            }
+        // We order the classes by sequence
+        asort($sequenceForClasses);
+
+        foreach ($sequenceForClasses as $class => $sequence) {
+            // If fixtures were ordered
+            $orderedFixtures[] = $this->fixtures[$class];
         }
 
         $this->orderedFixtures = array_merge($this->orderedFixtures, $orderedFixtures);
@@ -374,20 +370,18 @@ class Loader
     /**
      * @psalm-param iterable<class-string> $dependenciesClasses
      */
-    private function validateDependencies(iterable $dependenciesClasses): bool
+    private function validateDependencies(array $dependenciesClasses): void
     {
         $loadedFixtureClasses = array_keys($this->fixtures);
 
         foreach ($dependenciesClasses as $class) {
-            if (! in_array($class, $loadedFixtureClasses)) {
+            if (! in_array($class, $loadedFixtureClasses, true)) {
                 throw new RuntimeException(sprintf(
                     'Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.',
                     $class
                 ));
             }
         }
-
-        return true;
     }
 
     /**
@@ -427,13 +421,17 @@ class Loader
     {
         $includedFiles = [];
         foreach ($iterator as $file) {
-            $fileName = $file->getBasename($this->fileExtension);
-            if ($fileName === $file->getBasename()) {
+            if ($file->getExtension() !== $this->fileExtension) {
                 continue;
             }
 
-            $sourceFile = realpath($file->getPathName());
-            require_once $sourceFile;
+            $sourceFile = $file->getRealPath();
+            if ($sourceFile === false) {
+                continue;
+            }
+
+            self::requireOnce($sourceFile);
+
             $includedFiles[] = $sourceFile;
         }
 
@@ -443,10 +441,12 @@ class Loader
         sort($declared);
 
         foreach ($declared as $className) {
-            $reflClass  = new ReflectionClass($className);
-            $sourceFile = $reflClass->getFileName();
+            if ($this->isTransient($className)) {
+                continue;
+            }
 
-            if (! in_array($sourceFile, $includedFiles) || $this->isTransient($className)) {
+            $reflection = new ReflectionClass($className);
+            if (! in_array($reflection->getFileName(), $includedFiles, true)) {
                 continue;
             }
 
@@ -456,5 +456,10 @@ class Loader
         }
 
         return $fixtures;
+    }
+
+    private static function requireOnce($path): void
+    {
+        require_once $path;
     }
 }
