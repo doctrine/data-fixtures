@@ -77,7 +77,7 @@ class Loader
      *
      * @return array $fixtures Array of loaded fixture object instances.
      */
-    public function loadFromDirectory(string $dir): array
+    public function loadFromDirectory($dir)
     {
         if (! is_dir($dir)) {
             throw new InvalidArgumentException(sprintf('"%s" does not exist', $dir));
@@ -98,7 +98,7 @@ class Loader
      *
      * @return array $fixtures Array of loaded fixture object instances.
      */
-    public function loadFromFile(string $fileName): array
+    public function loadFromFile($fileName)
     {
         if (! is_readable($fileName)) {
             throw new InvalidArgumentException(sprintf('"%s" does not exist or is not readable', $fileName));
@@ -116,7 +116,7 @@ class Loader
      *
      * @return bool
      */
-    public function hasFixture(FixtureInterface $fixture): bool
+    public function hasFixture($fixture)
     {
         return isset($this->fixtures[get_class($fixture)]);
     }
@@ -128,7 +128,7 @@ class Loader
      *
      * @return FixtureInterface
      */
-    public function getFixture(string $className): FixtureInterface
+    public function getFixture($className)
     {
         if (! isset($this->fixtures[$className])) {
             throw new InvalidArgumentException(sprintf(
@@ -143,7 +143,7 @@ class Loader
     /**
      * Add a fixture object instance to the loader.
      */
-    public function addFixture(FixtureInterface $fixture): void
+    public function addFixture(FixtureInterface $fixture)
     {
         $fixtureClass = get_class($fixture);
 
@@ -204,11 +204,11 @@ class Loader
      * Check if a given fixture is transient and should not be considered a data fixtures
      * class.
      *
-     * @param string $className
+     * @psalm-param class-string<object> $className
      *
      * @return bool
      */
-    public function isTransient(string $className): bool
+    public function isTransient($className)
     {
         $reflection = new ReflectionClass($className);
         $interfaces = $reflection->getInterfaces();
@@ -223,7 +223,7 @@ class Loader
      *
      * @return FixtureInterface
      */
-    protected function createFixture(string $className): FixtureInterface
+    protected function createFixture($className)
     {
         return new $className();
     }
@@ -370,7 +370,7 @@ class Loader
     /**
      * @psalm-param iterable<class-string> $dependenciesClasses
      */
-    private function validateDependencies(array $dependenciesClasses): void
+    private function validateDependencies(iterable $dependenciesClasses): void
     {
         $loadedFixtureClasses = array_keys($this->fixtures);
 
