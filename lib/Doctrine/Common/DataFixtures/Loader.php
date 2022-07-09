@@ -181,7 +181,7 @@ class Loader
      *
      * @psalm-return array<class-string<OrderedFixtureInterface>|int, OrderedFixtureInterface>
      */
-    public function getFixtures(): array
+    public function getFixtures()
     {
         $this->orderedFixtures = [];
 
