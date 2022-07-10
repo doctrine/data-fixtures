@@ -422,9 +422,11 @@ class Loader
             }
 
             $sourceFile = $file->getRealPath();
+            // @codeCoverageIgnoreStart
             if ($sourceFile === false) {
                 continue;
             }
+            // @codeCoverageIgnoreEnd
 
             self::requireOnce($sourceFile);
 
