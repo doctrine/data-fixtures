@@ -426,6 +426,7 @@ class Loader
             if ($sourceFile === false) {
                 continue;
             }
+
             // @codeCoverageIgnoreEnd
 
             self::requireOnce($sourceFile);
