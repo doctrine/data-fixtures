@@ -7,9 +7,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
 
-/**
- * @ORM\Entity
- */
+/** @ORM\Entity */
 class Link
 {
     /**

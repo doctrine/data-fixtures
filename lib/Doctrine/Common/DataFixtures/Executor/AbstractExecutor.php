@@ -47,9 +47,7 @@ abstract class AbstractExecutor
         $this->referenceRepository = new ReferenceRepository($manager);
     }
 
-    /**
-     * @return ReferenceRepository
-     */
+    /** @return ReferenceRepository */
     public function getReferenceRepository()
     {
         return $this->referenceRepository;
@@ -70,9 +68,7 @@ abstract class AbstractExecutor
         $this->purger = $purger;
     }
 
-    /**
-     * @return PurgerInterface
-     */
+    /** @return PurgerInterface */
     public function getPurger()
     {
         return $this->purger;

@@ -32,9 +32,7 @@ class Uuid implements JsonSerializable, Serializable
         return $this->id;
     }
 
-    /**
-     * @param string $serialized
-     */
+    /** @param string $serialized */
     public function unserialize($serialized): void
     {
         $this->id = $serialized;

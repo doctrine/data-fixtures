@@ -60,17 +60,13 @@ class Quoted
         $this->select = $select;
     }
 
-    /**
-     * @return Collection|null
-     */
+    /** @return Collection|null */
     public function getSelects(): ?Collection
     {
         return $this->selects;
     }
 
-    /**
-     * @param Collection|null $selects
-     */
+    /** @param Collection|null $selects */
     public function setSelects(?Collection $selects): void
     {
         $this->selects = $selects;
