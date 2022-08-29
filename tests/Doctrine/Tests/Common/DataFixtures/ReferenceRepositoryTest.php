@@ -14,10 +14,7 @@ use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use OutOfBoundsException;
-use Prophecy\Prophecy\ProphecyInterface;
 use stdClass;
-
-use function assert;
 
 class ReferenceRepositoryTest extends BaseTest
 {
@@ -189,19 +186,27 @@ class ReferenceRepositoryTest extends BaseTest
         $role               = new Role();
         $identitiesExpected = ['id' => 1];
 
-        $uow = $this->prophesize(UnitOfWork::class);
-        assert($uow instanceof UnitOfWork || $uow instanceof ProphecyInterface);
-        $uow->isInIdentityMap($role)->shouldBeCalledTimes(2)->willReturn(true, false);
+        $uow = $this->createMock(UnitOfWork::class);
+        $uow->expects($this->exactly(2))
+            ->method('isInIdentityMap')
+            ->with($role)
+            ->willReturn(true, false);
 
-        $classMetadata = $this->prophesize(ClassMetadata::class);
-        $classMetadata->getIdentifierValues($role)->shouldBeCalled()->willReturn($identitiesExpected);
+        $classMetadata = $this->createMock(ClassMetadata::class);
+        $classMetadata->expects($this->once())
+            ->method('getIdentifierValues')
+            ->with($role)
+            ->willReturn($identitiesExpected);
 
-        $em = $this->prophesize(EntityManagerInterface::class);
-        assert($em instanceof EntityManagerInterface || $em instanceof ProphecyInterface);
-        $em->getUnitOfWork()->shouldBeCalled()->willReturn($uow);
-        $em->getClassMetadata(Role::class)->shouldBeCalled()->willReturn($classMetadata);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getUnitOfWork')
+           ->willReturn($uow);
+        $em->expects($this->once())
+            ->method('getClassMetadata')
+            ->with(Role::class)
+            ->willReturn($classMetadata);
 
-        $referenceRepository = new ReferenceRepository($em->reveal());
+        $referenceRepository = new ReferenceRepository($em);
         $referenceRepository->setReference('entity', $role);
         $identities = $referenceRepository->getIdentities();
 
