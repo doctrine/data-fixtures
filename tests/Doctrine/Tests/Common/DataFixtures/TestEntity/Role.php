@@ -6,9 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- */
+/** @ORM\Entity */
 class Role
 {
     /**

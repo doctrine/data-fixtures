@@ -56,17 +56,13 @@ class ORMExecutorTest extends BaseTest
         $executor->execute([$fixture], true);
     }
 
-    /**
-     * @return FixtureInterface&MockObject
-     */
+    /** @return FixtureInterface&MockObject */
     private function getMockFixture(): FixtureInterface
     {
         return $this->createMock(FixtureInterface::class);
     }
 
-    /**
-     * @return ORMPurger&MockObject
-     */
+    /** @return ORMPurger&MockObject */
     private function getMockPurger(): ORMPurger
     {
         return $this->createMock(ORMPurger::class);
