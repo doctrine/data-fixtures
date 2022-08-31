@@ -179,16 +179,18 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
                 $sorter->addNode($class->name, $class);
             }
 
-            // $class before its parents
-            foreach ($class->parentClasses as $parentClass) {
-                $parentClass     = $em->getClassMetadata($parentClass);
-                $parentClassName = $parentClass->getName();
+            if ($class->isInheritanceTypeJoined() || $class->isInheritanceTypeSingleTable()) {
+                // $class before its parents
+                foreach ($class->parentClasses as $parentClass) {
+                    $parentClass = $em->getClassMetadata($parentClass);
+                    $parentClassName = $parentClass->getName();
 
-                if (! $sorter->hasNode($parentClassName)) {
-                    $sorter->addNode($parentClassName, $parentClass);
+                    if (!$sorter->hasNode($parentClassName)) {
+                        $sorter->addNode($parentClassName, $parentClass);
+                    }
+
+                    $sorter->addDependency($class->name, $parentClassName);
                 }
-
-                $sorter->addDependency($class->name, $parentClassName);
             }
 
             foreach ($class->associationMappings as $assoc) {
@@ -208,15 +210,17 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
                 $sorter->addDependency($targetClassName, $class->name);
 
                 // parents of $targetClass before $class, too
-                foreach ($targetClass->parentClasses as $parentClass) {
-                    $parentClass     = $em->getClassMetadata($parentClass);
-                    $parentClassName = $parentClass->getName();
+                if ($targetClass->isInheritanceTypeJoined() || $targetClass->isInheritanceTypeSingleTable()) {
+                    foreach ($targetClass->parentClasses as $parentClass) {
+                        $parentClass = $em->getClassMetadata($parentClass);
+                        $parentClassName = $parentClass->getName();
 
-                    if (! $sorter->hasNode($parentClassName)) {
-                        $sorter->addNode($parentClassName, $parentClass);
+                        if (!$sorter->hasNode($parentClassName)) {
+                            $sorter->addNode($parentClassName, $parentClass);
+                        }
+
+                        $sorter->addDependency($parentClassName, $class->name);
                     }
-
-                    $sorter->addDependency($parentClassName, $class->name);
                 }
             }
         }
