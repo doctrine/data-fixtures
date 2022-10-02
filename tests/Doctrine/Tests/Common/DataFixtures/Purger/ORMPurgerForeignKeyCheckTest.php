@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -9,18 +11,13 @@ use Doctrine\DBAL\Driver\AbstractMySQLDriver;
 use Doctrine\DBAL\Driver\AbstractSQLiteDriver;
 use ReflectionClass;
 
-/**
- * @author Robert Freigang <robertfreigang@gmx.de>
- */
 class ORMPurgerForeignKeyCheckTest extends BaseTest
 {
-    const FOREIGN_KEY_CHECK_STRING_START = 'SET FOREIGN_KEY_CHECKS = 0;';
-    const FOREIGN_KEY_CHECK_STRING_END = ';SET FOREIGN_KEY_CHECKS = 1;';
-    const TEST_TABLE_NAME = 'test_table_name';
+    public const FOREIGN_KEY_CHECK_STRING_START = 'SET FOREIGN_KEY_CHECKS = 0;';
+    public const FOREIGN_KEY_CHECK_STRING_END   = ';SET FOREIGN_KEY_CHECKS = 1;';
+    public const TEST_TABLE_NAME                = 'test_table_name';
 
-    /**
-     * @dataProvider purgeForDifferentDriversProvider
-     */
+    /** @dataProvider purgeForDifferentDriversProvider */
     public function testPurgeForDifferentDrivers(Driver $driver, bool $hasForeignKeyCheckString): void
     {
         $truncateTableSQL = $this->getTruncateTableSQLForDriver($driver);
@@ -36,9 +33,7 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
         $this->assertStringContainsString(self::TEST_TABLE_NAME, $truncateTableSQL);
     }
 
-    /**
-     * @return list<array{Driver, bool}>
-     */
+    /** @return list<array{Driver, bool}> */
     public function purgeForDifferentDriversProvider()
     {
         return [
@@ -56,16 +51,14 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
         $connection = $this->createMock(Connection::class);
         $connection->method('getDriver')->willReturn($driver);
 
-        $purger = new ORMPurger($em);
-        $purgerClass = new ReflectionClass(ORMPurger::class);
+        $purger                    = new ORMPurger($em);
+        $purgerClass               = new ReflectionClass(ORMPurger::class);
         $getTruncateTableSQLMethod = $purgerClass->getMethod('getTruncateTableSQL');
         $getTruncateTableSQLMethod->setAccessible(true);
 
-        $truncateTableSQL = $getTruncateTableSQLMethod->invokeArgs(
+        return $getTruncateTableSQLMethod->invokeArgs(
             $purger,
             [$platform, $connection, self::TEST_TABLE_NAME]
         );
-
-        return $truncateTableSQL;
     }
 }

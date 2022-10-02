@@ -288,7 +288,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         $sql = $platform->getTruncateTableSQL($tbl, true);
 
         if ($connection->getDriver() instanceof AbstractMySQLDriver) {
-            $sql = 'SET FOREIGN_KEY_CHECKS = 0;'.$sql.';SET FOREIGN_KEY_CHECKS = 1;';
+            $sql = 'SET FOREIGN_KEY_CHECKS = 0;' . $sql . ';SET FOREIGN_KEY_CHECKS = 1;';
         }
 
         return $sql;
