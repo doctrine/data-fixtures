@@ -283,14 +283,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         return 'DELETE FROM ' . $tableIdentifier->getQuotedName($platform);
     }
 
-    /**
-     * @param AbstractPlatform $platform
-     * @param Connection       $connection
-     * @param string           $tbl
-     *
-     * @return string
-     */
-    private function getTruncateTableSQL(AbstractPlatform $platform, Connection $connection, $tbl)
+    private function getTruncateTableSQL(AbstractPlatform $platform, Connection $connection, string $tbl): string
     {
         $sql = $platform->getTruncateTableSQL($tbl, true);
 
