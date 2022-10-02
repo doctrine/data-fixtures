@@ -11,8 +11,6 @@ use ReflectionClass;
 
 /**
  * @author Robert Freigang <robertfreigang@gmx.de>
- *
- * @covers ORMPurger::getTruncateTableSQL
  */
 class ORMPurgerForeignKeyCheckTest extends BaseTest
 {
@@ -21,12 +19,9 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
     const TEST_TABLE_NAME = 'test_table_name';
 
     /**
-     * @param Driver $driver
-     * @param bool   $hasForeignKeyCheckString
-     *
      * @dataProvider purgeForDifferentDriversProvider
      */
-    public function testPurgeForDifferentDrivers(Driver $driver, $hasForeignKeyCheckString)
+    public function testPurgeForDifferentDrivers(Driver $driver, bool $hasForeignKeyCheckString): void
     {
         $truncateTableSQL = $this->getTruncateTableSQLForDriver($driver);
 
@@ -34,15 +29,15 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
             $this->assertStringStartsWith(self::FOREIGN_KEY_CHECK_STRING_START, $truncateTableSQL);
             $this->assertStringEndsWith(self::FOREIGN_KEY_CHECK_STRING_END, $truncateTableSQL);
         } else {
-            $this->assertNotContains(self::FOREIGN_KEY_CHECK_STRING_START, $truncateTableSQL);
-            $this->assertNotContains(self::FOREIGN_KEY_CHECK_STRING_END, $truncateTableSQL);
+            $this->assertStringNotContainsString(self::FOREIGN_KEY_CHECK_STRING_START, $truncateTableSQL);
+            $this->assertStringNotContainsString(self::FOREIGN_KEY_CHECK_STRING_END, $truncateTableSQL);
         }
 
-        $this->assertContains(self::TEST_TABLE_NAME, $truncateTableSQL);
+        $this->assertStringContainsString(self::TEST_TABLE_NAME, $truncateTableSQL);
     }
 
     /**
-     * @return array
+     * @return list<array{Driver, bool}>
      */
     public function purgeForDifferentDriversProvider()
     {
@@ -52,12 +47,7 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
         ];
     }
 
-    /**
-     * @param Driver $driver
-     *
-     * @return string
-     */
-    private function getTruncateTableSQLForDriver(Driver $driver)
+    private function getTruncateTableSQLForDriver(Driver $driver): string
     {
         $em = $this->getMockAnnotationReaderEntityManager();
 
