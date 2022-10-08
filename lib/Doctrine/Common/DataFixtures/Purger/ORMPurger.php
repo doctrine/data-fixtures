@@ -288,6 +288,9 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         $sql = $platform->getTruncateTableSQL($tbl, true);
 
         if ($connection->getDriver() instanceof AbstractMySQLDriver) {
+            // MySQL TRUNCATE TABLE Statement: fails for an InnoDB or NDB table
+            // if there are any FOREIGN KEY constraints from other tables that
+            // reference the table.
             $sql = 'SET FOREIGN_KEY_CHECKS = 0;' . $sql . ';SET FOREIGN_KEY_CHECKS = 1;';
         }
 
