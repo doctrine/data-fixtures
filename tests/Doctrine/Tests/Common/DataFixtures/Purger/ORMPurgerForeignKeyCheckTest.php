@@ -23,8 +23,8 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
     public const TEST_CLASS_NAME = Link::class;
     public const TEST_TABLE_NAME = 'link';
 
-    /** @return MappingDriver */
-    protected function getMockMetadataDriver()
+    /** @return MappingDriver&MockObject */
+    protected function getMockMetadataDriver(): MappingDriver
     {
         $metadataDriver = $this->createMock(MappingDriver::class);
         $metadataDriver->method('getAllClassNames')->willReturn([self::TEST_CLASS_NAME]);
@@ -42,8 +42,8 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
         return $metadataDriver;
     }
 
-    /** @return Connection */
-    protected function getMockConnectionForPlatform(AbstractPlatform $platform)
+    /** @return Connection&MockObject */
+    protected function getMockConnectionForPlatform(AbstractPlatform $platform): Connection
     {
         $driver = $this->createMock(AbstractDriverMiddleware::class);
         $driver->method('getDatabasePlatform')->willReturn($platform);
@@ -90,7 +90,7 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
         $purger->purge();
     }
 
-    /** @return list<array{AbstractPlatform, int, bool}> */
+    /** @return list<array{AbstractPlatform, ORMPurger::PURGE_MODE_*, bool}> */
     public function purgeForDifferentPlatformsProvider()
     {
         return [

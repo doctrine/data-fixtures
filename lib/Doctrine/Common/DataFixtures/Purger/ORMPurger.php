@@ -12,6 +12,7 @@ use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use PHPUnit\Framework\MockObject\MockObject;
 
 use function array_reverse;
 use function array_search;
@@ -289,7 +290,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         return 'DELETE FROM ' . $tableIdentifier->getQuotedName($platform);
     }
 
-    private function disableForeignKeyChecksForMySQL(Connection $connection)
+    private function disableForeignKeyChecksForMySQL(Connection $connection): void
     {
         if ($this->purgeMode !== self::PURGE_MODE_TRUNCATE || ! $this->isMySQL($connection)) {
             return;
@@ -302,7 +303,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
     }
 
-    private function enableForeignKeyChecksForMySQL(Connection $connection)
+    private function enableForeignKeyChecksForMySQL(Connection $connection): void
     {
         if ($this->purgeMode !== self::PURGE_MODE_TRUNCATE || ! $this->isMySQL($connection)) {
             return;
