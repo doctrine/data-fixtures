@@ -6,8 +6,9 @@ namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\AbstractMySQLDriver;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -15,6 +16,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use function array_reverse;
 use function array_search;
 use function assert;
+use function class_exists;
 use function count;
 use function is_callable;
 use function method_exists;
@@ -143,6 +145,8 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
             'getSchemaAssetsFilter'
         ) ? $connection->getConfiguration()->getSchemaAssetsFilter() : null;
 
+        $this->disableForeignKeyChecksForMySQL($connection);
+
         foreach ($orderedTables as $tbl) {
             // If we have a filter expression, check it and skip if necessary
             if (! $emptyFilterExpression && ! preg_match($filterExpr, $tbl)) {
@@ -162,9 +166,11 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
             if ($this->purgeMode === self::PURGE_MODE_DELETE) {
                 $connection->executeStatement($this->getDeleteFromTableSQL($tbl, $platform));
             } else {
-                $connection->executeStatement($this->getTruncateTableSQL($platform, $connection, $tbl));
+                $connection->executeStatement($platform->getTruncateTableSQL($tbl));
             }
         }
+
+        $this->enableForeignKeyChecksForMySQL($connection);
     }
 
     /**
@@ -283,17 +289,37 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         return 'DELETE FROM ' . $tableIdentifier->getQuotedName($platform);
     }
 
-    private function getTruncateTableSQL(AbstractPlatform $platform, Connection $connection, string $tbl): string
+    private function disableForeignKeyChecksForMySQL(Connection $connection)
     {
-        $sql = $platform->getTruncateTableSQL($tbl, true);
-
-        if ($connection->getDriver() instanceof AbstractMySQLDriver) {
-            // MySQL TRUNCATE TABLE Statement: fails for an InnoDB or NDB table
-            // if there are any FOREIGN KEY constraints from other tables that
-            // reference the table.
-            $sql = 'SET FOREIGN_KEY_CHECKS = 0;' . $sql . ';SET FOREIGN_KEY_CHECKS = 1;';
+        if ($this->purgeMode !== self::PURGE_MODE_TRUNCATE || ! $this->isMySQL($connection)) {
+            return;
         }
 
-        return $sql;
+        // see MySQL TRUNCATE TABLE Statement: fails for an InnoDB or NDB table
+        // if there are any FOREIGN KEY constraints from other tables that
+        // reference the table.
+        $connection->executeStatement('SET @DOCTRINE_OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS');
+        $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+    }
+
+    private function enableForeignKeyChecksForMySQL(Connection $connection)
+    {
+        if ($this->purgeMode !== self::PURGE_MODE_TRUNCATE || ! $this->isMySQL($connection)) {
+            return;
+        }
+
+        $connection->executeStatement('SET FOREIGN_KEY_CHECKS = @DOCTRINE_OLD_FOREIGN_KEY_CHECKS');
+    }
+
+    private function isMySQL(Connection $connection): bool
+    {
+        $platform = $connection->getDatabasePlatform();
+
+        if (! class_exists(AbstractMySQLPlatform::class)) {
+            // before DBAL 3.3
+            return $platform instanceof MySQLPlatform;
+        }
+
+        return $platform instanceof AbstractMySQLPlatform;
     }
 }

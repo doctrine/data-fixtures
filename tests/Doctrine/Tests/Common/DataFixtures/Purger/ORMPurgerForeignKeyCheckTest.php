@@ -5,60 +5,99 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver;
-use Doctrine\DBAL\Driver\AbstractMySQLDriver;
-use Doctrine\DBAL\Driver\AbstractSQLiteDriver;
-use ReflectionClass;
+use Doctrine\DBAL\Driver\Middleware\AbstractDriverMiddleware;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\ORMSetup;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Tests\Common\DataFixtures\TestEntity\Link;
 
 class ORMPurgerForeignKeyCheckTest extends BaseTest
 {
-    public const FOREIGN_KEY_CHECK_STRING_START = 'SET FOREIGN_KEY_CHECKS = 0;';
-    public const FOREIGN_KEY_CHECK_STRING_END   = ';SET FOREIGN_KEY_CHECKS = 1;';
-    public const TEST_TABLE_NAME                = 'test_table_name';
+    public const TEST_CLASS_NAME = Link::class;
+    public const TEST_TABLE_NAME = 'link';
 
-    /** @dataProvider purgeForDifferentDriversProvider */
-    public function testPurgeForDifferentDrivers(Driver $driver, bool $hasForeignKeyCheckString): void
+    /** @return MappingDriver */
+    protected function getMockMetadataDriver()
     {
-        $truncateTableSQL = $this->getTruncateTableSQLForDriver($driver);
+        $metadataDriver = $this->createMock(MappingDriver::class);
+        $metadataDriver->method('getAllClassNames')->willReturn([self::TEST_CLASS_NAME]);
+        $metadataDriver->method('loadMetadataForClass')
+            ->willReturnCallback(static function (string $className, ClassMetadata $metadata) {
+                if ($className !== self::TEST_CLASS_NAME) {
+                    return;
+                }
 
-        if ($hasForeignKeyCheckString) {
-            $this->assertStringStartsWith(self::FOREIGN_KEY_CHECK_STRING_START, $truncateTableSQL);
-            $this->assertStringEndsWith(self::FOREIGN_KEY_CHECK_STRING_END, $truncateTableSQL);
-        } else {
-            $this->assertStringNotContainsString(self::FOREIGN_KEY_CHECK_STRING_START, $truncateTableSQL);
-            $this->assertStringNotContainsString(self::FOREIGN_KEY_CHECK_STRING_END, $truncateTableSQL);
-        }
+                $metadata->setPrimaryTable(['name' => self::TEST_TABLE_NAME]);
+                $metadata->setIdentifier(['id']);
+            });
+        $metadataDriver->method('isTransient')->willReturn(false);
 
-        $this->assertStringContainsString(self::TEST_TABLE_NAME, $truncateTableSQL);
+        return $metadataDriver;
     }
 
-    /** @return list<array{Driver, bool}> */
-    public function purgeForDifferentDriversProvider()
+    /** @return Connection */
+    protected function getMockConnectionForPlatform(AbstractPlatform $platform)
     {
-        return [
-            [$this->createMock(AbstractMySQLDriver::class), true],
-            [$this->createMock(AbstractSQLiteDriver::class), false],
-        ];
-    }
-
-    private function getTruncateTableSQLForDriver(Driver $driver): string
-    {
-        $em = $this->getMockAnnotationReaderEntityManager();
-
-        $platform = $em->getConnection()->getDatabasePlatform();
+        $driver = $this->createMock(AbstractDriverMiddleware::class);
+        $driver->method('getDatabasePlatform')->willReturn($platform);
 
         $connection = $this->createMock(Connection::class);
         $connection->method('getDriver')->willReturn($driver);
+        $connection->method('getConfiguration')->willReturn(new Configuration());
+        $connection->method('getEventManager')->willReturn(new EventManager());
+        $connection->method('getDatabasePlatform')->willReturn($platform);
 
-        $purger                    = new ORMPurger($em);
-        $purgerClass               = new ReflectionClass(ORMPurger::class);
-        $getTruncateTableSQLMethod = $purgerClass->getMethod('getTruncateTableSQL');
-        $getTruncateTableSQLMethod->setAccessible(true);
+        return $connection;
+    }
 
-        return $getTruncateTableSQLMethod->invokeArgs(
-            $purger,
-            [$platform, $connection, self::TEST_TABLE_NAME]
-        );
+    /** @dataProvider purgeForDifferentPlatformsProvider */
+    public function testPurgeForDifferentPlatforms(AbstractPlatform $platform, int $purgeMode, bool $hasForeignKeyCheckString): void
+    {
+        $metadataDriver = $this->getMockMetadataDriver();
+        $connection     = $this->getMockConnectionForPlatform($platform);
+
+        $config = ORMSetup::createConfiguration(true);
+        $config->setMetadataDriverImpl($metadataDriver);
+
+        $em     = EntityManager::create($connection, $config);
+        $purger = new ORMPurger($em);
+        $purger->setPurgeMode($purgeMode);
+
+        if ($hasForeignKeyCheckString) {
+            $connection
+                ->expects($this->exactly(4))
+                ->method('executeStatement')
+                ->withConsecutive(
+                    ['SET @DOCTRINE_OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS'],
+                    ['SET FOREIGN_KEY_CHECKS = 0'],
+                    [$this->stringContains(self::TEST_TABLE_NAME)],
+                    ['SET FOREIGN_KEY_CHECKS = @DOCTRINE_OLD_FOREIGN_KEY_CHECKS']
+                );
+        } else {
+            $connection
+                ->expects($this->exactly(1))
+                ->method('executeStatement')
+                ->withConsecutive([$this->stringContains(self::TEST_TABLE_NAME)]);
+        }
+
+        $purger->purge();
+    }
+
+    /** @return list<array{AbstractPlatform, int, bool}> */
+    public function purgeForDifferentPlatformsProvider()
+    {
+        return [
+            [new MySQLPlatform(), ORMPurger::PURGE_MODE_TRUNCATE, true],
+            [new MySQLPlatform(), ORMPurger::PURGE_MODE_DELETE, false],
+            [new SqlitePlatform(), ORMPurger::PURGE_MODE_TRUNCATE, false],
+            [new SqlitePlatform(), ORMPurger::PURGE_MODE_DELETE, false],
+        ];
     }
 }
