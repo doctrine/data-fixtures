@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Link;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ORMPurgerForeignKeyCheckTest extends BaseTest
 {

@@ -12,7 +12,6 @@ use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use PHPUnit\Framework\MockObject\MockObject;
 
 use function array_reverse;
 use function array_search;
