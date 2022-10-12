@@ -30,7 +30,7 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
         $metadataDriver = $this->createMock(MappingDriver::class);
         $metadataDriver->method('getAllClassNames')->willReturn([self::TEST_CLASS_NAME]);
         $metadataDriver->method('loadMetadataForClass')
-            ->willReturnCallback(static function (string $className, ClassMetadata $metadata) {
+            ->willReturnCallback(static function (string $className, ClassMetadata $metadata): void {
                 if ($className !== self::TEST_CLASS_NAME) {
                     return;
                 }
@@ -92,7 +92,7 @@ class ORMPurgerForeignKeyCheckTest extends BaseTest
     }
 
     /** @return list<array{AbstractPlatform, ORMPurger::PURGE_MODE_*, bool}> */
-    public function purgeForDifferentPlatformsProvider()
+    public function purgeForDifferentPlatformsProvider(): array
     {
         return [
             [new MySQLPlatform(), ORMPurger::PURGE_MODE_TRUNCATE, true],
