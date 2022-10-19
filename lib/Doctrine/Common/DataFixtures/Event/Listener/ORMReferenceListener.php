@@ -50,7 +50,7 @@ final class ORMReferenceListener implements EventSubscriber
                 ->getUnitOfWork()
                 ->getEntityIdentifier($object);
 
-            $this->referenceRepository->setReferenceIdentity($name, $identity);
+            $this->referenceRepository->setReferenceIdentity($name, $identity, get_class($object));
         }
     }
 }

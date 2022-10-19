@@ -71,13 +71,25 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::getReference
      *
-     * @param string $name
+     * @param string      $name
+     * @param string|null $class
      *
      * @return object
+     *
+     * @template T of object
+     * @psalm-param class-string<T>|null $class
+     * @psalm-return $class is null ? object : T
      */
-    public function getReference($name)
+    public function getReference($name, $class = null) // NEXT_MAJOR: Make $class mandatory
     {
-        return $this->referenceRepository->getReference($name);
+        if ($class === null) {
+            @trigger_error(sprintf(
+                'Argument 3 of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                __METHOD__
+            ), E_USER_DEPRECATED);
+        }
+
+        return $this->referenceRepository->getReference($name, $class);
     }
 
     /**
@@ -86,12 +98,22 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::hasReference
      *
-     * @param string $name
+     * @param string      $name
+     * @param string|null $class
      *
      * @return bool
+     *
+     * @psalm-param class-string $class
      */
-    public function hasReference($name)
+    public function hasReference($name, $class = null) // NEXT_MAJOR: Make $class mandatory
     {
-        return $this->referenceRepository->hasReference($name);
+        if ($class === null) {
+            @trigger_error(sprintf(
+                'Argument 3 of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                __METHOD__
+            ), E_USER_DEPRECATED);
+        }
+
+        return $this->referenceRepository->hasReference($name, $class);
     }
 }

@@ -49,7 +49,7 @@ final class MongoDBReferenceListener implements EventSubscriber
                 ->getUnitOfWork()
                 ->getDocumentIdentifier($object);
 
-            $this->referenceRepository->setReferenceIdentity($name, $identity);
+            $this->referenceRepository->setReferenceIdentity($name, $identity, get_class($object));
         }
     }
 }
