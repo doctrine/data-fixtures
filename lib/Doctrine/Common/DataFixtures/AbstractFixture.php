@@ -87,7 +87,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
             Deprecation::trigger(
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
-                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                'Argument $class of %s() will be mandatory in 2.0.',
                 __METHOD__
             );
         }
@@ -114,7 +114,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
             Deprecation::trigger(
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
-                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                'Argument $class of %s() will be mandatory in 2.0.',
                 __METHOD__
             );
         }

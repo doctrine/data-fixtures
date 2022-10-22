@@ -148,7 +148,7 @@ class ReferenceRepository
             Deprecation::trigger(
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
-                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                'Argument $class of %s() will be mandatory in 2.0.',
                 __METHOD__
             );
         }
@@ -218,7 +218,7 @@ class ReferenceRepository
             Deprecation::trigger(
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
-                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                'Argument $class of %s() will be mandatory in 2.0.',
                 __METHOD__
             );
         }
@@ -271,7 +271,7 @@ class ReferenceRepository
             Deprecation::trigger(
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
-                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                'Argument $class of %s() will be mandatory in 2.0.',
                 __METHOD__
             );
         }
@@ -313,7 +313,7 @@ class ReferenceRepository
             Deprecation::trigger(
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
-                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+                'Argument $class of %s() will be mandatory in 2.0.',
                 __METHOD__
             );
         }
