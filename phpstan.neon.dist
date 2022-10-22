@@ -7,4 +7,3 @@ parameters:
 
 includes:
     - phpstan-baseline.neon
-    - vendor/jangregor/phpstan-prophecy/extension.neon

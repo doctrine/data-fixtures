@@ -120,17 +120,13 @@ class UserWithSchema
         return $this->role;
     }
 
-    /**
-     * @psalm-return Collection<int, self>
-     */
+    /** @psalm-return Collection<int, self> */
     public function getReaders(): Collection
     {
         return $this->readers;
     }
 
-    /**
-     * @psalm-param Collection<int, self> $readers
-     */
+    /** @psalm-param Collection<int, self> $readers */
     public function setReaders($readers): self
     {
         $this->readers = $readers;
@@ -138,17 +134,13 @@ class UserWithSchema
         return $this;
     }
 
-    /**
-     * @psalm-return Collection<int, self>
-     */
+    /** @psalm-return Collection<int, self> */
     public function getAuthors()
     {
         return $this->authors;
     }
 
-    /**
-     * @param Collection<int, self> $authors
-     */
+    /** @param Collection<int, self> $authors */
     public function setAuthors($authors): self
     {
         $this->authors = $authors;

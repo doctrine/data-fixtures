@@ -11,9 +11,7 @@ use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * @internal
- */
+/** @internal */
 trait ORMExecutorCommon
 {
     /** @var EntityManager|EntityManagerDecorator */

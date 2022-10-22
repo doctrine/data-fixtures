@@ -8,9 +8,7 @@ use Doctrine\Common\DataFixtures\Sorter\Vertex;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Tests\Common\DataFixtures\BaseTest;
 
-/**
- * @covers \Doctrine\Common\DataFixtures\Sorter\Vertex
- */
+/** @covers \Doctrine\Common\DataFixtures\Sorter\Vertex */
 class VertexTest extends BaseTest
 {
     public function testNode(): void

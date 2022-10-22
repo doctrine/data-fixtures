@@ -371,9 +371,7 @@ class Loader
         $this->orderedFixtures = array_merge($this->orderedFixtures, $orderedFixtures);
     }
 
-    /**
-     * @psalm-param iterable<class-string> $dependenciesClasses
-     */
+    /** @psalm-param iterable<class-string> $dependenciesClasses */
     private function validateDependencies(iterable $dependenciesClasses): bool
     {
         $loadedFixtureClasses = array_keys($this->fixtures);

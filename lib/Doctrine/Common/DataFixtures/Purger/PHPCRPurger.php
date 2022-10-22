@@ -26,17 +26,13 @@ class PHPCRPurger implements PurgerInterface
         $this->dm = $dm;
     }
 
-    /**
-     * @return DocumentManagerInterface|null
-     */
+    /** @return DocumentManagerInterface|null */
     public function getObjectManager()
     {
         return $this->dm;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function purge()
     {
         $session = $this->dm->getPhpcrSession();

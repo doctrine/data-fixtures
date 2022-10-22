@@ -119,17 +119,13 @@ class PHPCRExecutorTest extends BaseTest
         }
     }
 
-    /**
-     * @return PHPCRPurger&MockObject
-     */
+    /** @return PHPCRPurger&MockObject */
     private function getPurger()
     {
         return $this->createMock(PHPCRPurger::class);
     }
 
-    /**
-     * @return DocumentManager&MockObject
-     */
+    /** @return DocumentManager&MockObject */
     private function getDocumentManager()
     {
         if (! class_exists(DocumentManager::class)) {
@@ -147,9 +143,7 @@ class PHPCRExecutorTest extends BaseTest
             ->getMock();
     }
 
-    /**
-     * @return FixtureInterface&MockObject
-     */
+    /** @return FixtureInterface&MockObject */
     private function getMockFixture()
     {
         return $this->createMock(FixtureInterface::class);
