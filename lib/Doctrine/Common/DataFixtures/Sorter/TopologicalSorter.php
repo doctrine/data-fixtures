@@ -45,9 +45,7 @@ class TopologicalSorter
      */
     private $allowCyclicDependencies;
 
-    /**
-     * @param bool $allowCyclicDependencies
-     */
+    /** @param bool $allowCyclicDependencies */
     public function __construct($allowCyclicDependencies = true)
     {
         $this->allowCyclicDependencies = $allowCyclicDependencies;

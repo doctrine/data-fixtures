@@ -9,9 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use function md5;
 
-/**
- * @ORM\Entity
- */
+/** @ORM\Entity */
 class User
 {
     /**
@@ -119,9 +117,7 @@ class User
         return $this->role;
     }
 
-    /**
-     * @return User[]|Collection
-     */
+    /** @return User[]|Collection */
     public function getReaders()
     {
         return $this->readers;
@@ -139,9 +135,7 @@ class User
         return $this;
     }
 
-    /**
-     * @return User[]|Collection
-     */
+    /** @return User[]|Collection */
     public function getAuthors()
     {
         return $this->authors;

@@ -34,9 +34,7 @@ class PHPCRExecutor extends AbstractExecutor
         $this->setPurger($purger);
     }
 
-    /**
-     * @return DocumentManagerInterface
-     */
+    /** @return DocumentManagerInterface */
     public function getObjectManager()
     {
         return $this->dm;

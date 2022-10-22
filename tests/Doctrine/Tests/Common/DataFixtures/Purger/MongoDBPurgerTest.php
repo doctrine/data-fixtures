@@ -74,9 +74,7 @@ class MongoDBPurgerTest extends BaseTest
         $this->assertIndexCount(2, $collection);
     }
 
-    /**
-     * @param Collection|MongoCollection $collection
-     */
+    /** @param Collection|MongoCollection $collection */
     private function assertIndexCount(int $expectedCount, $collection): void
     {
         if ($collection instanceof Collection) {

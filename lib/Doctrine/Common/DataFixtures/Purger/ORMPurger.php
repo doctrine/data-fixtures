@@ -258,9 +258,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
     }
 
-    /**
-     * @param mixed[] $assoc
-     */
+    /** @param mixed[] $assoc */
     private function getJoinTableName(
         array $assoc,
         ClassMetadata $class,
