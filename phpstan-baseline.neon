@@ -32,7 +32,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Doctrine\\\\Persistence\\\\ObjectManager\\:\\:getReference\\(\\)\\.$#"
-			count: 1
+			count: 2
 			path: lib/Doctrine/Common/DataFixtures/ProxyReferenceRepository.php
 
 		-
@@ -114,4 +114,3 @@ parameters:
 			message: "#^Call to an undefined method Doctrine\\\\ODM\\\\MongoDB\\\\DocumentManager\\:\\:getConnection\\(\\)\\.$#"
 			count: 1
 			path: tests/Doctrine/Tests/Common/DataFixtures/Purger/MongoDBPurgerTest.php
-
