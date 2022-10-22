@@ -9,7 +9,6 @@ use function file_get_contents;
 use function file_put_contents;
 use function get_class;
 use function serialize;
-use function substr;
 use function unserialize;
 
 /**
@@ -55,8 +54,8 @@ class ProxyReferenceRepository extends ReferenceRepository
         $repositoryData = unserialize($serializedData);
 
         // For BC, remove in next major.
-        if (!isset($repositoryData['identitiesByClass'])) {
-            $references     = $repositoryData['references'];
+        if (! isset($repositoryData['identitiesByClass'])) {
+            $references = $repositoryData['references'];
 
             foreach ($references as $name => $proxyReference) {
                 $this->setReference(

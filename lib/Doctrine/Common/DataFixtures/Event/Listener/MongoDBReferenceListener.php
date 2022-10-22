@@ -8,6 +8,8 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 
+use function get_class;
+
 /**
  * Reference Listener populates identities for
  * stored references

@@ -74,12 +74,12 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @param string      $name
      * @param string|null $class
+     * @psalm-param class-string<T>|null $class
      *
      * @return object
+     * @psalm-return $class is null ? object : T
      *
      * @template T of object
-     * @psalm-param class-string<T>|null $class
-     * @psalm-return $class is null ? object : T
      */
     public function getReference($name, $class = null)
     {
@@ -103,10 +103,9 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @param string      $name
      * @param string|null $class
+     * @psalm-param class-string $class
      *
      * @return bool
-     *
-     * @psalm-param class-string $class
      */
     public function hasReference($name, $class = null)
     {

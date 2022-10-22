@@ -15,6 +15,7 @@ use function array_keys;
 use function get_class;
 use function method_exists;
 use function sprintf;
+use function substr;
 
 /**
  * ReferenceRepository class manages references for
@@ -201,16 +202,16 @@ class ReferenceRepository
      * Loads an object using stored reference
      * named by $name
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $class
+     * @psalm-param class-string<T>|null $class
      *
      * @return object
-     *
-     * @template T of object
-     * @psalm-param class-string<T>|null $class
      * @psalm-return $class is null ? object : T
      *
      * @throws OutOfBoundsException - if repository does not exist.
+     *
+     * @template T of object
      */
     public function getReference($name, $class = null)
     {
@@ -258,12 +259,11 @@ class ReferenceRepository
      * Check if an object is stored using reference
      * named by $name
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $class
+     * @psalm-param class-string $class
      *
      * @return bool
-     *
-     * @psalm-param class-string $class
      */
     public function hasReference($name, $class = null)
     {
@@ -292,7 +292,7 @@ class ReferenceRepository
     public function getReferenceNames($reference)
     {
         $class = $this->getRealClass(get_class($reference));
-        if (!isset($this->referencesByClass[$class])) {
+        if (! isset($this->referencesByClass[$class])) {
             return [];
         }
 
