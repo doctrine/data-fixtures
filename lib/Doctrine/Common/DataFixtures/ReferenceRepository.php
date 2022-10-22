@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures;
 
 use BadMethodCallException;
+use Doctrine\Deprecations\Deprecation;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
 use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
@@ -24,7 +25,7 @@ class ReferenceRepository
 {
     /**
      * List of named references to the fixture objects
-     * gathered during loads of fixtures
+     * gathered during fixure loading
      *
      * @psalm-var array<string, object>
      */
@@ -32,7 +33,7 @@ class ReferenceRepository
 
     /**
      * List of named references to the fixture objects
-     * gathered during loads of fixtures
+     * gathered during fixure loading
      *
      * @psalm-var array<class-string, array<string, object>>
      */
@@ -40,7 +41,7 @@ class ReferenceRepository
 
     /**
      * List of identifiers stored for references
-     * in case if reference gets unmanaged, it will
+     * in case a reference gets no longer managed, it will
      * use a proxy referenced by this identity
      *
      * @psalm-var array<string, mixed>
@@ -49,7 +50,7 @@ class ReferenceRepository
 
     /**
      * List of identifiers stored for references
-     * in case if reference gets unmanaged, it will
+     * in case a reference gets no longer managed, it will
      * use a proxy referenced by this identity
      *
      * @psalm-var array<class-string, array<string, mixed>>
@@ -141,13 +142,15 @@ class ReferenceRepository
      *
      * @return void
      */
-    public function setReferenceIdentity($name, $identity, $class = null) // NEXT_MAJOR: Make $class mandatory
+    public function setReferenceIdentity($name, $identity, $class = null)
     {
         if ($class === null) {
-            @trigger_error(sprintf(
-                'Argument 3 of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
                 __METHOD__
-            ), E_USER_DEPRECATED);
+            );
         }
 
         $this->identitiesByClass[$class][$name] = $identity;
@@ -177,7 +180,7 @@ class ReferenceRepository
         // For BC, to be removed in next major.
         if (isset($this->references[$name])) {
             throw new BadMethodCallException(sprintf(
-                'Reference to "%s" already exists, use method setReference in order to override it',
+                'Reference to "%s" already exists, use method setReference() in order to override it',
                 $name
             ));
         }
@@ -185,7 +188,7 @@ class ReferenceRepository
         $class = $this->getRealClass(get_class($object));
         if (isset($this->referencesByClass[$class][$name])) {
             throw new BadMethodCallException(sprintf(
-                'Reference to "%s" for class "%s" already exists, use method setReference in order to override it',
+                'Reference to "%s" for class "%s" already exists, use method setReference() in order to override it',
                 $name,
                 $class
             ));
@@ -209,13 +212,15 @@ class ReferenceRepository
      *
      * @throws OutOfBoundsException - if repository does not exist.
      */
-    public function getReference($name, $class = null) // NEXT_MAJOR: Make $class mandatory
+    public function getReference($name, $class = null)
     {
         if ($class === null) {
-            @trigger_error(sprintf(
-                'Argument 3 of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
                 __METHOD__
-            ), E_USER_DEPRECATED);
+            );
         }
 
         if (! $this->hasReference($name, $class)) {
@@ -260,13 +265,15 @@ class ReferenceRepository
      *
      * @psalm-param class-string $class
      */
-    public function hasReference($name, $class = null) // NEXT_MAJOR: Make $class mandatory
+    public function hasReference($name, $class = null)
     {
         if ($class === null) {
-            @trigger_error(sprintf(
-                'Argument 3 of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
                 __METHOD__
-            ), E_USER_DEPRECATED);
+            );
         }
 
         return $class === null
@@ -300,13 +307,15 @@ class ReferenceRepository
      *
      * @return bool
      */
-    public function hasIdentity($name, $class = null) // NEXT_MAJOR: Make $class mandatory
+    public function hasIdentity($name, $class = null)
     {
         if ($class === null) {
-            @trigger_error(sprintf(
-                'Argument 3 of %s() will be mandatory in DoctrineDataFixtures 2.0.',
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in DoctrineDataFixtures 2.0.',
                 __METHOD__
-            ), E_USER_DEPRECATED);
+            );
         }
 
         return $class === null
@@ -331,7 +340,7 @@ class ReferenceRepository
      *
      * @psalm-return array<class-string, array<string, object>>
      */
-    public function getIdentitiesByClass()
+    public function getIdentitiesByClass(): array
     {
         return $this->identitiesByClass;
     }
@@ -353,7 +362,7 @@ class ReferenceRepository
      *
      * @psalm-return array<class-string, array<string, object>>
      */
-    public function getReferencesByClass()
+    public function getReferencesByClass(): array
     {
         return $this->referencesByClass;
     }
