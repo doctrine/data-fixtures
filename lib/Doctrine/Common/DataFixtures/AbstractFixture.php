@@ -72,8 +72,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::getReference
      *
-     * @param string      $name
-     * @param string|null $class
+     * @param string $name
      * @psalm-param class-string<T>|null $class
      *
      * @return object
@@ -81,7 +80,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @template T of object
      */
-    public function getReference($name, $class = null)
+    public function getReference($name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -101,13 +100,12 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::hasReference
      *
-     * @param string      $name
-     * @param string|null $class
+     * @param string $name
      * @psalm-param class-string $class
      *
      * @return bool
      */
-    public function hasReference($name, $class = null)
+    public function hasReference($name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(

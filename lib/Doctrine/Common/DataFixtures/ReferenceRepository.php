@@ -143,7 +143,7 @@ class ReferenceRepository
      *
      * @return void
      */
-    public function setReferenceIdentity($name, $identity, $class = null)
+    public function setReferenceIdentity($name, $identity, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -202,8 +202,7 @@ class ReferenceRepository
      * Loads an object using stored reference
      * named by $name
      *
-     * @param string      $name
-     * @param string|null $class
+     * @param string $name
      * @psalm-param class-string<T>|null $class
      *
      * @return object
@@ -213,7 +212,7 @@ class ReferenceRepository
      *
      * @template T of object
      */
-    public function getReference($name, $class = null)
+    public function getReference($name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -259,13 +258,12 @@ class ReferenceRepository
      * Check if an object is stored using reference
      * named by $name
      *
-     * @param string      $name
-     * @param string|null $class
+     * @param string $name
      * @psalm-param class-string $class
      *
      * @return bool
      */
-    public function hasReference($name, $class = null)
+    public function hasReference($name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -307,7 +305,7 @@ class ReferenceRepository
      *
      * @return bool
      */
-    public function hasIdentity($name, $class = null)
+    public function hasIdentity($name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
