@@ -58,7 +58,7 @@ And the ``User`` data loading fixture:
             $user->setUsername('jwage');
             $user->setPassword('test');
             $user->setRole(
-                $this->getReference('admin-role') // load the stored reference
+                $this->getReference('admin-role', Role::class) // load the stored reference
             );
 
             $manager->persist($user);

@@ -9,7 +9,6 @@ use function file_get_contents;
 use function file_put_contents;
 use function get_class;
 use function serialize;
-use function substr;
 use function unserialize;
 
 /**
@@ -20,22 +19,6 @@ use function unserialize;
  */
 class ProxyReferenceRepository extends ReferenceRepository
 {
-    /**
-     * Get real class name of a reference that could be a proxy
-     *
-     * @param string $className Class name of reference object
-     *
-     * @return string
-     */
-    protected function getRealClass($className)
-    {
-        if (substr($className, -5) === 'Proxy') {
-            return substr($className, 0, -5);
-        }
-
-        return $className;
-    }
-
     /**
      * Serialize reference repository
      *
@@ -53,8 +36,9 @@ class ProxyReferenceRepository extends ReferenceRepository
         }
 
         return serialize([
-            'references' => $simpleReferences,
-            'identities' => $this->getIdentities(),
+            'references' => $simpleReferences, // For BC, remove in next major.
+            'identities' => $this->getIdentities(), // For BC, remove in next major.
+            'identitiesByClass' => $this->getIdentitiesByClass(),
         ]);
     }
 
@@ -68,22 +52,42 @@ class ProxyReferenceRepository extends ReferenceRepository
     public function unserialize($serializedData)
     {
         $repositoryData = unserialize($serializedData);
-        $references     = $repositoryData['references'];
 
-        foreach ($references as $name => $proxyReference) {
-            $this->setReference(
-                $name,
-                $this->getManager()->getReference(
-                    $proxyReference[0], // entity class name
-                    $proxyReference[1]  // identifiers
-                )
-            );
+        // For BC, remove in next major.
+        if (! isset($repositoryData['identitiesByClass'])) {
+            $references = $repositoryData['references'];
+
+            foreach ($references as $name => $proxyReference) {
+                $this->setReference(
+                    $name,
+                    $this->getManager()->getReference(
+                        $proxyReference[0], // entity class name
+                        $proxyReference[1]  // identifiers
+                    )
+                );
+            }
+
+            $identities = $repositoryData['identities'];
+
+            foreach ($identities as $name => $identity) {
+                $this->setReferenceIdentity($name, $identity);
+            }
+
+            return;
         }
 
-        $identities = $repositoryData['identities'];
+        foreach ($repositoryData['identitiesByClass'] as $className => $identities) {
+            foreach ($identities as $name => $identity) {
+                $this->setReference(
+                    $name,
+                    $this->getManager()->getReference(
+                        $className,
+                        $identity
+                    )
+                );
 
-        foreach ($identities as $name => $identity) {
-            $this->setReferenceIdentity($name, $identity);
+                $this->setReferenceIdentity($name, $identity, $className);
+            }
         }
     }
 

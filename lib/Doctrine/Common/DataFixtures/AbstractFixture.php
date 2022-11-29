@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures;
 
 use BadMethodCallException;
+use Doctrine\Deprecations\Deprecation;
 
 /**
  * Abstract Fixture class helps to manage references
@@ -72,12 +73,25 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::getReference
      *
      * @param string $name
+     * @psalm-param class-string<T>|null $class
      *
      * @return object
+     * @psalm-return $class is null ? object : T
+     *
+     * @template T of object
      */
-    public function getReference($name)
+    public function getReference($name, ?string $class = null)
     {
-        return $this->referenceRepository->getReference($name);
+        if ($class === null) {
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in 2.0.',
+                __METHOD__
+            );
+        }
+
+        return $this->referenceRepository->getReference($name, $class);
     }
 
     /**
@@ -87,11 +101,21 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::hasReference
      *
      * @param string $name
+     * @psalm-param class-string $class
      *
      * @return bool
      */
-    public function hasReference($name)
+    public function hasReference($name, ?string $class = null)
     {
-        return $this->referenceRepository->hasReference($name);
+        if ($class === null) {
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in 2.0.',
+                __METHOD__
+            );
+        }
+
+        return $this->referenceRepository->hasReference($name, $class);
     }
 }

@@ -134,7 +134,7 @@ class ReferenceRepositoryTest extends BaseTest
 
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage(
-            'Reference to "duplicated_reference" already exists, use method setReference in order to override it'
+            'Reference to "duplicated_reference" already exists, use method setReference() in order to override it'
         );
 
         $referenceRepository->addReference('duplicated_reference', new stdClass());

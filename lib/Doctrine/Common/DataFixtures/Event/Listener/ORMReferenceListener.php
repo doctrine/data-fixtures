@@ -8,6 +8,8 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use function get_class;
+
 /**
  * Reference Listener populates identities for
  * stored references
@@ -50,7 +52,7 @@ final class ORMReferenceListener implements EventSubscriber
                 ->getUnitOfWork()
                 ->getEntityIdentifier($object);
 
-            $this->referenceRepository->setReferenceIdentity($name, $identity);
+            $this->referenceRepository->setReferenceIdentity($name, $identity, get_class($object));
         }
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures;
 
 use BadMethodCallException;
+use Doctrine\Deprecations\Deprecation;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
 use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
@@ -14,6 +15,7 @@ use function array_keys;
 use function get_class;
 use function method_exists;
 use function sprintf;
+use function substr;
 
 /**
  * ReferenceRepository class manages references for
@@ -24,20 +26,37 @@ class ReferenceRepository
 {
     /**
      * List of named references to the fixture objects
-     * gathered during loads of fixtures
+     * gathered during fixure loading
      *
      * @psalm-var array<string, object>
      */
     private $references = [];
 
     /**
+     * List of named references to the fixture objects
+     * gathered during fixure loading
+     *
+     * @psalm-var array<class-string, array<string, object>>
+     */
+    private $referencesByClass = [];
+
+    /**
      * List of identifiers stored for references
-     * in case if reference gets unmanaged, it will
+     * in case a reference gets no longer managed, it will
      * use a proxy referenced by this identity
      *
      * @psalm-var array<string, mixed>
      */
     private $identities = [];
+
+    /**
+     * List of identifiers stored for references
+     * in case a reference gets no longer managed, it will
+     * use a proxy referenced by this identity
+     *
+     * @psalm-var array<class-string, array<string, mixed>>
+     */
+    private $identitiesByClass = [];
 
     /**
      * Currently used object manager
@@ -63,7 +82,7 @@ class ReferenceRepository
     {
         // In case Reference is not yet managed in UnitOfWork
         if (! $this->hasIdentifier($reference)) {
-            $class = $this->manager->getClassMetadata(get_class($reference));
+            $class = $this->manager->getClassMetadata($this->getRealClass(get_class($reference)));
 
             return $class->getIdentifierValues($reference);
         }
@@ -94,6 +113,11 @@ class ReferenceRepository
      */
     public function setReference($name, $reference)
     {
+        $class = $this->getRealClass(get_class($reference));
+
+        $this->referencesByClass[$class][$name] = $reference;
+
+        // For BC, to be removed in next major.
         $this->references[$name] = $reference;
 
         if (! $this->hasIdentifier($reference)) {
@@ -101,20 +125,38 @@ class ReferenceRepository
         }
 
         // in case if reference is set after flush, store its identity
-        $uow                     = $this->manager->getUnitOfWork();
-        $this->identities[$name] = $this->getIdentifier($reference, $uow);
+        $uow        = $this->manager->getUnitOfWork();
+        $identifier = $this->getIdentifier($reference, $uow);
+
+        $this->identitiesByClass[$class][$name] = $identifier;
+
+        // For BC, to be removed in next major.
+        $this->identities[$name] = $identifier;
     }
 
     /**
      * Store the identifier of a reference
      *
-     * @param string $name
-     * @param mixed  $identity
+     * @param string            $name
+     * @param mixed             $identity
+     * @param class-string|null $class
      *
      * @return void
      */
-    public function setReferenceIdentity($name, $identity)
+    public function setReferenceIdentity($name, $identity, ?string $class = null)
     {
+        if ($class === null) {
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in 2.0.',
+                __METHOD__
+            );
+        }
+
+        $this->identitiesByClass[$class][$name] = $identity;
+
+        // For BC, to be removed in next major.
         $this->identities[$name] = $identity;
     }
 
@@ -136,10 +178,20 @@ class ReferenceRepository
      */
     public function addReference($name, $object)
     {
+        // For BC, to be removed in next major.
         if (isset($this->references[$name])) {
             throw new BadMethodCallException(sprintf(
-                'Reference to "%s" already exists, use method setReference in order to override it',
+                'Reference to "%s" already exists, use method setReference() in order to override it',
                 $name
+            ));
+        }
+
+        $class = $this->getRealClass(get_class($object));
+        if (isset($this->referencesByClass[$class][$name])) {
+            throw new BadMethodCallException(sprintf(
+                'Reference to "%s" for class "%s" already exists, use method setReference() in order to override it',
+                $name,
+                $class
             ));
         }
 
@@ -151,25 +203,51 @@ class ReferenceRepository
      * named by $name
      *
      * @param string $name
+     * @psalm-param class-string<T>|null $class
      *
      * @return object
+     * @psalm-return $class is null ? object : T
      *
      * @throws OutOfBoundsException - if repository does not exist.
+     *
+     * @template T of object
      */
-    public function getReference($name)
+    public function getReference($name, ?string $class = null)
     {
-        if (! $this->hasReference($name)) {
-            throw new OutOfBoundsException(sprintf('Reference to "%s" does not exist', $name));
+        if ($class === null) {
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in 2.0.',
+                __METHOD__
+            );
         }
 
-        $reference = $this->references[$name];
-        $meta      = $this->manager->getClassMetadata(get_class($reference));
+        if (! $this->hasReference($name, $class)) {
+            // For BC, to be removed in next major.
+            if ($class === null) {
+                throw new OutOfBoundsException(sprintf('Reference to "%s" does not exist', $name));
+            }
 
-        if (! $this->manager->contains($reference) && isset($this->identities[$name])) {
-            $reference               = $this->manager->getReference(
-                $meta->name,
-                $this->identities[$name]
-            );
+            throw new OutOfBoundsException(sprintf('Reference to "%s" for class "%s" does not exist', $name, $class));
+        }
+
+        $reference = $class === null
+            ? $this->references[$name] // For BC, to be removed in next major.
+            : $this->referencesByClass[$class][$name];
+
+        $identity = $class === null
+            ? ($this->identities[$name] ?? null) // For BC, to be removed in next major.
+            : ($this->identitiesByClass[$class][$name] ?? null);
+
+        if ($class === null) { // For BC, to be removed in next major.
+            $class = $this->getRealClass(get_class($reference));
+        }
+
+        $meta = $this->manager->getClassMetadata($class);
+
+        if (! $this->manager->contains($reference) && $identity !== null) {
+            $reference               = $this->manager->getReference($meta->name, $identity);
             $this->references[$name] = $reference; // already in identity map
         }
 
@@ -181,12 +259,24 @@ class ReferenceRepository
      * named by $name
      *
      * @param string $name
+     * @psalm-param class-string $class
      *
      * @return bool
      */
-    public function hasReference($name)
+    public function hasReference($name, ?string $class = null)
     {
-        return isset($this->references[$name]);
+        if ($class === null) {
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in 2.0.',
+                __METHOD__
+            );
+        }
+
+        return $class === null
+            ? isset($this->references[$name]) // For BC, to be removed in next major.
+            : isset($this->referencesByClass[$class][$name]);
     }
 
     /**
@@ -195,26 +285,45 @@ class ReferenceRepository
      *
      * @param object $reference
      *
-     * @return array
+     * @return array<string>
      */
     public function getReferenceNames($reference)
     {
-        return array_keys($this->references, $reference, true);
+        $class = $this->getRealClass(get_class($reference));
+        if (! isset($this->referencesByClass[$class])) {
+            return [];
+        }
+
+        return array_keys($this->referencesByClass[$class], $reference, true);
     }
 
     /**
      * Checks if reference has identity stored
      *
-     * @param string $name
+     * @param string            $name
+     * @param class-string|null $class
      *
      * @return bool
      */
-    public function hasIdentity($name)
+    public function hasIdentity($name, ?string $class = null)
     {
-        return array_key_exists($name, $this->identities);
+        if ($class === null) {
+            Deprecation::trigger(
+                'doctrine/data-fixtures',
+                'https://github.com/doctrine/data-fixtures/pull/409',
+                'Argument $class of %s() will be mandatory in 2.0.',
+                __METHOD__
+            );
+        }
+
+        return $class === null
+            ? array_key_exists($name, $this->identities) // For BC, to be removed in next major.
+            : array_key_exists($class, $this->identitiesByClass) && array_key_exists($name, $this->identitiesByClass[$class]);
     }
 
     /**
+     * @deprecated in favor of getIdentitiesByClass
+     *
      * Get all stored identities
      *
      * @psalm-return array<string, object>
@@ -225,6 +334,18 @@ class ReferenceRepository
     }
 
     /**
+     * Get all stored identities
+     *
+     * @psalm-return array<class-string, array<string, object>>
+     */
+    public function getIdentitiesByClass(): array
+    {
+        return $this->identitiesByClass;
+    }
+
+    /**
+     * @deprecated in favor of getReferencesByClass
+     *
      * Get all stored references
      *
      * @psalm-return array<string, object>
@@ -232,6 +353,16 @@ class ReferenceRepository
     public function getReferences()
     {
         return $this->references;
+    }
+
+    /**
+     * Get all stored references
+     *
+     * @psalm-return array<class-string, array<string, object>>
+     */
+    public function getReferencesByClass(): array
+    {
+        return $this->referencesByClass;
     }
 
     /**
@@ -245,9 +376,25 @@ class ReferenceRepository
     }
 
     /**
+     * Get real class name of a reference that could be a proxy
+     *
+     * @param string $className Class name of reference object
+     *
+     * @return string
+     */
+    protected function getRealClass($className)
+    {
+        if (substr($className, -5) === 'Proxy') {
+            return substr($className, 0, -5);
+        }
+
+        return $className;
+    }
+
+    /**
      * Checks if object has identifier already in unit of work.
      *
-     * @param string $reference
+     * @param object $reference
      *
      * @return bool
      */

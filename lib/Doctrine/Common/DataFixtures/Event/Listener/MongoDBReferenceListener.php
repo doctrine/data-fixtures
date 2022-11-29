@@ -8,6 +8,8 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 
+use function get_class;
+
 /**
  * Reference Listener populates identities for
  * stored references
@@ -49,7 +51,7 @@ final class MongoDBReferenceListener implements EventSubscriber
                 ->getUnitOfWork()
                 ->getDocumentIdentifier($object);
 
-            $this->referenceRepository->setReferenceIdentity($name, $identity);
+            $this->referenceRepository->setReferenceIdentity($name, $identity, get_class($object));
         }
     }
 }
