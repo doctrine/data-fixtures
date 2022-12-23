@@ -247,8 +247,9 @@ class ReferenceRepository
         $meta = $this->manager->getClassMetadata($class);
 
         if (! $this->manager->contains($reference) && $identity !== null) {
-            $reference               = $this->manager->getReference($meta->name, $identity);
-            $this->references[$name] = $reference; // already in identity map
+            $reference                              = $this->manager->getReference($meta->name, $identity);
+            $this->references[$name]                = $reference; // already in identity map
+            $this->referencesByClass[$class][$name] = $reference; // already in identity map
         }
 
         return $reference;
