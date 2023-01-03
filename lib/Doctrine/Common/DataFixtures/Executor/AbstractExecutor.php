@@ -13,7 +13,6 @@ use Doctrine\Persistence\ObjectManager;
 use Exception;
 
 use function get_class;
-use function interface_exists;
 use function sprintf;
 
 /**
@@ -157,5 +156,3 @@ abstract class AbstractExecutor
      */
     abstract public function execute(array $fixtures, $append = false);
 }
-
-interface_exists(ObjectManager::class);
