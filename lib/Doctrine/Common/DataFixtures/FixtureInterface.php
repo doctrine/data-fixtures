@@ -6,8 +6,6 @@ namespace Doctrine\Common\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 
-use function interface_exists;
-
 /**
  * Interface contract for fixture classes to implement.
  */
@@ -18,5 +16,3 @@ interface FixtureInterface
      */
     public function load(ObjectManager $manager);
 }
-
-interface_exists(ObjectManager::class);
