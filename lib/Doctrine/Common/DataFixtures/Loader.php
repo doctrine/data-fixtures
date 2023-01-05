@@ -47,7 +47,7 @@ class Loader
     /**
      * Array of ordered fixture object instances.
      *
-     * @psalm-var array<class-string<OrderedFixtureInterface>, OrderedFixtureInterface>|list<OrderedFixtureInterface>
+     * @psalm-var array<class-string<FixtureInterface>|int, FixtureInterface>
      */
     private $orderedFixtures = [];
 
@@ -181,7 +181,7 @@ class Loader
     /**
      * Returns the array of data fixtures to execute.
      *
-     * @psalm-return array<class-string<OrderedFixtureInterface>|int, OrderedFixtureInterface>
+     * @psalm-return array<class-string<FixtureInterface>|int, FixtureInterface>
      */
     public function getFixtures()
     {
