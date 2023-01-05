@@ -8,6 +8,7 @@ use BadMethodCallException;
 use Doctrine\Deprecations\Deprecation;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\Proxy;
 use OutOfBoundsException;
 
 use function array_key_exists;
@@ -15,6 +16,7 @@ use function array_keys;
 use function get_class;
 use function method_exists;
 use function sprintf;
+use function strrpos;
 use function substr;
 
 /**
@@ -385,11 +387,13 @@ class ReferenceRepository
      */
     protected function getRealClass($className)
     {
-        if (substr($className, -5) === 'Proxy') {
-            return substr($className, 0, -5);
+        $pos = strrpos($className, '\\' . Proxy::MARKER . '\\');
+
+        if ($pos === false) {
+            return $className;
         }
 
-        return $className;
+        return substr($className, $pos + Proxy::MARKER_LENGTH + 2);
     }
 
     /**

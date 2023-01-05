@@ -212,4 +212,22 @@ class ReferenceRepositoryTest extends BaseTest
 
         $this->assertEquals($identitiesExpected, $identities['entity']);
     }
+
+    public function testReferenceEntityWithSuffixProxy(): void
+    {
+        $em                  = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ReferenceRepository($em);
+        $em->getEventManager()->addEventSubscriber(new ORMReferenceListener($referenceRepository));
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->createSchema([$em->getClassMetadata(TestEntity\EntityWithSuffixProxy::class)]);
+
+        $entity = new TestEntity\EntityWithSuffixProxy();
+
+        $em->persist($entity);
+        $referenceRepository->addReference('admin', $entity);
+        $em->flush();
+        $em->clear();
+
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin'));
+    }
 }
