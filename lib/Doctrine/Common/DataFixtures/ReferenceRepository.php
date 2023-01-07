@@ -15,7 +15,6 @@ use function array_keys;
 use function get_class;
 use function method_exists;
 use function sprintf;
-use function substr;
 
 /**
  * ReferenceRepository class manages references for
@@ -82,7 +81,7 @@ class ReferenceRepository
     {
         // In case Reference is not yet managed in UnitOfWork
         if (! $this->hasIdentifier($reference)) {
-            $class = $this->manager->getClassMetadata($this->getRealClass(get_class($reference)));
+            $class = $this->manager->getClassMetadata(get_class($reference));
 
             return $class->getIdentifierValues($reference);
         }
@@ -385,11 +384,7 @@ class ReferenceRepository
      */
     protected function getRealClass($className)
     {
-        if (substr($className, -5) === 'Proxy') {
-            return substr($className, 0, -5);
-        }
-
-        return $className;
+        return $this->manager->getClassMetadata($className)->getName();
     }
 
     /**

@@ -14,7 +14,6 @@ use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use OutOfBoundsException;
-use stdClass;
 
 class ReferenceRepositoryTest extends BaseTest
 {
@@ -129,15 +128,17 @@ class ReferenceRepositoryTest extends BaseTest
 
     public function testThrowsExceptionAddingDuplicatedReference(): void
     {
-        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
-        $referenceRepository->addReference('duplicated_reference', new stdClass());
+        $em                  = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ReferenceRepository($em);
+
+        $referenceRepository->addReference('duplicated_reference', new Role());
 
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage(
             'Reference to "duplicated_reference" already exists, use method setReference() in order to override it'
         );
 
-        $referenceRepository->addReference('duplicated_reference', new stdClass());
+        $referenceRepository->addReference('duplicated_reference', new Role());
     }
 
     public function testThrowsExceptionTryingToGetWrongReference(): void
@@ -201,8 +202,7 @@ class ReferenceRepositoryTest extends BaseTest
         $em = $this->createMock(EntityManagerInterface::class);
         $em->method('getUnitOfWork')
            ->willReturn($uow);
-        $em->expects($this->once())
-            ->method('getClassMetadata')
+        $em->method('getClassMetadata')
             ->with(Role::class)
             ->willReturn($classMetadata);
 
