@@ -85,7 +85,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * @psalm-param class-string<T>|null $class
      *
      * @return object
-     * @psalm-return $class is null ? object : T
+     * @psalm-return ($class is null ? object : T)
      *
      * @template T of object
      */
