@@ -20,6 +20,7 @@ Option 1: Controlling the order manually
 ----------------------------------------
 
 .. code-block:: php
+
     <?php
 
     namespace MyDataFixtures;
