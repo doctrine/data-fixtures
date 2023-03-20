@@ -173,22 +173,25 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     private function getCommitOrder(EntityManagerInterface $em, array $classes)
     {
         $sorter = new TopologicalSorter();
+        $platform = $em->getConnection()->getDatabasePlatform();
 
         foreach ($classes as $class) {
-            if (! $sorter->hasNode($class->name)) {
-                $sorter->addNode($class->name, $class);
+            $tableName = $this->getTableName($class, $platform);
+
+            if (! $sorter->hasNode($tableName)) {
+                $sorter->addNode($tableName, $class);
             }
 
             // $class before its parents
             foreach ($class->parentClasses as $parentClass) {
                 $parentClass     = $em->getClassMetadata($parentClass);
-                $parentClassName = $parentClass->getName();
+                $parentTableName = $this->getTableName($parentClass, $platform);
 
-                if (! $sorter->hasNode($parentClassName)) {
-                    $sorter->addNode($parentClassName, $parentClass);
+                if (! $sorter->hasNode($parentTableName)) {
+                    $sorter->addNode($parentTableName, $parentClass);
                 }
 
-                $sorter->addDependency($class->name, $parentClassName);
+                $sorter->addDependency($tableName, $parentTableName);
             }
 
             foreach ($class->associationMappings as $assoc) {
@@ -198,25 +201,25 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
 
                 $targetClass = $em->getClassMetadata($assoc['targetEntity']);
                 assert($targetClass instanceof ClassMetadata);
-                $targetClassName = $targetClass->getName();
+                $targetTableName = $this->getTableName($targetClass, $platform);
 
-                if (! $sorter->hasNode($targetClassName)) {
-                    $sorter->addNode($targetClassName, $targetClass);
+                if (! $sorter->hasNode($targetTableName)) {
+                    $sorter->addNode($targetTableName, $targetClass);
                 }
 
                 // add dependency ($targetClass before $class)
-                $sorter->addDependency($targetClassName, $class->name);
+                $sorter->addDependency($targetTableName, $tableName);
 
                 // parents of $targetClass before $class, too
                 foreach ($targetClass->parentClasses as $parentClass) {
                     $parentClass     = $em->getClassMetadata($parentClass);
-                    $parentClassName = $parentClass->getName();
+                    $parentTableName = $this->getTableName($parentClass, $platform);
 
-                    if (! $sorter->hasNode($parentClassName)) {
-                        $sorter->addNode($parentClassName, $parentClass);
+                    if (! $sorter->hasNode($parentTableName)) {
+                        $sorter->addNode($parentTableName, $parentClass);
                     }
 
-                    $sorter->addDependency($parentClassName, $class->name);
+                    $sorter->addDependency($parentTableName, $tableName);
                 }
             }
         }
