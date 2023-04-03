@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Test Fixture ordering.
  */
-class OrderedFixtureTest extends BaseTest
+class OrderedFixtureTest extends BaseTestCase
 {
     public function testFixtureOrder(): void
     {

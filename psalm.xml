@@ -2,6 +2,8 @@
 <psalm
     phpVersion="7.4"
     errorLevel="7"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
     resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
@@ -9,7 +11,7 @@
     errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
-        <directory name="lib/Doctrine/Common/DataFixtures" />
+        <directory name="src" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>

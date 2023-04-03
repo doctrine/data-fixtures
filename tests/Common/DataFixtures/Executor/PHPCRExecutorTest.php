@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\Executor\PHPCRExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
 use Doctrine\ODM\PHPCR\DocumentManager;
-use Doctrine\Tests\Common\DataFixtures\BaseTest;
+use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use Throwable;
@@ -20,7 +20,7 @@ use function class_exists;
  *
  * @covers \Doctrine\Common\DataFixtures\Executor\PHPCRExecutor
  */
-class PHPCRExecutorTest extends BaseTest
+class PHPCRExecutorTest extends BaseTestCase
 {
     public function testExecuteSingleFixtureWithNoPurge(): void
     {

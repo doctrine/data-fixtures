@@ -24,15 +24,15 @@
     },
     "require-dev": {
         "ext-sqlite3": "*",
-        "doctrine/coding-standard": "^10.0",
+        "doctrine/coding-standard": "^11.0",
         "doctrine/dbal": "^2.13 || ^3.0",
         "doctrine/deprecations": "^1.0",
         "doctrine/mongodb-odm": "^1.3.0 || ^2.0.0",
         "doctrine/orm": "^2.12",
         "phpstan/phpstan": "^1.5",
-        "phpunit/phpunit": "^8.5 || ^9.5",
+        "phpunit/phpunit": "^8.5 || ^9.5 || ^10.0",
         "symfony/cache": "^5.0 || ^6.0",
-        "vimeo/psalm": "^4.10"
+        "vimeo/psalm": "^4.10 || ^5.9"
     },
     "suggest": {
         "alcaeus/mongo-php-adapter": "For using MongoDB ODM 1.3 with PHP 7 (deprecated)",
@@ -49,12 +49,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures"
+            "Doctrine\\Common\\DataFixtures\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Doctrine\\Tests\\": "tests/Doctrine/Tests"
+            "Doctrine\\Tests\\": "tests"
         }
     }
 }
