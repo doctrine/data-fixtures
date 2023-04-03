@@ -49,12 +49,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures"
+            "Doctrine\\Common\\DataFixtures\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Doctrine\\Tests\\": "tests/Doctrine/Tests"
+            "Doctrine\\Tests\\": "tests"
         }
     }
 }

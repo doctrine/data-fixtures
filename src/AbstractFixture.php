@@ -7,6 +7,8 @@ namespace Doctrine\Common\DataFixtures;
 use BadMethodCallException;
 use Doctrine\Deprecations\Deprecation;
 
+use function assert;
+
 /**
  * Abstract Fixture class helps to manage references
  * between fixture classes in order to set relations
@@ -17,7 +19,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
     /**
      * Fixture reference repository
      *
-     * @var ReferenceRepository
+     * @var ReferenceRepository|null
      */
     protected $referenceRepository;
 
@@ -27,6 +29,13 @@ abstract class AbstractFixture implements SharedFixtureInterface
     public function setReferenceRepository(ReferenceRepository $referenceRepository)
     {
         $this->referenceRepository = $referenceRepository;
+    }
+
+    private function getReferenceRepository(): ReferenceRepository
+    {
+        assert($this->referenceRepository !== null);
+
+        return $this->referenceRepository;
     }
 
     /**
@@ -43,7 +52,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      */
     public function setReference($name, $object)
     {
-        $this->referenceRepository->setReference($name, $object);
+        $this->getReferenceRepository()->setReference($name, $object);
     }
 
     /**
@@ -63,7 +72,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      */
     public function addReference($name, $object)
     {
-        $this->referenceRepository->addReference($name, $object);
+        $this->getReferenceRepository()->addReference($name, $object);
     }
 
     /**
@@ -76,7 +85,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * @psalm-param class-string<T>|null $class
      *
      * @return object
-     * @psalm-return $class is null ? object : T
+     * @psalm-return ($class is null ? object : T)
      *
      * @template T of object
      */
@@ -91,7 +100,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
             );
         }
 
-        return $this->referenceRepository->getReference($name, $class);
+        return $this->getReferenceRepository()->getReference($name, $class);
     }
 
     /**
@@ -116,6 +125,6 @@ abstract class AbstractFixture implements SharedFixtureInterface
             );
         }
 
-        return $this->referenceRepository->hasReference($name, $class);
+        return $this->getReferenceRepository()->hasReference($name, $class);
     }
 }

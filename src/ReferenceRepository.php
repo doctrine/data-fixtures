@@ -205,7 +205,7 @@ class ReferenceRepository
      * @psalm-param class-string<T>|null $class
      *
      * @return object
-     * @psalm-return $class is null ? object : T
+     * @psalm-return ($class is null ? object : T)
      *
      * @throws OutOfBoundsException - if repository does not exist.
      *
