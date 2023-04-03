@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures\Purger;
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -37,8 +36,6 @@ class MongoDBPurgerTest extends BaseTest
         $config->setHydratorDir($root . '/generate/hydrators');
         $config->setHydratorNamespace('Hydrators');
         $config->setMetadataDriverImpl(AnnotationDriver::create(dirname(__DIR__) . '/TestDocument'));
-
-        AnnotationRegistry::registerLoader('class_exists');
 
         $dm = DocumentManager::create(null, $config);
 
