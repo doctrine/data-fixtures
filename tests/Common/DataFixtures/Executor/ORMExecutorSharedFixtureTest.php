@@ -17,7 +17,7 @@ use function extension_loaded;
 /**
  * Test referenced fixture execution
  */
-class ORMExecutorSharedFixtureTest extends BaseTest
+class ORMExecutorSharedFixtureTest extends BaseTestCase
 {
     public const TEST_ENTITY_ROLE = Role::class;
     public const TEST_ENTITY_USER = User::class;

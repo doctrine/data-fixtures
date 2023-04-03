@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * Test Fixture interface.
  */
-class FixtureTest extends BaseTest
+class FixtureTest extends BaseTestCase
 {
     public function testFixtureInterface(): void
     {

@@ -358,14 +358,14 @@ class Loader
             $msg .= 'This case would produce a CircularReferenceException.';
 
             throw new CircularReferenceException(sprintf($msg, implode(',', $unsequencedClasses)));
-        } else {
-            // We order the classes by sequence
-            asort($sequenceForClasses);
+        }
 
-            foreach ($sequenceForClasses as $class => $sequence) {
-                // If fixtures were ordered
-                $orderedFixtures[] = $this->fixtures[$class];
-            }
+        // We order the classes by sequence
+        asort($sequenceForClasses);
+
+        foreach ($sequenceForClasses as $class => $sequence) {
+            // If fixtures were ordered
+            $orderedFixtures[] = $this->fixtures[$class];
         }
 
         $this->orderedFixtures = array_merge($this->orderedFixtures, $orderedFixtures);

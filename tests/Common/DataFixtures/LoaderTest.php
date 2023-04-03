@@ -13,7 +13,7 @@ use TestFixtures\NotAFixture;
 /**
  * Test fixtures loader.
  */
-class LoaderTest extends BaseTest
+class LoaderTest extends BaseTestCase
 {
     public function testLoadFromDirectory(): void
     {

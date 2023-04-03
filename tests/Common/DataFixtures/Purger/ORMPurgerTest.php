@@ -10,7 +10,7 @@ use ReflectionClass;
 /**
  * Doctrine\Tests\Common\DataFixtures\ORMPurgerTest
  */
-class ORMPurgerTest extends BaseTest
+class ORMPurgerTest extends BaseTestCase
 {
     public const TEST_ENTITY_USER              = TestEntity\User::class;
     public const TEST_ENTITY_USER_WITH_SCHEMA  = TestEntity\UserWithSchema::class;

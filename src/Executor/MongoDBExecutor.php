@@ -34,6 +34,7 @@ class MongoDBExecutor extends AbstractExecutor
         }
 
         parent::__construct($dm);
+
         $this->listener = new MongoDBReferenceListener($this->referenceRepository);
         $dm->getEventManager()->addEventSubscriber($this->listener);
     }
