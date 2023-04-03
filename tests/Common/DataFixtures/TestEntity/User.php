@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,39 +16,23 @@ class User
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     *
-     * @var int|null
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(length=32)
      * @ORM\Id
-     *
-     * @var string|null
      */
-    private $code;
+    private ?string $code = null;
 
-    /**
-     * @ORM\Column(length=32)
-     *
-     * @var string|null
-     */
-    private $password;
+    /** @ORM\Column(length=32) */
+    private ?string $password = null;
 
-    /**
-     * @ORM\Column(length=255)
-     *
-     * @var string|null
-     */
-    private $email;
+    /** @ORM\Column(length=255) */
+    private ?string $email = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"})
-     *
-     * @var Role|null
-     */
-    private $role;
+    /** @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"}) */
+    private ?Role $role = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="authors")
@@ -56,16 +41,22 @@ class User
      *      inverseJoinColumns={@ORM\JoinColumn(name="reader_id", referencedColumnName="id")}
      * )
      *
-     * @var User[]|Collection
+     * @var Collection<int, User>
      */
-    private $readers;
+    private Collection $readers;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, mappedBy="readers")
      *
-     * @var User[]|Collection
+     * @var Collection<int, User>
      */
-    private $authors;
+    private Collection $authors;
+
+    public function __construct()
+    {
+        $this->readers = new ArrayCollection();
+        $this->authors = new ArrayCollection();
+    }
 
     public function setId(int $id): void
     {
@@ -117,36 +108,36 @@ class User
         return $this->role;
     }
 
-    /** @return User[]|Collection */
-    public function getReaders()
+    /** @return Collection<int, User> */
+    public function getReaders(): Collection
     {
         return $this->readers;
     }
 
     /**
-     * @param User[]|Collection $readers
+     * @param Collection<int, User> $readers
      *
-     * @return User
+     * @return $this
      */
-    public function setReaders($readers)
+    public function setReaders(Collection $readers): self
     {
         $this->readers = $readers;
 
         return $this;
     }
 
-    /** @return User[]|Collection */
-    public function getAuthors()
+    /** @return Collection<int, User> */
+    public function getAuthors(): Collection
     {
         return $this->authors;
     }
 
     /**
-     * @param User[]|Collection $authors
+     * @param Collection<int, User> $authors
      *
-     * @return User
+     * @return $this
      */
-    public function setAuthors($authors)
+    public function setAuthors(Collection $authors): self
     {
         $this->authors = $authors;
 

@@ -17,17 +17,11 @@ class Quoted
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     *
-     * @var int|null
      */
-    private $id;
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(length=50, name="select")
-     *
-     * @var string|null
-     */
-    private $select;
+    /** @ORM\Column(length=50, name="select") */
+    private ?string $select = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=Quoted::class)
@@ -38,7 +32,7 @@ class Quoted
      *
      * @var Collection|null
      */
-    private $selects;
+    private ?Collection $selects = null;
 
     public function getId(): ?int
     {

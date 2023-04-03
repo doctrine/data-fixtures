@@ -15,15 +15,11 @@ final class MultipleTransactionORMExecutor extends AbstractExecutor
     {
         $executor = $this;
         if ($append === false) {
-            $this->em->wrapInTransaction(static function () use ($executor) {
-                $executor->purge();
-            });
+            $this->em->wrapInTransaction(static fn () => $executor->purge());
         }
 
         foreach ($fixtures as $fixture) {
-            $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixture) {
-                $executor->load($em, $fixture);
-            });
+            $this->em->wrapInTransaction(static fn (EntityManagerInterface $em) => $executor->load($em, $fixture));
         }
     }
 }

@@ -120,13 +120,13 @@ class PHPCRExecutorTest extends BaseTestCase
     }
 
     /** @return PHPCRPurger&MockObject */
-    private function getPurger()
+    private function getPurger(): PHPCRPurger
     {
         return $this->createMock(PHPCRPurger::class);
     }
 
     /** @return DocumentManager&MockObject */
-    private function getDocumentManager()
+    private function getDocumentManager(): DocumentManager
     {
         if (! class_exists(DocumentManager::class)) {
             $this->markTestSkipped('Missing doctrine/phpcr-odm');
@@ -144,7 +144,7 @@ class PHPCRExecutorTest extends BaseTestCase
     }
 
     /** @return FixtureInterface&MockObject */
-    private function getMockFixture()
+    private function getMockFixture(): FixtureInterface
     {
         return $this->createMock(FixtureInterface::class);
     }

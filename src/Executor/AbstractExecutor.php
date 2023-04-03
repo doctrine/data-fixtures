@@ -135,7 +135,7 @@ abstract class AbstractExecutor
         if ($this->purger === null) {
             throw new Exception(
                 PurgerInterface::class .
-                 ' instance is required if you want to purge the database before loading your data fixtures.'
+                 ' instance is required if you want to purge the database before loading your data fixtures.',
             );
         }
 
@@ -154,5 +154,5 @@ abstract class AbstractExecutor
      *
      * @return void
      */
-    abstract public function execute(array $fixtures, $append = false);
+    abstract public function execute(array $fixtures, bool $append = false);
 }

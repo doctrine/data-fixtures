@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,39 +19,23 @@ class UserWithSchema
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     *
-     * @var int|null
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(length=32)
      * @ORM\Id
-     *
-     * @var string|null
      */
-    private $code;
+    private ?string $code = null;
 
-    /**
-     * @ORM\Column(length=32)
-     *
-     * @var string|null
-     */
-    private $password;
+    /** @ORM\Column(length=32) */
+    private ?string $password = null;
 
-    /**
-     * @ORM\Column(length=255)
-     *
-     * @var string|null
-     */
-    private $email;
+    /** @ORM\Column(length=255) */
+    private ?string $email = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"})
-     *
-     * @var Role|null
-     */
-    private $role;
+    /** @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"}) */
+    private ?Role $role = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=UserWithSchema::class, inversedBy="authors")
@@ -59,16 +44,22 @@ class UserWithSchema
      *      inverseJoinColumns={@ORM\JoinColumn(name="reader_id", referencedColumnName="id")}
      * )
      *
-     * @psalm-var Collection<int, self>
+     * @var Collection<int, self>
      */
-    private $readers;
+    private Collection $readers;
 
     /**
      * @ORM\ManyToMany(targetEntity=UserWithSchema::class, mappedBy="readers")
      *
-     * @psalm-var Collection<int, self>
+     * @var Collection<int, self>
      */
-    private $authors;
+    private Collection $authors;
+
+    public function __construct()
+    {
+        $this->readers = new ArrayCollection();
+        $this->authors = new ArrayCollection();
+    }
 
     public function setId(int $id): void
     {
@@ -120,28 +111,36 @@ class UserWithSchema
         return $this->role;
     }
 
-    /** @psalm-return Collection<int, self> */
+    /** @return Collection<int, self> */
     public function getReaders(): Collection
     {
         return $this->readers;
     }
 
-    /** @psalm-param Collection<int, self> $readers */
-    public function setReaders($readers): self
+    /**
+     * @param Collection<int, self> $readers
+     *
+     * @return $this
+     */
+    public function setReaders(Collection $readers): self
     {
         $this->readers = $readers;
 
         return $this;
     }
 
-    /** @psalm-return Collection<int, self> */
-    public function getAuthors()
+    /** @return Collection<int, self> */
+    public function getAuthors(): Collection
     {
         return $this->authors;
     }
 
-    /** @param Collection<int, self> $authors */
-    public function setAuthors($authors): self
+    /**
+     * @param Collection<int, self> $authors
+     *
+     * @return $this
+     */
+    public function setAuthors(Collection $authors): self
     {
         $this->authors = $authors;
 

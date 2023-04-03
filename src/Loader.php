@@ -42,35 +42,29 @@ class Loader
      *
      * @psalm-var array<class-string<FixtureInterface>, FixtureInterface>
      */
-    private $fixtures = [];
+    private array $fixtures = [];
 
     /**
      * Array of ordered fixture object instances.
      *
      * @psalm-var array<class-string<FixtureInterface>|int, FixtureInterface>
      */
-    private $orderedFixtures = [];
+    private array $orderedFixtures = [];
 
     /**
      * Determines if we must order fixtures by number
-     *
-     * @var bool
      */
-    private $orderFixturesByNumber = false;
+    private bool $orderFixturesByNumber = false;
 
     /**
      * Determines if we must order fixtures by its dependencies
-     *
-     * @var bool
      */
-    private $orderFixturesByDependencies = false;
+    private bool $orderFixturesByDependencies = false;
 
     /**
      * The file extension of fixture files.
-     *
-     * @var string
      */
-    private $fileExtension = '.php';
+    private string $fileExtension = '.php';
 
     /**
      * Find fixtures classes in a given directory and load them.
@@ -87,7 +81,7 @@ class Loader
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($dir),
-            RecursiveIteratorIterator::LEAVES_ONLY
+            RecursiveIteratorIterator::LEAVES_ONLY,
         );
 
         return $this->loadFromIterator($iterator);
@@ -135,7 +129,7 @@ class Loader
         if (! isset($this->fixtures[$className])) {
             throw new InvalidArgumentException(sprintf(
                 '"%s" is not a registered fixture',
-                $className
+                $className,
             ));
         }
 
@@ -158,7 +152,7 @@ class Loader
                 'Class "%s" can\'t implement "%s" and "%s" at the same time.',
                 get_class($fixture),
                 'OrderedFixtureInterface',
-                'DependentFixtureInterface'
+                'DependentFixtureInterface',
             ));
         }
 
@@ -308,14 +302,14 @@ class Loader
                     throw new InvalidArgumentException(sprintf(
                         'Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.',
                         'getDependencies',
-                        $fixtureClass
+                        $fixtureClass,
                     ));
                 }
 
                 if (in_array($fixtureClass, $dependenciesClasses)) {
                     throw new InvalidArgumentException(sprintf(
                         'Class "%s" can\'t have itself as a dependency',
-                        $fixtureClass
+                        $fixtureClass,
                     ));
                 }
 
@@ -380,7 +374,7 @@ class Loader
             if (! in_array($class, $loadedFixtureClasses)) {
                 throw new RuntimeException(sprintf(
                     'Fixture "%s" was declared as a dependency, but it should be added in fixture loader first.',
-                    $class
+                    $class,
                 ));
             }
         }

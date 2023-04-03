@@ -21,13 +21,13 @@ class UuidType extends Type
         return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
     }
 
-    /** @param ?string $value */
+    /** @param string|null $value */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Uuid
     {
         return $value === null ? null : new Uuid($value);
     }
 
-    /** @param ?Uuid $value */
+    /** @param Uuid|null $value */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         return $value === null ? null : (string) $value;

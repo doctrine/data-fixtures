@@ -15,18 +15,14 @@ class GroupWithSchema
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     *
-     * @var int|null
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(length=32)
      * @ORM\Id
-     *
-     * @var string|null
      */
-    private $code;
+    private ?string $code = null;
 
     public function setId(int $id): void
     {

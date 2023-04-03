@@ -14,8 +14,7 @@ use function method_exists;
  */
 class PHPCRExecutor extends AbstractExecutor
 {
-    /** @var DocumentManagerInterface */
-    private $dm;
+    private DocumentManagerInterface $dm;
 
     /**
      * @param DocumentManagerInterface $dm     manager instance used for persisting the fixtures

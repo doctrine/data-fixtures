@@ -29,26 +29,24 @@ class TopologicalSorter
      *
      * @var Vertex[]
      */
-    private $nodeList = [];
+    private array $nodeList = [];
 
     /**
      * Volatile variable holding calculated nodes during sorting process.
      *
      * @var ClassMetadata[]
      */
-    private $sortedNodeList = [];
+    private array $sortedNodeList = [];
 
     /**
      * Allow or not cyclic dependencies
-     *
-     * @var bool
      */
-    private $allowCyclicDependencies;
+    private bool $allowCyclicDependencies;
 
     /** @param bool $allowCyclicDependencies */
     public function __construct($allowCyclicDependencies = true)
     {
-        $this->allowCyclicDependencies = $allowCyclicDependencies;
+        $this->allowCyclicDependencies = (bool) $allowCyclicDependencies;
     }
 
     /**
@@ -138,7 +136,7 @@ class TopologicalSorter
                 throw new RuntimeException(sprintf(
                     'Fixture "%s" has a dependency of fixture "%s", but it not listed to be loaded.',
                     get_class($definition->value),
-                    $dependency
+                    $dependency,
                 ));
             }
 
@@ -164,8 +162,8 @@ Finally, class A has class C as its dependency.
 EXCEPTION
                                 ,
                                 $definition->value->getName(),
-                                $childDefinition->value->getName()
-                            )
+                                $childDefinition->value->getName(),
+                            ),
                         );
                     }
 

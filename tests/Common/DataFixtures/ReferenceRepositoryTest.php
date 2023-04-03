@@ -45,7 +45,7 @@ class ReferenceRepositoryTest extends BaseTestCase
             ->setConstructorArgs([$em])
             ->getMock();
         $em->getEventManager()->addEventSubscriber(
-            new ORMReferenceListener($referenceRepository)
+            new ORMReferenceListener($referenceRepository),
         );
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
@@ -74,7 +74,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
         $em->getEventManager()->addEventSubscriber(
-            new ORMReferenceListener($referenceRepository)
+            new ORMReferenceListener($referenceRepository),
         );
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
@@ -135,7 +135,7 @@ class ReferenceRepositoryTest extends BaseTestCase
 
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage(
-            'Reference to "duplicated_reference" already exists, use method setReference() in order to override it'
+            'Reference to "duplicated_reference" already exists, use method setReference() in order to override it',
         );
 
         $referenceRepository->addReference('duplicated_reference', new Role());

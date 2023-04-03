@@ -16,8 +16,7 @@ use function get_class;
  */
 final class ORMReferenceListener implements EventSubscriber
 {
-    /** @var ReferenceRepository */
-    private $referenceRepository;
+    private ReferenceRepository $referenceRepository;
 
     public function __construct(ReferenceRepository $referenceRepository)
     {
@@ -27,7 +26,7 @@ final class ORMReferenceListener implements EventSubscriber
     /**
      * {@inheritdoc}
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         // would be better to use onClear, but it is supported only in 2.1
         return ['postPersist'];
@@ -35,10 +34,8 @@ final class ORMReferenceListener implements EventSubscriber
 
     /**
      * Populates identities for stored references
-     *
-     * @return void
      */
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(LifecycleEventArgs $args): void
     {
         $object = $args->getEntity();
 
