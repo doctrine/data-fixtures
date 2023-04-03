@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
-use Doctrine\Tests\Common\DataFixtures\BaseTest;
+use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Doctrine\Tests\Common\DataFixtures\TestDocument\Role;
 use MongoCollection;
 use MongoDB\Collection;
@@ -18,7 +18,7 @@ use function class_exists;
 use function dirname;
 use function method_exists;
 
-class MongoDBPurgerTest extends BaseTest
+class MongoDBPurgerTest extends BaseTestCase
 {
     public const TEST_DOCUMENT_ROLE = Role::class;
 

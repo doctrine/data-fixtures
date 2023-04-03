@@ -15,7 +15,7 @@ use Doctrine\Persistence\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use OutOfBoundsException;
 
-class ReferenceRepositoryTest extends BaseTest
+class ReferenceRepositoryTest extends BaseTestCase
 {
     public function testReferenceEntry(): void
     {

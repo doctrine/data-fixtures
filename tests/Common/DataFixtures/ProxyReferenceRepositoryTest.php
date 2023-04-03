@@ -17,7 +17,7 @@ use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
 /**
  * Test ProxyReferenceRepository.
  */
-class ProxyReferenceRepositoryTest extends BaseTest
+class ProxyReferenceRepositoryTest extends BaseTestCase
 {
     public const TEST_ENTITY_ROLE = Role::class;
     public const TEST_ENTITY_LINK = Link::class;

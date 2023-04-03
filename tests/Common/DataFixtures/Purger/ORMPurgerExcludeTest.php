@@ -16,7 +16,7 @@ use function extension_loaded;
 use function method_exists;
 use function preg_match;
 
-class ORMPurgerExcludeTest extends BaseTest
+class ORMPurgerExcludeTest extends BaseTestCase
 {
     public const TEST_ENTITY_INCLUDED = IncludedEntity::class;
     public const TEST_ENTITY_EXCLUDED = ExcludedEntity::class;

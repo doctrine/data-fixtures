@@ -19,7 +19,7 @@ use function array_shift;
 /**
  * Test Fixture ordering by dependencies.
  */
-class DependentFixtureTest extends BaseTest
+class DependentFixtureTest extends BaseTestCase
 {
     public function testOrderFixturesByDependenciesOrderClassesWithASingleParent(): void
     {
