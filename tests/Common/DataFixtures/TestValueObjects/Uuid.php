@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures\TestValueObjects;
 
 use JsonSerializable;
-use Serializable;
 
-class Uuid implements JsonSerializable, Serializable
+class Uuid implements JsonSerializable
 {
-    /** @var string $id */
-    private $id;
+    private string $id;
 
     public function __construct(string $id)
     {
@@ -25,17 +23,6 @@ class Uuid implements JsonSerializable, Serializable
     public function jsonSerialize(): string
     {
         return $this->id;
-    }
-
-    public function serialize(): string
-    {
-        return $this->id;
-    }
-
-    /** @param string $serialized */
-    public function unserialize($serialized): void
-    {
-        $this->id = $serialized;
     }
 
     public function __serialize(): array

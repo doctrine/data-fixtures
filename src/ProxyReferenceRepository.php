@@ -62,8 +62,8 @@ class ProxyReferenceRepository extends ReferenceRepository
                     $name,
                     $this->getManager()->getReference(
                         $proxyReference[0], // entity class name
-                        $proxyReference[1]  // identifiers
-                    )
+                        $proxyReference[1],  // identifiers
+                    ),
                 );
             }
 
@@ -82,8 +82,8 @@ class ProxyReferenceRepository extends ReferenceRepository
                     $name,
                     $this->getManager()->getReference(
                         $className,
-                        $identity
-                    )
+                        $identity,
+                    ),
                 );
 
                 $this->setReferenceIdentity($name, $identity, $className);

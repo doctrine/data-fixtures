@@ -26,8 +26,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     public const PURGE_MODE_DELETE   = 1;
     public const PURGE_MODE_TRUNCATE = 2;
 
-    /** @var EntityManagerInterface|null */
-    private $em;
+    private ?EntityManagerInterface $em;
 
     /**
      * If the purge should be done through DELETE or TRUNCATE statements
@@ -41,7 +40,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
      *
      * @var string[]
      */
-    private $excluded;
+    private array $excluded;
 
     /**
      * Construct new purger instance.
@@ -132,13 +131,13 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         $connection            = $this->em->getConnection();
         $filterExpr            = method_exists(
             $connection->getConfiguration(),
-            'getFilterSchemaAssetsExpression'
+            'getFilterSchemaAssetsExpression',
         ) ? $connection->getConfiguration()->getFilterSchemaAssetsExpression() : null;
         $emptyFilterExpression = empty($filterExpr);
 
         $schemaAssetsFilter = method_exists(
             $connection->getConfiguration(),
-            'getSchemaAssetsFilter'
+            'getSchemaAssetsFilter',
         ) ? $connection->getConfiguration()->getSchemaAssetsFilter() : null;
 
         foreach ($orderedTables as $tbl) {

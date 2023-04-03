@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -23,10 +24,8 @@ class ORMPurgerExcludeTest extends BaseTestCase
 
     /**
      * Loads test data
-     *
-     * @return EntityManager
      */
-    protected function loadTestData()
+    protected function loadTestData(): EntityManager
     {
         if (! extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped('Missing pdo_sqlite extension.');
@@ -34,7 +33,7 @@ class ORMPurgerExcludeTest extends BaseTestCase
 
         $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
         $config   = ORMSetup::createAnnotationMetadataConfiguration([__DIR__ . '/../TestPurgeEntity'], true);
-        $em       = EntityManager::create($dbParams, $config);
+        $em       = new EntityManager(DriverManager::getConnection($dbParams, $config), $config);
 
         $connection    = $em->getConnection();
         $configuration = $connection->getConfiguration();
@@ -65,10 +64,9 @@ class ORMPurgerExcludeTest extends BaseTestCase
     /**
      * Execute test purge
      *
-     * @param string|null $expression
-     * @param string[]    $list
+     * @param string[] $list
      */
-    public function executeTestPurge($expression, array $list, ?callable $filter = null): void
+    public function executeTestPurge(?string $expression, array $list, ?callable $filter = null): void
     {
         $em                 = $this->loadTestData();
         $excludedRepository = $em->getRepository(self::TEST_ENTITY_EXCLUDED);

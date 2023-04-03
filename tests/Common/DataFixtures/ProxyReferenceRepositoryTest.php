@@ -58,7 +58,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
             ->setConstructorArgs([$em])
             ->getMock();
         $em->getEventManager()->addEventSubscriber(
-            new ORMReferenceListener($referenceRepository)
+            new ORMReferenceListener($referenceRepository),
         );
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);
@@ -154,7 +154,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
         $this->assertInstanceOf(
             'Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid',
-            $proxyReferenceRepository->getReference('home-link')->getId()
+            $proxyReferenceRepository->getReference('home-link')->getId(),
         );
     }
 

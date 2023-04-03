@@ -13,17 +13,11 @@ class Link
     /**
      * @ORM\Id
      * @ORM\Column(type="uuid")
-     *
-     * @var Uuid
      */
-    private $id;
+    private Uuid $id;
 
-    /**
-     * @ORM\Column(length=150)
-     *
-     * @var string|null
-     */
-    private $url;
+    /** @ORM\Column(length=150) */
+    private ?string $url = null;
 
     public function __construct(Uuid $id)
     {

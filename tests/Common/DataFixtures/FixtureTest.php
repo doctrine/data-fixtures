@@ -24,8 +24,7 @@ class FixtureTest extends BaseTestCase
 
 class MyFixture2 implements FixtureInterface
 {
-    /** @var bool */
-    public $loaded = false;
+    public bool $loaded = false;
 
     public function load(ObjectManager $manager): void
     {

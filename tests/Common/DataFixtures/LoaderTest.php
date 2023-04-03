@@ -21,7 +21,7 @@ class LoaderTest extends BaseTestCase
         $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock1')->getMock());
         $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock2')->getMock());
         $loader->addFixture(
-            $this->getMockBuilder(SharedFixtureInterface::class)->setMockClassName('Mock3')->getMock()
+            $this->getMockBuilder(SharedFixtureInterface::class)->setMockClassName('Mock3')->getMock(),
         );
 
         $this->assertCount(3, $loader->getFixtures());
@@ -38,7 +38,7 @@ class LoaderTest extends BaseTestCase
         $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock1')->getMock());
         $loader->addFixture($this->getMockBuilder(FixtureInterface::class)->setMockClassName('Mock2')->getMock());
         $loader->addFixture(
-            $this->getMockBuilder(SharedFixtureInterface::class)->setMockClassName('Mock3')->getMock()
+            $this->getMockBuilder(SharedFixtureInterface::class)->setMockClassName('Mock3')->getMock(),
         );
 
         $this->assertCount(3, $loader->getFixtures());

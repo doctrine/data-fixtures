@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.22.0@fc2c6ab4d5fa5d644d8617089f012f3bb84b8703">
+<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
   <file src="src/Executor/PHPCRExecutor.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
+      <code>DocumentManagerInterface</code>
       <code>DocumentManagerInterface</code>
     </UndefinedClass>
-    <UndefinedDocblockClass occurrences="2">
-      <code>DocumentManagerInterface</code>
+    <UndefinedDocblockClass>
       <code>DocumentManagerInterface</code>
     </UndefinedDocblockClass>
   </file>
   <file src="src/Purger/PHPCRPurger.php">
-    <UndefinedClass occurrences="3">
+    <UndefinedClass>
+      <code><![CDATA[$this->dm]]></code>
+      <code>?DocumentManagerInterface</code>
       <code>?DocumentManagerInterface</code>
       <code>DocumentManager</code>
       <code>NodeHelper</code>
     </UndefinedClass>
-    <UndefinedDocblockClass occurrences="3">
-      <code>$this-&gt;dm</code>
-      <code>DocumentManagerInterface|null</code>
+    <UndefinedDocblockClass>
       <code>DocumentManagerInterface|null</code>
     </UndefinedDocblockClass>
   </file>
   <file src="src/ReferenceRepository.php">
-    <UndefinedClass occurrences="2">
+    <UndefinedClass>
       <code>PhpcrDocumentManager</code>
       <code>PhpcrDocumentManager</code>
     </UndefinedClass>

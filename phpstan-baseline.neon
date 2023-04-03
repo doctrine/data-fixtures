@@ -102,7 +102,7 @@ parameters:
 
 		-
 			message: "#^Method Doctrine\\\\Tests\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutorTest\\:\\:getDocumentManager\\(\\) has invalid return type Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManager\\.$#"
-			count: 1
+			count: 2
 			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
 
 		-

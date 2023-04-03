@@ -96,7 +96,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
                 'Argument $class of %s() will be mandatory in 2.0.',
-                __METHOD__
+                __METHOD__,
             );
         }
 
@@ -121,7 +121,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
                 'Argument $class of %s() will be mandatory in 2.0.',
-                __METHOD__
+                __METHOD__,
             );
         }
 

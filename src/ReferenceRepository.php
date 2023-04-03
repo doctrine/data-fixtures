@@ -29,7 +29,7 @@ class ReferenceRepository
      *
      * @psalm-var array<string, object>
      */
-    private $references = [];
+    private array $references = [];
 
     /**
      * List of named references to the fixture objects
@@ -37,7 +37,7 @@ class ReferenceRepository
      *
      * @psalm-var array<class-string, array<string, object>>
      */
-    private $referencesByClass = [];
+    private array $referencesByClass = [];
 
     /**
      * List of identifiers stored for references
@@ -46,7 +46,7 @@ class ReferenceRepository
      *
      * @psalm-var array<string, mixed>
      */
-    private $identities = [];
+    private array $identities = [];
 
     /**
      * List of identifiers stored for references
@@ -55,14 +55,12 @@ class ReferenceRepository
      *
      * @psalm-var array<class-string, array<string, mixed>>
      */
-    private $identitiesByClass = [];
+    private array $identitiesByClass = [];
 
     /**
      * Currently used object manager
-     *
-     * @var ObjectManager
      */
-    private $manager;
+    private ObjectManager $manager;
 
     public function __construct(ObjectManager $manager)
     {
@@ -149,7 +147,7 @@ class ReferenceRepository
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
                 'Argument $class of %s() will be mandatory in 2.0.',
-                __METHOD__
+                __METHOD__,
             );
         }
 
@@ -181,7 +179,7 @@ class ReferenceRepository
         if (isset($this->references[$name])) {
             throw new BadMethodCallException(sprintf(
                 'Reference to "%s" already exists, use method setReference() in order to override it',
-                $name
+                $name,
             ));
         }
 
@@ -190,7 +188,7 @@ class ReferenceRepository
             throw new BadMethodCallException(sprintf(
                 'Reference to "%s" for class "%s" already exists, use method setReference() in order to override it',
                 $name,
-                $class
+                $class,
             ));
         }
 
@@ -218,7 +216,7 @@ class ReferenceRepository
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
                 'Argument $class of %s() will be mandatory in 2.0.',
-                __METHOD__
+                __METHOD__,
             );
         }
 
@@ -270,7 +268,7 @@ class ReferenceRepository
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
                 'Argument $class of %s() will be mandatory in 2.0.',
-                __METHOD__
+                __METHOD__,
             );
         }
 
@@ -312,7 +310,7 @@ class ReferenceRepository
                 'doctrine/data-fixtures',
                 'https://github.com/doctrine/data-fixtures/pull/409',
                 'Argument $class of %s() will be mandatory in 2.0.',
-                __METHOD__
+                __METHOD__,
             );
         }
 

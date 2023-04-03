@@ -9,20 +9,14 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /** @ODM\Document */
 class Role
 {
-    /**
-     * @ODM\Id
-     *
-     * @var string|null
-     */
-    private $id;
+    /** @ODM\Id */
+    private ?string $id = null;
 
     /**
      * @ODM\Field(type="string")
      * @ODM\Index
-     *
-     * @var string|null
      */
-    private $name;
+    private ?string $name = null;
 
     public function getId(): ?string
     {

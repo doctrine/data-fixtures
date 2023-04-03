@@ -12,10 +12,8 @@ class IncludedEntity
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     *
-     * @var int
      */
-    private $id;
+    private ?int $id = null;
 
     public function setId(int $id): void
     {

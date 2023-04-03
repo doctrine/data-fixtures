@@ -13,17 +13,11 @@ class Role
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     *
-     * @var int|null
      */
-    private $id;
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(length=50)
-     *
-     * @var string|null
-     */
-    private $name;
+    /** @ORM\Column(length=50) */
+    private ?string $name = null;
 
     public function getId(): ?int
     {

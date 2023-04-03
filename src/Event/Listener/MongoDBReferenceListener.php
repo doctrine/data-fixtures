@@ -16,8 +16,7 @@ use function get_class;
  */
 final class MongoDBReferenceListener implements EventSubscriber
 {
-    /** @var ReferenceRepository */
-    private $referenceRepository;
+    private ReferenceRepository $referenceRepository;
 
     public function __construct(ReferenceRepository $referenceRepository)
     {
@@ -27,17 +26,15 @@ final class MongoDBReferenceListener implements EventSubscriber
     /**
      * {@inheritdoc}
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return ['postPersist'];
     }
 
     /**
      * Populates identities for stored references
-     *
-     * @return void
      */
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(LifecycleEventArgs $args): void
     {
         $object = $args->getDocument();
 

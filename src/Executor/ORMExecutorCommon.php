@@ -15,13 +15,10 @@ use Doctrine\ORM\EntityManagerInterface;
 trait ORMExecutorCommon
 {
     /** @var EntityManager|EntityManagerDecorator */
-    private $em;
+    private EntityManagerInterface $em;
 
-    /** @var EntityManagerInterface */
-    private $originalManager;
-
-    /** @var ORMReferenceListener */
-    private $listener;
+    private EntityManagerInterface $originalManager;
+    private ORMReferenceListener $listener;
 
     public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null)
     {
@@ -59,7 +56,7 @@ trait ORMExecutorCommon
     {
         $this->em->getEventManager()->removeEventListener(
             $this->listener->getSubscribedEvents(),
-            $this->listener
+            $this->listener,
         );
 
         parent::setReferenceRepository($referenceRepository);

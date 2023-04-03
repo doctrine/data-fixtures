@@ -18,14 +18,18 @@ class Vertex
     public const IN_PROGRESS = 1;
     public const VISITED     = 2;
 
-    /** @var int one of either {@see self::NOT_VISITED}, {@see self::IN_PROGRESS} or {@see self::VISITED}. */
-    public $state = self::NOT_VISITED;
+    /** @psalm-var self::* */
+    public int $state = self::NOT_VISITED;
 
-    /** @var ClassMetadata Actual node value */
-    public $value;
+    /** Actual node value. */
+    public ClassMetadata $value;
 
-    /** @var string[] Map of node dependencies defined as hashes. */
-    public $dependencyList = [];
+    /**
+     * Map of node dependencies defined as hashes.
+     *
+     * @var string[]
+     */
+    public array $dependencyList = [];
 
     public function __construct(ClassMetadata $value)
     {

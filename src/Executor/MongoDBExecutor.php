@@ -14,11 +14,8 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  */
 class MongoDBExecutor extends AbstractExecutor
 {
-    /** @var DocumentManager */
-    private $dm;
-
-    /** @var MongoDBReferenceListener */
-    private $listener;
+    private DocumentManager $dm;
+    private MongoDBReferenceListener $listener;
 
     /**
      * Construct new fixtures loader instance.
@@ -54,7 +51,7 @@ class MongoDBExecutor extends AbstractExecutor
     {
         $this->dm->getEventManager()->removeEventListener(
             $this->listener->getSubscribedEvents(),
-            $this->listener
+            $this->listener,
         );
 
         $this->referenceRepository = $referenceRepository;
