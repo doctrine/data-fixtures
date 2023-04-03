@@ -1,8 +1,8 @@
 parameters:
-    phpVersion: 70100
+    phpVersion: 80200
     level: 3
     paths:
-        - lib
+        - src
         - tests
 
 includes:

@@ -15,6 +15,7 @@ showing how to use the ``AbstractFixture`` class to do that.
    <loading-fixtures>` is satisfied if you extend ``AbstractFixture``.
 
 .. code-block:: php
+
     <?php
     namespace MyDataFixtures;
 
@@ -43,6 +44,7 @@ showing how to use the ``AbstractFixture`` class to do that.
 And the ``User`` data loading fixture:
 
 .. code-block:: php
+
     <?php
 
     namespace MyDataFixtures;

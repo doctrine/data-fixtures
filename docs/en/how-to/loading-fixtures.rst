@@ -18,6 +18,7 @@ Fixture classes have two requirements:
   without arguments.
 
 .. code-block:: php
+
     <?php
 
     namespace MyDataFixtures;
@@ -50,6 +51,7 @@ Loading fixtures
 To load a fixture, you can call ``Loader::addFixture()``:
 
 .. code-block:: php
+
     <?php
 
     use Doctrine\Common\DataFixtures\Loader;
@@ -61,6 +63,7 @@ To load a fixture, you can call ``Loader::addFixture()``:
 It is also possible to load a fixture by providing its path:
 
 .. code-block:: php
+
     <?php
     $loader->loadFromFile('/path/to/MyDataFixtures/MyFixture1.php');
 
@@ -69,12 +72,14 @@ want to load a whole directory of fixtures instead of making one call
 per fixture.
 
 .. code-block:: php
+
     <?php
     $loader->loadFromDirectory('/path/to/MyDataFixtures');
 
 You can get the added fixtures using the ``getFixtures()`` method:
 
 .. code-block:: php
+
     <?php
     $fixtures = $loader->getFixtures();
 
@@ -87,6 +92,7 @@ store you are using. For example, if you are using ORM, you should
 do the following:
 
 .. code-block:: php
+
     <?php
     use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
     use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -104,6 +110,7 @@ If you want to append the fixtures instead of purging before loading
 then pass ``append: true`` to the ``execute()`` method:
 
 .. code-block:: php
+
     <?php
     $executor->execute($loader->getFixtures(), append: true);
 
@@ -114,5 +121,6 @@ want to wrap the purge and the load of every fixture in its own transaction.
 To do so, you can use ``MultipleTransactionORMExecutor``.
 
 .. code-block:: php
+
     <?php
     $executor = new MultipleTransactionORMExecutor($entityManager, new ORMPurger());

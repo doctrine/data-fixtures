@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.22.0@fc2c6ab4d5fa5d644d8617089f012f3bb84b8703">
-  <file src="lib/Doctrine/Common/DataFixtures/Executor/PHPCRExecutor.php">
+  <file src="src/Executor/PHPCRExecutor.php">
     <UndefinedClass occurrences="1">
       <code>DocumentManagerInterface</code>
     </UndefinedClass>
@@ -9,7 +9,7 @@
       <code>DocumentManagerInterface</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="lib/Doctrine/Common/DataFixtures/Purger/PHPCRPurger.php">
+  <file src="src/Purger/PHPCRPurger.php">
     <UndefinedClass occurrences="3">
       <code>?DocumentManagerInterface</code>
       <code>DocumentManager</code>
@@ -21,7 +21,7 @@
       <code>DocumentManagerInterface|null</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="lib/Doctrine/Common/DataFixtures/ReferenceRepository.php">
+  <file src="src/ReferenceRepository.php">
     <UndefinedClass occurrences="2">
       <code>PhpcrDocumentManager</code>
       <code>PhpcrDocumentManager</code>

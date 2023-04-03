@@ -11,13 +11,13 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Tests\Common\DataFixtures\BaseTest;
+use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test Fixture executor.
  */
-class ORMExecutorTest extends BaseTest
+class ORMExecutorTest extends BaseTestCase
 {
     public function testExecuteWithNoPurge(): void
     {

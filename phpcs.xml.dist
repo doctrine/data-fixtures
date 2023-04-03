@@ -11,7 +11,7 @@
     <!-- Ignore warnings and show progress of the run -->
     <arg value="nps"/>
 
-    <file>lib</file>
+    <file>src</file>
     <file>tests</file>
 
     <rule ref="Doctrine">
@@ -30,21 +30,21 @@
     </rule>
 
     <rule ref="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming">
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/AbstractFixture.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Executor/AbstractExecutor.php</exclude-pattern>
+        <exclude-pattern>src/AbstractFixture.php</exclude-pattern>
+        <exclude-pattern>src/Executor/AbstractExecutor.php</exclude-pattern>
     </rule>
 
     <rule ref="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming">
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Exception/CircularReferenceException.php</exclude-pattern>
+        <exclude-pattern>src/Exception/CircularReferenceException.php</exclude-pattern>
     </rule>
 
     <rule ref="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming">
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/DependentFixtureInterface.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/FixtureInterface.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Purger/ORMPurgerInterface.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/Purger/PurgerInterface.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/OrderedFixtureInterface.php</exclude-pattern>
-        <exclude-pattern>lib/Doctrine/Common/DataFixtures/SharedFixtureInterface.php</exclude-pattern>
+        <exclude-pattern>src/DependentFixtureInterface.php</exclude-pattern>
+        <exclude-pattern>src/FixtureInterface.php</exclude-pattern>
+        <exclude-pattern>src/Purger/ORMPurgerInterface.php</exclude-pattern>
+        <exclude-pattern>src/Purger/PurgerInterface.php</exclude-pattern>
+        <exclude-pattern>src/OrderedFixtureInterface.php</exclude-pattern>
+        <exclude-pattern>src/SharedFixtureInterface.php</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">

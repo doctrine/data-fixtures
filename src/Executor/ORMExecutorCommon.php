@@ -39,6 +39,7 @@ trait ORMExecutorCommon
         }
 
         parent::__construct($em);
+
         $this->listener = new ORMReferenceListener($this->referenceRepository);
         $em->getEventManager()->addEventSubscriber($this->listener);
     }
