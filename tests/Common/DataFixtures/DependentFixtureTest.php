@@ -10,11 +10,14 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 
 use function array_search;
 use function array_shift;
+use function restore_error_handler;
+use function set_error_handler;
 
 /**
  * Test Fixture ordering by dependencies.
@@ -153,6 +156,29 @@ class DependentFixtureTest extends BaseTestCase
         $this->assertCount(2, $orderedFixtures);
         $this->assertInstanceOf(BaseParentFixture1::class, array_shift($orderedFixtures));
         $this->assertInstanceOf(DependentFixture1::class, array_shift($orderedFixtures));
+    }
+
+    public function testOrderFixturesDependingOnOrderedFixture(): void
+    {
+        set_error_handler(static function (int $errno, string $errstr): never {
+            throw new Exception($errstr, $errno);
+        });
+
+        try {
+            $loader = new Loader();
+            $loader->addFixture(new DependingOnOrderedFixture());
+            $loader->addFixture(new OrderedByNumberFixture1());
+            $loader->addFixture(new OrderedByNumberFixture2());
+
+            $orderedFixtures = $loader->getFixtures();
+
+            $this->assertCount(3, $orderedFixtures);
+            $this->assertInstanceOf(OrderedByNumberFixture1::class, array_shift($orderedFixtures));
+            $this->assertInstanceOf(OrderedByNumberFixture2::class, array_shift($orderedFixtures));
+            $this->assertInstanceOf(DependingOnOrderedFixture::class, array_shift($orderedFixtures));
+        } finally {
+            restore_error_handler();
+        }
     }
 }
 
@@ -365,6 +391,21 @@ class FixtureWithUnexistentDependency implements FixtureInterface, DependentFixt
     public function getDependencies(): array
     {
         return ['UnexistentDependency'];
+    }
+}
+
+class DependingOnOrderedFixture implements FixtureInterface, DependentFixtureInterface
+{
+    public function load(ObjectManager $manager): void
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDependencies(): array
+    {
+        return [OrderedByNumberFixture2::class];
     }
 }
 
