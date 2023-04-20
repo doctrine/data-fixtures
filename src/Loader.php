@@ -397,7 +397,7 @@ class Loader
         }
 
         foreach ($classes as $class) {
-            if ($sequences[$class] !== -1) {
+            if (! isset($sequences[$class]) || $sequences[$class] !== -1) {
                 continue;
             }
 
