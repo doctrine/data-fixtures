@@ -4,6 +4,7 @@
 # Exclude non-essential files from dist
 /docs export-ignore
 /tests export-ignore
+/.doctrine-project.json export-ignore
 /.gitattributes export-ignore
 /.github export-ignore
 /.gitignore export-ignore
