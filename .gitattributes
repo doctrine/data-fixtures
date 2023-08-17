@@ -4,7 +4,13 @@
 # Exclude non-essential files from dist
 /docs export-ignore
 /tests export-ignore
+/.doctrine-project.json export-ignore
 /.gitattributes export-ignore
 /.github export-ignore
 /.gitignore export-ignore
 /phpunit.xml.dist export-ignore
+/phpcs.xml.dist export-ignore
+/phpstan.neon.dist export-ignore
+/phpstan-baseline.neon export-ignore
+/psalm.xml export-ignore
+/psalm-baseline.xml export-ignore
