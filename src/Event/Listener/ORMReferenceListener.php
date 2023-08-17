@@ -48,7 +48,7 @@ final class ORMReferenceListener implements EventSubscriber
         }
 
         foreach ($names as $name) {
-            $identity = $args->getEntityManager()
+            $identity = $args->getObjectManager()
                 ->getUnitOfWork()
                 ->getEntityIdentifier($object);
 
