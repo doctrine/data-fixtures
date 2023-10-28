@@ -14,7 +14,6 @@ use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity;
 
 use function count;
 use function extension_loaded;
-use function method_exists;
 use function preg_match;
 
 class ORMPurgerExcludeTest extends BaseTestCase
@@ -34,12 +33,6 @@ class ORMPurgerExcludeTest extends BaseTestCase
         $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
         $config   = ORMSetup::createAnnotationMetadataConfiguration([__DIR__ . '/../TestPurgeEntity'], true);
         $em       = new EntityManager(DriverManager::getConnection($dbParams, $config), $config);
-
-        $connection    = $em->getConnection();
-        $configuration = $connection->getConfiguration();
-        if (method_exists($configuration, 'setFilterSchemaAssetsExpression')) {
-            $configuration->setFilterSchemaAssetsExpression(null);
-        }
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropDatabase();
@@ -66,7 +59,7 @@ class ORMPurgerExcludeTest extends BaseTestCase
      *
      * @param string[] $list
      */
-    public function executeTestPurge(?string $expression, array $list, ?callable $filter = null): void
+    private function executeTestPurge(array $list, ?callable $filter): void
     {
         $em                 = $this->loadTestData();
         $excludedRepository = $em->getRepository(self::TEST_ENTITY_EXCLUDED);
@@ -80,19 +73,8 @@ class ORMPurgerExcludeTest extends BaseTestCase
 
         $connection    = $em->getConnection();
         $configuration = $connection->getConfiguration();
-        if ($expression !== null) {
-            if (! method_exists($configuration, 'setFilterSchemaAssetsExpression')) {
-                $this->markTestSkipped('DBAL 2 is required to test schema assets filters');
-            }
-
-            $configuration->setFilterSchemaAssetsExpression($expression);
-        }
 
         if ($filter !== null) {
-            if (! method_exists($configuration, 'setSchemaAssetsFilter')) {
-                $this->markTestSkipped('DBAL 2.9 or newer is required to test schema assets filters');
-            }
-
             $configuration->setSchemaAssetsFilter($filter);
         }
 
@@ -107,25 +89,18 @@ class ORMPurgerExcludeTest extends BaseTestCase
     }
 
     /**
-     * Test for purge exclusion usig dbal filter expression regexp.
-     */
-    public function testPurgeExcludeUsingFilterExpression(): void
-    {
-        $this->executeTestPurge('~^(?!ExcludedEntity)~', [], null);
-    }
-
-    /**
      * Test for purge exclusion usig explicit exclution list.
      */
     public function testPurgeExcludeUsingList(): void
     {
-        $this->executeTestPurge(null, ['ExcludedEntity'], null);
+        $this->executeTestPurge(['ExcludedEntity'], null);
     }
 
     public function testPurgeExcludeUsingFilterCallable(): void
     {
-        $this->executeTestPurge(null, [], static function (string $table): bool {
-            return (bool) preg_match('~^(?!ExcludedEntity)~', $table);
-        });
+        $this->executeTestPurge(
+            [],
+            static fn (string $table): bool => (bool) preg_match('~^(?!ExcludedEntity)~', $table),
+        );
     }
 }
