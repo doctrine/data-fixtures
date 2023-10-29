@@ -6,7 +6,7 @@ namespace Doctrine\Common\DataFixtures\Event\Listener;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
 
 use function get_class;
 
@@ -24,7 +24,7 @@ final class ORMReferenceListener implements EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSubscribedEvents(): array
     {
@@ -35,7 +35,7 @@ final class ORMReferenceListener implements EventSubscriber
     /**
      * Populates identities for stored references
      */
-    public function postPersist(LifecycleEventArgs $args): void
+    public function postPersist(PostPersistEventArgs $args): void
     {
         $object = $args->getObject();
 

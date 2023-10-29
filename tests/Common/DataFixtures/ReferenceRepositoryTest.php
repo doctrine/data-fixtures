@@ -7,19 +7,19 @@ namespace Doctrine\Tests\Common\DataFixtures;
 use BadMethodCallException;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\UnitOfWork;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
+use Doctrine\Tests\Mock\ForwardCompatibleEntityManager;
 use OutOfBoundsException;
 
 class ReferenceRepositoryTest extends BaseTestCase
 {
     public function testReferenceEntry(): void
     {
-        $em = $this->getMockAnnotationReaderEntityManager();
+        $em = $this->getMockSqliteEntityManager();
 
         $role = new TestEntity\Role();
         $role->setName('admin');
@@ -199,7 +199,7 @@ class ReferenceRepositoryTest extends BaseTestCase
             ->with($role)
             ->willReturn($identitiesExpected);
 
-        $em = $this->createMock(EntityManagerInterface::class);
+        $em = $this->createMock(ForwardCompatibleEntityManager::class);
         $em->method('getUnitOfWork')
            ->willReturn($uow);
         $em->method('getClassMetadata')

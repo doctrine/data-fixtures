@@ -20,7 +20,7 @@ class ORMPurgerTest extends BaseTestCase
 
     public function testGetAssociationTables(): void
     {
-        $em       = $this->getMockAnnotationReaderEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_USER);
         $platform = $em->getConnection()->getDatabasePlatform();
         $purger   = new ORMPurger($em);
@@ -28,12 +28,12 @@ class ORMPurgerTest extends BaseTestCase
         $method   = $class->getMethod('getAssociationTables');
         $method->setAccessible(true);
         $associationTables = $method->invokeArgs($purger, [[$metadata], $platform]);
-        $this->assertEquals($associationTables[0], 'readers__author_reader');
+        $this->assertEquals('readers.author_reader', $associationTables[0]);
     }
 
     public function testGetAssociationTablesQuoted(): void
     {
-        $em       = $this->getMockAnnotationReaderEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_QUOTED);
         $platform = $em->getConnection()->getDatabasePlatform();
         $purger   = new ORMPurger($em);
@@ -46,7 +46,7 @@ class ORMPurgerTest extends BaseTestCase
 
     public function testTableNameWithSchema(): void
     {
-        $em       = $this->getMockAnnotationReaderEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_USER_WITH_SCHEMA);
         $platform = $em->getConnection()->getDatabasePlatform();
         $purger   = new ORMPurger($em);
@@ -59,7 +59,7 @@ class ORMPurgerTest extends BaseTestCase
 
     public function testGetDeleteFromTableSQL(): void
     {
-        $em       = $this->getMockAnnotationReaderEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP);
         $platform = $em->getConnection()->getDatabasePlatform();
         $purger   = new ORMPurger($em);
@@ -75,7 +75,7 @@ class ORMPurgerTest extends BaseTestCase
 
     public function testGetDeleteFromTableSQLWithSchema(): void
     {
-        $em       = $this->getMockAnnotationReaderEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $metadata = $em->getClassMetadata(self::TEST_ENTITY_GROUP_WITH_SCHEMA);
         $platform = $em->getConnection()->getDatabasePlatform();
         $purger   = new ORMPurger($em);
@@ -86,6 +86,6 @@ class ORMPurgerTest extends BaseTestCase
         $method    = $class->getMethod('getDeleteFromTableSQL');
         $method->setAccessible(true);
         $sql = $method->invokeArgs($purger, [$tableName, $platform]);
-        $this->assertEquals('DELETE FROM test_schema__group', $sql);
+        $this->assertEquals('DELETE FROM test_schema."group"', $sql);
     }
 }

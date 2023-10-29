@@ -5,5 +5,9 @@ parameters:
         - src
         - tests
 
+    ignoreErrors:
+        # ORM 3 forward compatibility
+        - '~^Parameter \$assoc of method Doctrine\\Common\\DataFixtures\\Purger\\ORMPurger\:\:getJoinTableName\(\) has invalid type Doctrine\\ORM\\Mapping\\ManyToManyOwningSideMapping\.$~'
+
 includes:
     - phpstan-baseline.neon
