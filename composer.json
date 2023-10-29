@@ -19,14 +19,14 @@
         "doctrine/persistence": "^2.0|^3.0"
     },
     "conflict": {
-        "doctrine/dbal": "<2.13",
+        "doctrine/dbal": "<3",
         "doctrine/orm": "<2.14",
         "doctrine/phpcr-odm": "<1.3.0"
     },
     "require-dev": {
         "ext-sqlite3": "*",
         "doctrine/coding-standard": "^11.1",
-        "doctrine/dbal": "^2.13 || ^3.0",
+        "doctrine/dbal": "^3.0",
         "doctrine/mongodb-odm": "^1.3.0 || ^2.0.0",
         "doctrine/orm": "^2.14",
         "phpstan/phpstan": "^1.10",

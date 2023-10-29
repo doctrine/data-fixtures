@@ -7,13 +7,13 @@ namespace Doctrine\Common\DataFixtures;
 use BadMethodCallException;
 use Doctrine\Deprecations\Deprecation;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpcrDocumentManager;
+use Doctrine\ORM\UnitOfWork as OrmUnitOfWork;
 use Doctrine\Persistence\ObjectManager;
 use OutOfBoundsException;
 
 use function array_key_exists;
 use function array_keys;
 use function get_class;
-use function method_exists;
 use function sprintf;
 
 /**
@@ -85,7 +85,7 @@ class ReferenceRepository
         }
 
         // Dealing with ORM UnitOfWork
-        if (method_exists($uow, 'getEntityIdentifier')) {
+        if ($uow instanceof OrmUnitOfWork) {
             return $uow->getEntityIdentifier($reference);
         }
 

@@ -15,8 +15,6 @@ use function array_reverse;
 use function assert;
 use function count;
 use function in_array;
-use function method_exists;
-use function preg_match;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
@@ -147,31 +145,18 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
 
         $connectionConfiguration = $connection->getConfiguration();
 
-        $filterExpr = method_exists(
-            $connectionConfiguration,
-            'getFilterSchemaAssetsExpression',
-        ) ? $connectionConfiguration->getFilterSchemaAssetsExpression() : null;
-
-        $schemaAssetsFilter = method_exists(
-            $connectionConfiguration,
-            'getSchemaAssetsFilter',
-        ) ? $connectionConfiguration->getSchemaAssetsFilter() : null;
+        $schemaAssetsFilter = $connectionConfiguration->getSchemaAssetsFilter()
+            ?? static fn (): bool => true;
 
         $this->cachedSqlStatements = [];
-        $hasFilterExpression       = ! empty($filterExpr);
         foreach ($orderedTables as $tbl) {
-            // If we have a filter expression, check it and skip if necessary
-            if ($hasFilterExpression && ! preg_match($filterExpr, $tbl)) {
-                continue;
-            }
-
             // If the table is excluded, skip it as well
             if (in_array($tbl, $this->excluded)) {
                 continue;
             }
 
             // Support schema asset filters as presented in
-            if ($schemaAssetsFilter !== null && ! $schemaAssetsFilter($tbl)) {
+            if (! $schemaAssetsFilter($tbl)) {
                 continue;
             }
 
@@ -190,7 +175,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
      *
      * @return ClassMetadata[]
      */
-    private function getCommitOrder(EntityManagerInterface $em, array $classes)
+    private function getCommitOrder(EntityManagerInterface $em, array $classes): array
     {
         $sorter = new TopologicalSorter();
 
@@ -249,7 +234,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
      *
      * @return string[]
      */
-    private function getAssociationTables(array $classes, AbstractPlatform $platform)
+    private function getAssociationTables(array $classes, AbstractPlatform $platform): array
     {
         $associationTables = [];
 
@@ -268,13 +253,6 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
 
     private function getTableName(ClassMetadata $class, AbstractPlatform $platform): string
     {
-        if (isset($class->table['schema']) && ! method_exists($class, 'getSchemaName')) {
-            return $class->table['schema'] . '.' .
-                $this->em->getConfiguration()
-                ->getQuoteStrategy()
-                ->getTableName($class, $platform);
-        }
-
         return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
     }
 
@@ -284,13 +262,6 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         ClassMetadata $class,
         AbstractPlatform $platform
     ): string {
-        if (isset($assoc['joinTable']['schema']) && ! method_exists($class, 'getSchemaName')) {
-            return $assoc['joinTable']['schema'] . '.' .
-                $this->em->getConfiguration()
-                ->getQuoteStrategy()
-                ->getJoinTableName($assoc, $class, $platform);
-        }
-
         return $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
     }
 
