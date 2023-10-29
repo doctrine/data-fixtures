@@ -30,15 +30,23 @@ jobs:
           - "7.4"
           - "8.0"
           - "8.1"
+          - "8.2"
+          - "8.3"
         dependencies:
           - "highest"
+        stability:
+          - "stable"
         include:
           - php-version: "7.2"
             dependencies: "lowest"
+            stability: "stable"
+          - php-version: "8.3"
+            dependencies: "highest"
+            stability: "dev"
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           fetch-depth: 2
 
@@ -49,6 +57,10 @@ jobs:
           extensions: "mongodb, sqlite3"
           coverage: "pcov"
           ini-values: "zend.assertions=1"
+
+      - name: "Use dev stability"
+        run: "composer config minimum-stability dev"
+        if: "matrix.stability == 'dev'"
 
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
@@ -73,7 +85,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           fetch-depth: 2
 
