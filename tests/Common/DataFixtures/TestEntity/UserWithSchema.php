@@ -14,27 +14,36 @@ use function md5;
  * @ORM\Entity
  * @ORM\Table(name="user",schema="test_schema")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'user', schema: 'test_schema')]
 class UserWithSchema
 {
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      */
+    #[ORM\Column]
+    #[ORM\Id]
     private ?int $id = null;
 
     /**
      * @ORM\Column(length=32)
      * @ORM\Id
      */
+    #[ORM\Column(length: 32)]
+    #[ORM\Id]
     private ?string $code = null;
 
     /** @ORM\Column(length=32) */
+    #[ORM\Column(length: 32)]
     private ?string $password = null;
 
     /** @ORM\Column(length=255) */
+    #[ORM\Column(length: 255)]
     private ?string $email = null;
 
     /** @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"}) */
+    #[ORM\ManyToOne(cascade: ['persist'])]
     private ?Role $role = null;
 
     /**
@@ -46,6 +55,10 @@ class UserWithSchema
      *
      * @var Collection<int, self>
      */
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'authors')]
+    #[ORM\JoinTable(name: 'author_reader', schema: 'readers')]
+    #[ORM\JoinColumn(name: 'author_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'reader_id', referencedColumnName: 'id')]
     private Collection $readers;
 
     /**
@@ -53,6 +66,7 @@ class UserWithSchema
      *
      * @var Collection<int, self>
      */
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'readers')]
     private Collection $authors;
 
     public function __construct()

@@ -9,6 +9,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use PHPUnit\Framework\TestCase;
 
+use function method_exists;
+
+use const PHP_VERSION_ID;
+
 /**
  * Base test class
  */
@@ -16,26 +20,27 @@ abstract class BaseTestCase extends TestCase
 {
     /**
      * EntityManager mock object together with
-     * annotation mapping driver
-     */
-    protected function getMockAnnotationReaderEntityManager(): EntityManager
-    {
-        $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
-        $config   = ORMSetup::createAnnotationMetadataConfiguration([__DIR__ . '/TestEntity'], true);
-
-        return new EntityManager(DriverManager::getConnection($dbParams, $config), $config);
-    }
-
-    /**
-     * EntityManager mock object together with
      * annotation mapping driver and pdo_sqlite
      * database in memory
      */
-    protected function getMockSqliteEntityManager(): EntityManager
+    protected function getMockSqliteEntityManager(string $fixtureSet = 'TestEntity'): EntityManager
     {
-        $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
-        $config   = ORMSetup::createAnnotationMetadataConfiguration([__DIR__ . '/TestEntity'], true);
+        $dbParams = ['driver' => 'sqlite3', 'memory' => true];
+        if (PHP_VERSION_ID >= 80100) {
+            $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__ . '/' . $fixtureSet], true);
+            $config->setLazyGhostObjectEnabled(true);
+        } else {
+            $config = ORMSetup::createAnnotationMetadataConfiguration([__DIR__ . '/' . $fixtureSet], true);
+        }
 
-        return new EntityManager(DriverManager::getConnection($dbParams, $config), $config);
+        $connection = DriverManager::getConnection($dbParams, $config);
+        $platform   = $connection->getDatabasePlatform();
+        if (method_exists($platform, 'disableSchemaEmulation')) {
+            $platform->disableSchemaEmulation();
+        }
+
+        $connection->executeStatement('ATTACH DATABASE \':memory:\' AS readers');
+
+        return new EntityManager($connection, $config);
     }
 }

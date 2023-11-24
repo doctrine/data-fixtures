@@ -12,8 +12,6 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
 use PHPUnit\Framework\MockObject\MockObject;
 
-use function extension_loaded;
-
 /**
  * Test referenced fixture execution
  */
@@ -24,7 +22,7 @@ class ORMExecutorSharedFixtureTest extends BaseTestCase
 
     public function testFixtureExecution(): void
     {
-        $em       = $this->getMockAnnotationReaderEntityManager();
+        $em       = $this->getMockSqliteEntityManager();
         $purger   = new ORMPurger();
         $executor = new ORMExecutor($em, $purger);
 
@@ -43,10 +41,6 @@ class ORMExecutorSharedFixtureTest extends BaseTestCase
 
     public function testSharedFixtures(): void
     {
-        if (! extension_loaded('pdo_sqlite')) {
-            $this->markTestSkipped('Missing pdo_sqlite extension.');
-        }
-
         $em         = $this->getMockSqliteEntityManager();
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropSchema([]);

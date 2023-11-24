@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\ExcludedEntity;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity;
 
 use function count;
-use function extension_loaded;
 use function preg_match;
 
 class ORMPurgerExcludeTest extends BaseTestCase
@@ -26,13 +23,7 @@ class ORMPurgerExcludeTest extends BaseTestCase
      */
     protected function loadTestData(): EntityManager
     {
-        if (! extension_loaded('pdo_sqlite')) {
-            $this->markTestSkipped('Missing pdo_sqlite extension.');
-        }
-
-        $dbParams = ['driver' => 'pdo_sqlite', 'memory' => true];
-        $config   = ORMSetup::createAnnotationMetadataConfiguration([__DIR__ . '/../TestPurgeEntity'], true);
-        $em       = new EntityManager(DriverManager::getConnection($dbParams, $config), $config);
+        $em = $this->getMockSqliteEntityManager('TestPurgeEntity');
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropDatabase();

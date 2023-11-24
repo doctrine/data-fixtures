@@ -25,11 +25,11 @@ class TopologicalSorterTest extends BaseTestCase
     {
         $sorter = new TopologicalSorter();
 
-        $node1 = new ClassMetadata(1);
-        $node2 = new ClassMetadata(2);
-        $node3 = new ClassMetadata(3);
-        $node4 = new ClassMetadata(4);
-        $node5 = new ClassMetadata(5);
+        $node1 = new ClassMetadata('1');
+        $node2 = new ClassMetadata('2');
+        $node3 = new ClassMetadata('3');
+        $node4 = new ClassMetadata('4');
+        $node5 = new ClassMetadata('5');
 
         $sorter->addNode('1', $node1);
         $sorter->addNode('2', $node2);
@@ -52,11 +52,11 @@ class TopologicalSorterTest extends BaseTestCase
     {
         $sorter = new TopologicalSorter();
 
-        $node1 = new ClassMetadata(1);
-        $node2 = new ClassMetadata(2);
-        $node3 = new ClassMetadata(3);
-        $node4 = new ClassMetadata(4);
-        $node5 = new ClassMetadata(5);
+        $node1 = new ClassMetadata('1');
+        $node2 = new ClassMetadata('2');
+        $node3 = new ClassMetadata('3');
+        $node4 = new ClassMetadata('4');
+        $node5 = new ClassMetadata('5');
 
         $sorter->addNode('1', $node1);
         $sorter->addNode('2', $node2);
@@ -80,9 +80,9 @@ class TopologicalSorterTest extends BaseTestCase
     {
         $sorter = new TopologicalSorter();
 
-        $node1 = new ClassMetadata(1);
-        $node2 = new ClassMetadata(2);
-        $node3 = new ClassMetadata(3);
+        $node1 = new ClassMetadata('1');
+        $node2 = new ClassMetadata('2');
+        $node3 = new ClassMetadata('3');
 
         $sorter->addNode('1', $node1);
         $sorter->addNode('2', $node2);
@@ -104,9 +104,9 @@ class TopologicalSorterTest extends BaseTestCase
     {
         $sorter = new TopologicalSorter(false);
 
-        $node1 = new ClassMetadata(1);
-        $node2 = new ClassMetadata(2);
-        $node3 = new ClassMetadata(3);
+        $node1 = new ClassMetadata('1');
+        $node2 = new ClassMetadata('2');
+        $node3 = new ClassMetadata('3');
 
         $sorter->addNode('1', $node1);
         $sorter->addNode('2', $node2);
@@ -125,11 +125,11 @@ class TopologicalSorterTest extends BaseTestCase
     {
         $sorter = new TopologicalSorter();
 
-        $node1 = new ClassMetadata(1);
-        $node2 = new ClassMetadata(2);
-        $node3 = new ClassMetadata(3);
-        $node4 = new ClassMetadata(4);
-        $node5 = new ClassMetadata(5);
+        $node1 = new ClassMetadata('1');
+        $node2 = new ClassMetadata('2');
+        $node3 = new ClassMetadata('3');
+        $node4 = new ClassMetadata('4');
+        $node5 = new ClassMetadata('5');
 
         $sorter->addNode('1', $node1);
         $sorter->addNode('2', $node2);
@@ -153,7 +153,7 @@ class TopologicalSorterTest extends BaseTestCase
     {
         $sorter = new TopologicalSorter();
 
-        $node1 = new ClassMetadata(1);
+        $node1 = new ClassMetadata('1');
 
         $sorter->addNode('1', $node1);
 

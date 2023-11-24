@@ -16,4 +16,13 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+    
+    <issueHandlers>
+        <UndefinedDocblockClass>
+            <errorLevel type="suppress">
+                <!-- ORM 3 forward compatibility -->
+                <referencedClass name="Doctrine\ORM\Mapping\ManyToManyOwningSideMapping" />
+            </errorLevel>
+        </UndefinedDocblockClass>
+    </issueHandlers>
 </psalm>

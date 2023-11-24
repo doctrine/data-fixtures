@@ -35,7 +35,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
     public function testReferenceEntry(): void
     {
-        $em   = $this->getMockAnnotationReaderEntityManager();
+        $em   = $this->getMockSqliteEntityManager();
         $role = new TestEntity\Role();
         $role->setName('admin');
         $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);

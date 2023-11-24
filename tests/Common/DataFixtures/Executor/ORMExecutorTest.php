@@ -12,6 +12,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
+use Doctrine\Tests\Mock\ForwardCompatibleEntityManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -38,8 +39,8 @@ class ORMExecutorTest extends BaseTestCase
     {
         $em = $this->getMockEntityManager();
         $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
-        // We call transactional once for purge and for the fixtures (load)
-        $em->expects($this->once())->method('transactional')->with(self::isInstanceOf(Closure::class));
+        // We call wrapInTransaction once for purge and for the fixtures (load)
+        $em->expects($this->once())->method('wrapInTransaction')->with(self::isInstanceOf(Closure::class));
 
         $executor = new ORMExecutor($em);
         $fixture  = $this->getMockFixture();
@@ -52,7 +53,7 @@ class ORMExecutorTest extends BaseTestCase
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('purge')
-            ->will($this->returnValue(null));
+            ->willReturn(null);
         $executor = new ORMExecutor($em, $purger);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
@@ -76,7 +77,7 @@ class ORMExecutorTest extends BaseTestCase
     {
         $em = $this->getMockEntityManager();
         $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
-        $em->expects($this->once())->method('transactional')->with(self::isInstanceOf(Closure::class));
+        $em->expects($this->once())->method('wrapInTransaction')->with(self::isInstanceOf(Closure::class));
 
         $executor = new ORMExecutor($em);
         @$executor->execute([]);
@@ -103,7 +104,7 @@ class ORMExecutorTest extends BaseTestCase
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
             ->method('purge')
-            ->will($this->returnValue(null));
+            ->willReturn(null);
         $executor = new MultipleTransactionORMExecutor($em, $purger);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
@@ -116,8 +117,8 @@ class ORMExecutorTest extends BaseTestCase
     {
         $em = $this->getMockEntityManager();
         $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
-        // We call transactional once for purge and twice for the fixtures (load)
-        $em->expects($this->exactly(3))->method('transactional')->with(self::isInstanceOf(Closure::class));
+        // We call wrapInTransaction once for purge and twice for the fixtures (load)
+        $em->expects($this->exactly(3))->method('wrapInTransaction')->with(self::isInstanceOf(Closure::class));
 
         $executor = new MultipleTransactionORMExecutor($em);
         $fixture  = $this->getMockFixture();
@@ -127,7 +128,7 @@ class ORMExecutorTest extends BaseTestCase
     /** @return EntityManagerInterface&MockObject */
     private function getMockEntityManager(): EntityManagerInterface
     {
-        return $this->createMock(EntityManagerInterface::class);
+        return $this->createMock(ForwardCompatibleEntityManager::class);
     }
 
     /** @return FixtureInterface&MockObject */

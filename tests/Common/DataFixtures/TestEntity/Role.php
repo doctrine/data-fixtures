@@ -7,6 +7,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity */
+#[ORM\Entity]
 class Role
 {
     /**
@@ -14,9 +15,13 @@ class Role
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[ORM\Column]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private ?int $id = null;
 
     /** @ORM\Column(length=50) */
+    #[ORM\Column(length: 50)]
     private ?string $name = null;
 
     public function getId(): ?int

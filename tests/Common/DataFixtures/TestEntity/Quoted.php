@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table("`SELECT`")
  */
+#[ORM\Entity]
+#[ORM\Table(name: '`SELECT`')]
 class Quoted
 {
     /**
@@ -18,9 +20,13 @@ class Quoted
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[ORM\Column]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private ?int $id = null;
 
     /** @ORM\Column(length=50, name="select") */
+    #[ORM\Column(length: 50, name: '`SELECT`')]
     private ?string $select = null;
 
     /**
@@ -29,9 +35,11 @@ class Quoted
      *      joinColumns={@ORM\JoinColumn(name="`SELECT`", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="`UPDATE`", referencedColumnName="id")}
      * )
-     *
-     * @var Collection|null
      */
+    #[ORM\ManyToMany(targetEntity: self::class)]
+    #[ORM\JoinTable(name: '`INSERT`')]
+    #[ORM\JoinColumn(name: '`SELECT`', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: '`UPDATE`', referencedColumnName: 'id')]
     private ?Collection $selects = null;
 
     public function getId(): ?int
@@ -54,13 +62,11 @@ class Quoted
         $this->select = $select;
     }
 
-    /** @return Collection|null */
     public function getSelects(): ?Collection
     {
         return $this->selects;
     }
 
-    /** @param Collection|null $selects */
     public function setSelects(?Collection $selects): void
     {
         $this->selects = $selects;

@@ -24,7 +24,7 @@ final class MongoDBReferenceListener implements EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSubscribedEvents(): array
     {

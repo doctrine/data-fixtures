@@ -9,6 +9,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ManyToManyOwningSideMapping;
 
 use function array_map;
 use function array_reverse;
@@ -256,9 +257,9 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
         return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
     }
 
-    /** @param mixed[] $assoc */
+    /** @param ManyToManyOwningSideMapping|mixed[] $assoc */
     private function getJoinTableName(
-        array $assoc,
+        $assoc,
         ClassMetadata $class,
         AbstractPlatform $platform
     ): string {

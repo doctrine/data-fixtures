@@ -18,7 +18,7 @@ class UuidType extends Type
         $fieldDeclaration['length'] = 36;
         $fieldDeclaration['fixed']  = true;
 
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getStringTypeDeclarationSQL($fieldDeclaration);
     }
 
     /** @param string|null $value */

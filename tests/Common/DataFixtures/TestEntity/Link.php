@@ -8,15 +8,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
 
 /** @ORM\Entity */
+#[ORM\Entity]
 class Link
 {
     /**
      * @ORM\Id
      * @ORM\Column(type="uuid")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'uuid')]
     private Uuid $id;
 
     /** @ORM\Column(length=150) */
+    #[ORM\Column(length: 150)]
     private ?string $url = null;
 
     public function __construct(Uuid $id)
