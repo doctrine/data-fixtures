@@ -17,6 +17,8 @@ use function sprintf;
 
 /**
  * Abstract fixture executor.
+ *
+ * @internal since 1.8.0
  */
 abstract class AbstractExecutor
 {

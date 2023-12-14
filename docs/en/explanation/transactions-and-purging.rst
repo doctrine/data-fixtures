@@ -1,9 +1,8 @@
 Transactions and purging
 ========================
 
-This package exposes an ``AbstractExecutor`` class and 3 concrete
-implementations for ``doctrine/orm``, ``doctrine/mongodb-odm`` and
-``doctrine/phpcr-odm``.
+This package provides executors for ``doctrine/orm``, ``doctrine/mongodb-odm``
+and ``doctrine/phpcr-odm``.
 
 The executors purge the database, then load the fixtures. The ORM
 implementation wraps these two steps in a database transaction, which

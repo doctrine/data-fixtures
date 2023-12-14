@@ -10,6 +10,8 @@ use PHPCR\Util\NodeHelper;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
+ *
+ * @final since 1.8.0
  */
 class PHPCRPurger implements PurgerInterface
 {
