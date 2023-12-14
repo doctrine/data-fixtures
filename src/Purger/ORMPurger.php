@@ -59,11 +59,9 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     /**
      * Set the purge mode
      *
-     * @param int $mode
-     *
      * @return void
      */
-    public function setPurgeMode($mode)
+    public function setPurgeMode(int $mode)
     {
         $this->purgeMode           = $mode;
         $this->cachedSqlStatements = null;

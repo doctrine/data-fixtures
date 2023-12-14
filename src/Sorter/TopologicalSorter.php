@@ -43,8 +43,7 @@ class TopologicalSorter
      */
     private bool $allowCyclicDependencies;
 
-    /** @param bool $allowCyclicDependencies */
-    public function __construct($allowCyclicDependencies = true)
+    public function __construct(bool $allowCyclicDependencies = true)
     {
         $this->allowCyclicDependencies = (bool) $allowCyclicDependencies;
     }
@@ -52,11 +51,9 @@ class TopologicalSorter
     /**
      * Adds a new node (vertex) to the graph, assigning its hash and value.
      *
-     * @param string $hash
-     *
      * @return void
      */
-    public function addNode($hash, ClassMetadata $node)
+    public function addNode(string $hash, ClassMetadata $node)
     {
         $this->nodeList[$hash] = new Vertex($node);
     }
@@ -64,11 +61,9 @@ class TopologicalSorter
     /**
      * Checks the existence of a node in the graph.
      *
-     * @param string $hash
-     *
      * @return bool
      */
-    public function hasNode($hash)
+    public function hasNode(string $hash)
     {
         return isset($this->nodeList[$hash]);
     }
@@ -76,12 +71,9 @@ class TopologicalSorter
     /**
      * Adds a new dependency (edge) to the graph using their hashes.
      *
-     * @param string $fromHash
-     * @param string $toHash
-     *
      * @return void
      */
-    public function addDependency($fromHash, $toHash)
+    public function addDependency(string $fromHash, string $toHash)
     {
         $definition = $this->nodeList[$fromHash];
 

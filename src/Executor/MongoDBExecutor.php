@@ -60,7 +60,7 @@ class MongoDBExecutor extends AbstractExecutor
     }
 
     /** @inheritDoc */
-    public function execute(array $fixtures, $append = false)
+    public function execute(array $fixtures, bool $append = false)
     {
         if ($append === false) {
             $this->purge();
