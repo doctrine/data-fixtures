@@ -43,7 +43,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * and referenced to managed $object. If $name
      * already is set, it overrides it
      *
-     * @see Doctrine\Common\DataFixtures\ReferenceRepository::setReference
+     * @see ReferenceRepository::setReference()
      *
      * @param string $name
      * @param object $object - managed object
@@ -61,7 +61,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * already is set, it throws a
      * BadMethodCallException exception
      *
-     * @see Doctrine\Common\DataFixtures\ReferenceRepository::addReference
+     * @see ReferenceRepository::addReference()
      *
      * @param string $name
      * @param object $object - managed object
@@ -79,7 +79,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * Loads an object using stored reference
      * named by $name
      *
-     * @see Doctrine\Common\DataFixtures\ReferenceRepository::getReference
+     * @see ReferenceRepository::getReference()
      *
      * @param string $name
      * @psalm-param class-string<T>|null $class
@@ -107,7 +107,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * Check if an object is stored using reference
      * named by $name
      *
-     * @see Doctrine\Common\DataFixtures\ReferenceRepository::hasReference
+     * @see ReferenceRepository::hasReference()
      *
      * @param string $name
      * @psalm-param class-string $class
