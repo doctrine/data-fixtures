@@ -49,7 +49,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @return void
      */
-    public function setReference(string $name, $object)
+    public function setReference(string $name, object $object)
     {
         $this->getReferenceRepository()->setReference($name, $object);
     }
@@ -106,7 +106,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::hasReference
      *
-     * @psalm-param class-string $class
+     * @psalm-param class-string|null $class
      *
      * @return bool
      */
