@@ -14,7 +14,7 @@ class ORMExecutor extends AbstractExecutor
     use ORMExecutorCommon;
 
     /** @inheritDoc */
-    public function execute(array $fixtures, $append = false)
+    public function execute(array $fixtures, bool $append = false)
     {
         $executor = $this;
         $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {

@@ -40,7 +40,7 @@ class PHPCRExecutor extends AbstractExecutor
     }
 
     /** @inheritDoc */
-    public function execute(array $fixtures, $append = false)
+    public function execute(array $fixtures, bool $append = false)
     {
         $that = $this;
 

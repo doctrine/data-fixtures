@@ -49,7 +49,7 @@ class ProxyReferenceRepository extends ReferenceRepository
      *
      * @return void
      */
-    public function unserialize($serializedData)
+    public function unserialize(string $serializedData)
     {
         $repositoryData = unserialize($serializedData);
 
@@ -98,7 +98,7 @@ class ProxyReferenceRepository extends ReferenceRepository
      *
      * @return bool
      */
-    public function load($baseCacheName)
+    public function load(string $baseCacheName)
     {
         $filename = $baseCacheName . '.ser';
 
@@ -124,7 +124,7 @@ class ProxyReferenceRepository extends ReferenceRepository
      *
      * @return void
      */
-    public function save($baseCacheName)
+    public function save(string $baseCacheName)
     {
         $serializedData = $this->serialize();
 

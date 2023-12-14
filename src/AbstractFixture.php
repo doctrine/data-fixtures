@@ -45,12 +45,11 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::setReference
      *
-     * @param string $name
      * @param object $object - managed object
      *
      * @return void
      */
-    public function setReference($name, $object)
+    public function setReference(string $name, object $object)
     {
         $this->getReferenceRepository()->setReference($name, $object);
     }
@@ -63,14 +62,13 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::addReference
      *
-     * @param string $name
      * @param object $object - managed object
      *
      * @return void
      *
      * @throws BadMethodCallException - if repository already has a reference by $name.
      */
-    public function addReference($name, $object)
+    public function addReference(string $name, object $object)
     {
         $this->getReferenceRepository()->addReference($name, $object);
     }
@@ -81,7 +79,6 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::getReference
      *
-     * @param string $name
      * @psalm-param class-string<T>|null $class
      *
      * @return object
@@ -89,7 +86,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @template T of object
      */
-    public function getReference($name, ?string $class = null)
+    public function getReference(string $name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -109,12 +106,11 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @see Doctrine\Common\DataFixtures\ReferenceRepository::hasReference
      *
-     * @param string $name
-     * @psalm-param class-string $class
+     * @psalm-param class-string|null $class
      *
      * @return bool
      */
-    public function hasReference($name, ?string $class = null)
+    public function hasReference(string $name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(

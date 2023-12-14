@@ -76,11 +76,9 @@ abstract class AbstractExecutor
     /**
      * Set the logger callable to execute with the log() method.
      *
-     * @param callable $logger
-     *
      * @return void
      */
-    public function setLogger($logger)
+    public function setLogger(callable $logger)
     {
         $this->logger = $logger;
     }
@@ -88,11 +86,9 @@ abstract class AbstractExecutor
     /**
      * Logs a message using the logger.
      *
-     * @param string $message
-     *
      * @return void
      */
-    public function log($message)
+    public function log(string $message)
     {
         $logger = $this->logger;
         $logger($message);

@@ -75,7 +75,7 @@ class ReferenceRepository
      *
      * @return array
      */
-    protected function getIdentifier($reference, $uow)
+    protected function getIdentifier(object $reference, object $uow)
     {
         // In case Reference is not yet managed in UnitOfWork
         if (! $this->hasIdentifier($reference)) {
@@ -103,12 +103,9 @@ class ReferenceRepository
      * and referenced to $reference. If $name
      * already is set, it overrides it
      *
-     * @param string $name
-     * @param object $reference
-     *
      * @return void
      */
-    public function setReference($name, $reference)
+    public function setReference(string $name, object $reference)
     {
         $class = $this->getRealClass(get_class($reference));
 
@@ -134,13 +131,12 @@ class ReferenceRepository
     /**
      * Store the identifier of a reference
      *
-     * @param string            $name
      * @param mixed             $identity
      * @param class-string|null $class
      *
      * @return void
      */
-    public function setReferenceIdentity($name, $identity, ?string $class = null)
+    public function setReferenceIdentity(string $name, $identity, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -166,14 +162,13 @@ class ReferenceRepository
      * the record is inserted, be sure tu use this method
      * after $object is flushed
      *
-     * @param string $name
      * @param object $object - managed object
      *
      * @return void
      *
      * @throws BadMethodCallException - if repository already has a reference by $name.
      */
-    public function addReference($name, $object)
+    public function addReference(string $name, object $object)
     {
         // For BC, to be removed in next major.
         if (isset($this->references[$name])) {
@@ -199,7 +194,6 @@ class ReferenceRepository
      * Loads an object using stored reference
      * named by $name
      *
-     * @param string $name
      * @psalm-param class-string<T>|null $class
      *
      * @return object
@@ -209,7 +203,7 @@ class ReferenceRepository
      *
      * @template T of object
      */
-    public function getReference($name, ?string $class = null)
+    public function getReference(string $name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -256,12 +250,11 @@ class ReferenceRepository
      * Check if an object is stored using reference
      * named by $name
      *
-     * @param string $name
      * @psalm-param class-string $class
      *
      * @return bool
      */
-    public function hasReference($name, ?string $class = null)
+    public function hasReference(string $name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -281,11 +274,9 @@ class ReferenceRepository
      * Searches for reference names in the
      * list of stored references
      *
-     * @param object $reference
-     *
      * @return array<string>
      */
-    public function getReferenceNames($reference)
+    public function getReferenceNames(object $reference)
     {
         $class = $this->getRealClass(get_class($reference));
         if (! isset($this->referencesByClass[$class])) {
@@ -298,12 +289,11 @@ class ReferenceRepository
     /**
      * Checks if reference has identity stored
      *
-     * @param string            $name
      * @param class-string|null $class
      *
      * @return bool
      */
-    public function hasIdentity($name, ?string $class = null)
+    public function hasIdentity(string $name, ?string $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -380,7 +370,7 @@ class ReferenceRepository
      *
      * @return string
      */
-    protected function getRealClass($className)
+    protected function getRealClass(string $className)
     {
         return $this->manager->getClassMetadata($className)->getName();
     }
@@ -388,11 +378,9 @@ class ReferenceRepository
     /**
      * Checks if object has identifier already in unit of work.
      *
-     * @param object $reference
-     *
      * @return bool
      */
-    private function hasIdentifier($reference)
+    private function hasIdentifier(object $reference)
     {
         // in case if reference is set after flush, store its identity
         $uow = $this->manager->getUnitOfWork();

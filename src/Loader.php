@@ -73,7 +73,7 @@ class Loader
      *
      * @return array $fixtures Array of loaded fixture object instances.
      */
-    public function loadFromDirectory($dir)
+    public function loadFromDirectory(string $dir)
     {
         if (! is_dir($dir)) {
             throw new InvalidArgumentException(sprintf('"%s" does not exist', $dir));
@@ -94,7 +94,7 @@ class Loader
      *
      * @return array $fixtures Array of loaded fixture object instances.
      */
-    public function loadFromFile($fileName)
+    public function loadFromFile(string $fileName)
     {
         if (! is_readable($fileName)) {
             throw new InvalidArgumentException(sprintf('"%s" does not exist or is not readable', $fileName));
@@ -108,11 +108,9 @@ class Loader
     /**
      * Has fixture?
      *
-     * @param FixtureInterface $fixture
-     *
      * @return bool
      */
-    public function hasFixture($fixture)
+    public function hasFixture(FixtureInterface $fixture)
     {
         return isset($this->fixtures[get_class($fixture)]);
     }
@@ -120,11 +118,9 @@ class Loader
     /**
      * Get a specific fixture instance
      *
-     * @param string $className
-     *
      * @return FixtureInterface
      */
-    public function getFixture($className)
+    public function getFixture(string $className)
     {
         if (! isset($this->fixtures[$className])) {
             throw new InvalidArgumentException(sprintf(
@@ -204,7 +200,7 @@ class Loader
      *
      * @return bool
      */
-    public function isTransient($className)
+    public function isTransient(string $className)
     {
         $rc = new ReflectionClass($className);
         if ($rc->isAbstract()) {
@@ -219,11 +215,9 @@ class Loader
     /**
      * Creates the fixture object from the class.
      *
-     * @param string $class
-     *
      * @return FixtureInterface
      */
-    protected function createFixture($class)
+    protected function createFixture(string $class)
     {
         return new $class();
     }
