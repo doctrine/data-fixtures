@@ -6,6 +6,11 @@ awareness about deprecated code.
 - Use of our low-overhead runtime deprecation API, details:
   https://github.com/doctrine/deprecations/
 
+# Upgrade to 1.8
+
+Executor and Purger classes are final, they cannot be extended.
+`AbstractExecutor` is internal. It cannot be extended or used as typehint.
+
 # Upgrade to 1.6
 
 ## BC BREAK: `CircularReferenceException` no longer extends `Doctrine\Common\CommonException`
