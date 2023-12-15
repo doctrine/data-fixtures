@@ -11,10 +11,8 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 
 /**
  * Class responsible for executing data fixtures.
- *
- * @final since 1.8.0
  */
-class MongoDBExecutor extends AbstractExecutor
+final class MongoDBExecutor extends AbstractExecutor
 {
     private MongoDBReferenceListener $listener;
 

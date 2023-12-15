@@ -8,10 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class responsible for executing data fixtures.
- *
- * @final since 1.8.0
  */
-class ORMExecutor extends AbstractExecutor
+final class ORMExecutor extends AbstractExecutor
 {
     use ORMExecutorCommon;
 
