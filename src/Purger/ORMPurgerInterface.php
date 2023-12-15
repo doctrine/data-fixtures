@@ -13,8 +13,6 @@ interface ORMPurgerInterface extends PurgerInterface
 {
     /**
      * Set the EntityManagerInterface instance this purger instance should use.
-     *
-     * @return void
      */
-    public function setEntityManager(EntityManagerInterface $em);
+    public function setEntityManager(EntityManagerInterface $em): void;
 }

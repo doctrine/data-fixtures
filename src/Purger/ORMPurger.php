@@ -57,10 +57,8 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
 
     /**
      * Set the purge mode
-     *
-     * @return void
      */
-    public function setPurgeMode(int $mode)
+    public function setPurgeMode(int $mode): void
     {
         $this->purgeMode           = $mode;
         $this->cachedSqlStatements = null;
@@ -68,16 +66,13 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
 
     /**
      * Get the purge mode
-     *
-     * @return int
      */
-    public function getPurgeMode()
+    public function getPurgeMode(): int
     {
         return $this->purgeMode;
     }
 
-    /** @inheritDoc */
-    public function setEntityManager(EntityManagerInterface $em)
+    public function setEntityManager(EntityManagerInterface $em): void
     {
         $this->em                  = $em;
         $this->cachedSqlStatements = null;
@@ -85,16 +80,13 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
 
     /**
      * Retrieve the EntityManagerInterface instance this purger instance is using.
-     *
-     * @return EntityManagerInterface
      */
-    public function getObjectManager()
+    public function getObjectManager(): EntityManagerInterface
     {
         return $this->em;
     }
 
-    /** @inheritDoc */
-    public function purge()
+    public function purge(): void
     {
         $connection = $this->em->getConnection();
         array_map([$connection, 'executeStatement'], $this->getPurgeStatements());

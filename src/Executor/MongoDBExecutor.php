@@ -38,16 +38,13 @@ class MongoDBExecutor extends AbstractExecutor
 
     /**
      * Retrieve the DocumentManager instance this executor instance is using.
-     *
-     * @return DocumentManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManager
     {
         return $this->dm;
     }
 
-    /** @inheritDoc */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {
         $this->dm->getEventManager()->removeEventListener(
             $this->listener->getSubscribedEvents(),
@@ -60,7 +57,7 @@ class MongoDBExecutor extends AbstractExecutor
     }
 
     /** @inheritDoc */
-    public function execute(array $fixtures, bool $append = false)
+    public function execute(array $fixtures, bool $append = false): void
     {
         if ($append === false) {
             $this->purge();

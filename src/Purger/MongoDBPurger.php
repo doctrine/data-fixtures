@@ -24,26 +24,21 @@ class MongoDBPurger implements PurgerInterface
 
     /**
      * Set the DocumentManager instance this purger instance should use.
-     *
-     * @return void
      */
-    public function setDocumentManager(DocumentManager $dm)
+    public function setDocumentManager(DocumentManager $dm): void
     {
         $this->dm = $dm;
     }
 
     /**
      * Retrieve the DocumentManager instance this purger instance is using.
-     *
-     * @return DocumentManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManager
     {
         return $this->dm;
     }
 
-    /** @inheritDoc */
-    public function purge()
+    public function purge(): void
     {
         $metadatas = $this->dm->getMetadataFactory()->getAllMetadata();
         foreach ($metadatas as $metadata) {

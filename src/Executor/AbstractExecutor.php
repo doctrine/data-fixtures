@@ -45,39 +45,33 @@ abstract class AbstractExecutor implements LoggerAwareInterface
         $this->referenceRepository = new ReferenceRepository($manager);
     }
 
-    /** @return ReferenceRepository */
-    public function getReferenceRepository()
+    public function getReferenceRepository(): ReferenceRepository
     {
         return $this->referenceRepository;
     }
 
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {
         $this->referenceRepository = $referenceRepository;
     }
 
     /**
      * Sets the Purger instance to use for this executor instance.
-     *
-     * @return void
      */
-    public function setPurger(PurgerInterface $purger)
+    public function setPurger(PurgerInterface $purger): void
     {
         $this->purger = $purger;
     }
 
-    /** @return PurgerInterface */
-    public function getPurger()
+    public function getPurger(): PurgerInterface
     {
         return $this->purger;
     }
 
     /**
      * Load a fixture with the given persistence manager.
-     *
-     * @return void
      */
-    public function load(ObjectManager $manager, FixtureInterface $fixture)
+    public function load(ObjectManager $manager, FixtureInterface $fixture): void
     {
         if ($this->logger) {
             $prefix = '';
@@ -100,11 +94,9 @@ abstract class AbstractExecutor implements LoggerAwareInterface
     /**
      * Purges the database before loading.
      *
-     * @return void
-     *
      * @throws Exception if the purger is not defined.
      */
-    public function purge()
+    public function purge(): void
     {
         if ($this->purger === null) {
             throw new Exception(
@@ -123,8 +115,6 @@ abstract class AbstractExecutor implements LoggerAwareInterface
      *
      * @param FixtureInterface[] $fixtures Array of fixtures to execute.
      * @param bool               $append   Whether to append the data fixtures or purge the database before loading.
-     *
-     * @return void
      */
-    abstract public function execute(array $fixtures, bool $append = false);
+    abstract public function execute(array $fixtures, bool $append = false): void;
 }
