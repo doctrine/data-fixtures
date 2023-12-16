@@ -20,7 +20,7 @@ class GroupWithSchema
      */
     #[ORM\Column]
     #[ORM\Id]
-    private ?int $id = null;
+    private int|null $id = null;
 
     /**
      * @ORM\Column(length=32)
@@ -28,14 +28,14 @@ class GroupWithSchema
      */
     #[ORM\Column(length: 32)]
     #[ORM\Id]
-    private ?string $code = null;
+    private string|null $code = null;
 
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->id;
     }
@@ -45,7 +45,7 @@ class GroupWithSchema
         $this->code = $code;
     }
 
-    public function getCode(): ?string
+    public function getCode(): string|null
     {
         return $this->code;
     }

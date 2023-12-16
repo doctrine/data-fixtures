@@ -7,7 +7,6 @@ namespace Doctrine\Common\DataFixtures;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
-use function get_class;
 use function serialize;
 use function unserialize;
 
@@ -30,7 +29,7 @@ class ProxyReferenceRepository extends ReferenceRepository
         $simpleReferences = [];
 
         foreach ($this->getReferences() as $name => $reference) {
-            $className = $this->getRealClass(get_class($reference));
+            $className = $this->getRealClass($reference::class);
 
             $simpleReferences[$name] = [$className, $this->getIdentifier($reference, $unitOfWork)];
         }

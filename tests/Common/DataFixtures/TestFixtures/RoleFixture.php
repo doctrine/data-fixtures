@@ -11,7 +11,7 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 
 class RoleFixture implements SharedFixtureInterface
 {
-    private ?ReferenceRepository $referenceRepository = null;
+    private ReferenceRepository|null $referenceRepository = null;
 
     public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {

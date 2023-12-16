@@ -15,11 +15,8 @@ use PHPCR\Util\NodeHelper;
  */
 class PHPCRPurger implements PurgerInterface
 {
-    private ?DocumentManagerInterface $dm;
-
-    public function __construct(?DocumentManagerInterface $dm = null)
+    public function __construct(private DocumentManagerInterface|null $dm = null)
     {
-        $this->dm = $dm;
     }
 
     public function setDocumentManager(DocumentManager $dm)

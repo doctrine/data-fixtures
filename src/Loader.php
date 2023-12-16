@@ -20,7 +20,6 @@ use function asort;
 use function class_exists;
 use function class_implements;
 use function count;
-use function get_class;
 use function get_declared_classes;
 use function implode;
 use function in_array;
@@ -112,7 +111,7 @@ class Loader
      */
     public function hasFixture(FixtureInterface $fixture)
     {
-        return isset($this->fixtures[get_class($fixture)]);
+        return isset($this->fixtures[$fixture::class]);
     }
 
     /**
@@ -137,7 +136,7 @@ class Loader
      */
     public function addFixture(FixtureInterface $fixture)
     {
-        $fixtureClass = get_class($fixture);
+        $fixtureClass = $fixture::class;
 
         if (isset($this->fixtures[$fixtureClass])) {
             return;
@@ -146,7 +145,7 @@ class Loader
         if ($fixture instanceof OrderedFixtureInterface && $fixture instanceof DependentFixtureInterface) {
             throw new InvalidArgumentException(sprintf(
                 'Class "%s" can\'t implement "%s" and "%s" at the same time.',
-                get_class($fixture),
+                $fixture::class,
                 'OrderedFixtureInterface',
                 'DependentFixtureInterface',
             ));
@@ -281,7 +280,7 @@ class Loader
 
         // First we determine which classes has dependencies and which don't
         foreach ($this->fixtures as $fixture) {
-            $fixtureClass = get_class($fixture);
+            $fixtureClass = $fixture::class;
 
             if ($fixture instanceof OrderedFixtureInterface) {
                 continue;
@@ -382,7 +381,7 @@ class Loader
      *
      * @psalm-return array<class-string<FixtureInterface>>
      */
-    private function getUnsequencedClasses(array $sequences, ?iterable $classes = null): array
+    private function getUnsequencedClasses(array $sequences, iterable|null $classes = null): array
     {
         $unsequencedClasses = [];
 

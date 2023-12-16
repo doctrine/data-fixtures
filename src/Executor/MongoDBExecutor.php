@@ -16,7 +16,6 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  */
 class MongoDBExecutor extends AbstractExecutor
 {
-    private DocumentManager $dm;
     private MongoDBReferenceListener $listener;
 
     /**
@@ -24,9 +23,8 @@ class MongoDBExecutor extends AbstractExecutor
      *
      * @param DocumentManager $dm DocumentManager instance used for persistence.
      */
-    public function __construct(DocumentManager $dm, ?MongoDBPurger $purger = null)
+    public function __construct(private DocumentManager $dm, MongoDBPurger|null $purger = null)
     {
-        $this->dm = $dm;
         if ($purger !== null) {
             $this->purger = $purger;
             $this->purger->setDocumentManager($dm);

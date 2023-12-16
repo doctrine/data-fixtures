@@ -27,8 +27,6 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     public const PURGE_MODE_DELETE   = 1;
     public const PURGE_MODE_TRUNCATE = 2;
 
-    private ?EntityManagerInterface $em;
-
     /**
      * If the purge should be done through DELETE or TRUNCATE statements
      *
@@ -44,7 +42,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     private array $excluded;
 
     /** @var list<string>|null */
-    private ?array $cachedSqlStatements = null;
+    private array|null $cachedSqlStatements = null;
 
     /**
      * Construct new purger instance.
@@ -52,9 +50,8 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
      * @param EntityManagerInterface|null $em       EntityManagerInterface instance used for persistence.
      * @param string[]                    $excluded array of table/view names to be excluded from purge
      */
-    public function __construct(?EntityManagerInterface $em = null, array $excluded = [])
+    public function __construct(private EntityManagerInterface|null $em = null, array $excluded = [])
     {
-        $this->em       = $em;
         $this->excluded = $excluded;
     }
 
@@ -261,7 +258,7 @@ class ORMPurger implements PurgerInterface, ORMPurgerInterface
     private function getJoinTableName(
         $assoc,
         ClassMetadata $class,
-        AbstractPlatform $platform
+        AbstractPlatform $platform,
     ): string {
         return $this->em->getConfiguration()->getQuoteStrategy()->getJoinTableName($assoc, $class, $platform);
     }

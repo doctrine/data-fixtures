@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
+<files psalm-version="5.18.0@b113f3ed0259fd6e212d87c3df80eec95a6abf19">
   <file src="src/Executor/PHPCRExecutor.php">
     <UndefinedClass>
-      <code>DocumentManagerInterface</code>
       <code>DocumentManagerInterface</code>
     </UndefinedClass>
     <UndefinedDocblockClass>
@@ -12,10 +11,9 @@
   <file src="src/Purger/PHPCRPurger.php">
     <UndefinedClass>
       <code><![CDATA[$this->dm]]></code>
-      <code>?DocumentManagerInterface</code>
-      <code>?DocumentManagerInterface</code>
       <code>DocumentManager</code>
       <code>NodeHelper</code>
+      <code>private</code>
     </UndefinedClass>
     <UndefinedDocblockClass>
       <code>DocumentManagerInterface|null</code>

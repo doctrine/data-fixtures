@@ -9,12 +9,7 @@ namespace Doctrine\Tests\Mock;
  */
 class Node
 {
-    /** @var mixed */
-    public $value;
-
-    /** @param mixed $value */
-    public function __construct($value)
+    public function __construct(public mixed $value)
     {
-        $this->value = $value;
     }
 }

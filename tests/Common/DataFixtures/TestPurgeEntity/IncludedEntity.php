@@ -16,14 +16,14 @@ class IncludedEntity
      */
     #[ORM\Column]
     #[ORM\Id]
-    private ?int $id = null;
+    private int|null $id = null;
 
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->id;
     }

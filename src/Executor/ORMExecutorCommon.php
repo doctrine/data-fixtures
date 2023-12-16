@@ -20,7 +20,7 @@ trait ORMExecutorCommon
     private EntityManagerInterface $originalManager;
     private ORMReferenceListener $listener;
 
-    public function __construct(EntityManagerInterface $em, ?ORMPurgerInterface $purger = null)
+    public function __construct(EntityManagerInterface $em, ORMPurgerInterface|null $purger = null)
     {
         $this->originalManager = $em;
         // Make sure, wrapInTransaction() exists on the EM.

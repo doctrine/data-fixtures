@@ -6,6 +6,10 @@ awareness about deprecated code.
 - Use of our low-overhead runtime deprecation API, details:
   https://github.com/doctrine/deprecations/
 
+# Upgrade to 2.0
+
+You need PHP 8.1 or newer to use this library. 
+
 # Upgrade to 1.8
 
 Executor and Purger classes are final, they cannot be extended.

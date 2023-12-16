@@ -13,16 +13,13 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  */
 class MongoDBPurger implements PurgerInterface
 {
-    private ?DocumentManager $dm;
-
     /**
      * Construct new purger instance.
      *
      * @param DocumentManager|null $dm DocumentManager instance used for persistence.
      */
-    public function __construct(?DocumentManager $dm = null)
+    public function __construct(private DocumentManager|null $dm = null)
     {
-        $this->dm = $dm;
     }
 
     /**

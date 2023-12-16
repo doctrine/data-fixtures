@@ -88,7 +88,7 @@ class MongoDBPurgerTest extends BaseTestCase
         if (method_exists($documentManager, 'getClient')) {
             try {
                 $documentManager->getClient()->selectDatabase('admin')->command(['ping' => 1]);
-            } catch (ConnectionTimeoutException $driverException) {
+            } catch (ConnectionTimeoutException) {
                 $this->markTestSkipped('Unable to connect to MongoDB');
             }
 

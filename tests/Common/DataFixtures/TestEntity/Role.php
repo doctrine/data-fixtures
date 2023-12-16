@@ -18,13 +18,13 @@ class Role
     #[ORM\Column]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private ?int $id = null;
+    private int|null $id = null;
 
     /** @ORM\Column(length=50) */
     #[ORM\Column(length: 50)]
-    private ?string $name = null;
+    private string|null $name = null;
 
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->id;
     }
@@ -34,7 +34,7 @@ class Role
         $this->name = $name;
     }
 
-    public function getName(): ?string
+    public function getName(): string|null
     {
         return $this->name;
     }

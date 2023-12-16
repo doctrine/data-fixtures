@@ -17,7 +17,7 @@ parameters:
 
 		-
 			message: "#^Property Doctrine\\\\Common\\\\DataFixtures\\\\Executor\\\\PHPCRExecutor\\:\\:\\$dm has unknown class Doctrine\\\\ODM\\\\PHPCR\\\\DocumentManagerInterface as its type\\.$#"
-			count: 1
+			count: 2
 			path: src/Executor/PHPCRExecutor.php
 
 		-

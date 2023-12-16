@@ -10,15 +10,15 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 class Role
 {
     /** @ODM\Id */
-    private ?string $id = null;
+    private string|null $id = null;
 
     /**
      * @ODM\Field(type="string")
      * @ODM\Index
      */
-    private ?string $name = null;
+    private string|null $name = null;
 
-    public function getId(): ?string
+    public function getId(): string|null
     {
         return $this->id;
     }
@@ -28,7 +28,7 @@ class Role
         $this->name = $name;
     }
 
-    public function getName(): ?string
+    public function getName(): string|null
     {
         return $this->name;
     }
