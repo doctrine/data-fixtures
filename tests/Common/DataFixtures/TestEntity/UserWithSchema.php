@@ -24,7 +24,7 @@ class UserWithSchema
      */
     #[ORM\Column]
     #[ORM\Id]
-    private ?int $id = null;
+    private int|null $id = null;
 
     /**
      * @ORM\Column(length=32)
@@ -32,19 +32,19 @@ class UserWithSchema
      */
     #[ORM\Column(length: 32)]
     #[ORM\Id]
-    private ?string $code = null;
+    private string|null $code = null;
 
     /** @ORM\Column(length=32) */
     #[ORM\Column(length: 32)]
-    private ?string $password = null;
+    private string|null $password = null;
 
     /** @ORM\Column(length=255) */
     #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    private string|null $email = null;
 
     /** @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"}) */
     #[ORM\ManyToOne(cascade: ['persist'])]
-    private ?Role $role = null;
+    private Role|null $role = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=UserWithSchema::class, inversedBy="authors")
@@ -80,7 +80,7 @@ class UserWithSchema
         $this->id = $id;
     }
 
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->id;
     }
@@ -90,7 +90,7 @@ class UserWithSchema
         $this->code = $code;
     }
 
-    public function getCode(): ?string
+    public function getCode(): string|null
     {
         return $this->code;
     }
@@ -100,7 +100,7 @@ class UserWithSchema
         $this->password = md5($password);
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string|null
     {
         return $this->password;
     }
@@ -110,7 +110,7 @@ class UserWithSchema
         $this->email = $email;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string|null
     {
         return $this->email;
     }
@@ -120,7 +120,7 @@ class UserWithSchema
         $this->role = $role;
     }
 
-    public function getRole(): ?Role
+    public function getRole(): Role|null
     {
         return $this->role;
     }

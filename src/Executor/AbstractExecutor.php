@@ -12,7 +12,6 @@ use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 
-use function get_class;
 use function sprintf;
 
 /**
@@ -109,7 +108,7 @@ abstract class AbstractExecutor
                 $prefix = sprintf('[%d] ', $fixture->getOrder());
             }
 
-            $this->log('loading ' . $prefix . get_class($fixture));
+            $this->log('loading ' . $prefix . $fixture::class);
         }
 
         // additionally pass the instance of reference repository to shared fixtures

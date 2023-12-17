@@ -50,7 +50,7 @@ class ORMPurgerExcludeTest extends BaseTestCase
      *
      * @param string[] $list
      */
-    private function executeTestPurge(array $list, ?callable $filter): void
+    private function executeTestPurge(array $list, callable|null $filter): void
     {
         $em                 = $this->loadTestData();
         $excludedRepository = $em->getRepository(self::TEST_ENTITY_EXCLUDED);

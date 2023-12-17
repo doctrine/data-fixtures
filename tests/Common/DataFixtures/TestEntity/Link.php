@@ -21,7 +21,7 @@ class Link
 
     /** @ORM\Column(length=150) */
     #[ORM\Column(length: 150)]
-    private ?string $url = null;
+    private string|null $url = null;
 
     public function __construct(Uuid $id)
     {
@@ -33,7 +33,7 @@ class Link
         return $this->id;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(): string|null
     {
         return $this->url;
     }

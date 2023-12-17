@@ -13,7 +13,6 @@ use OutOfBoundsException;
 
 use function array_key_exists;
 use function array_keys;
-use function get_class;
 use function sprintf;
 
 /**
@@ -79,7 +78,7 @@ class ReferenceRepository
     {
         // In case Reference is not yet managed in UnitOfWork
         if (! $this->hasIdentifier($reference)) {
-            $class = $this->manager->getClassMetadata(get_class($reference));
+            $class = $this->manager->getClassMetadata($reference::class);
 
             return $class->getIdentifierValues($reference);
         }
@@ -107,7 +106,7 @@ class ReferenceRepository
      */
     public function setReference(string $name, object $reference)
     {
-        $class = $this->getRealClass(get_class($reference));
+        $class = $this->getRealClass($reference::class);
 
         $this->referencesByClass[$class][$name] = $reference;
 
@@ -136,7 +135,7 @@ class ReferenceRepository
      *
      * @return void
      */
-    public function setReferenceIdentity(string $name, $identity, ?string $class = null)
+    public function setReferenceIdentity(string $name, $identity, string|null $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -178,7 +177,7 @@ class ReferenceRepository
             ));
         }
 
-        $class = $this->getRealClass(get_class($object));
+        $class = $this->getRealClass($object::class);
         if (isset($this->referencesByClass[$class][$name])) {
             throw new BadMethodCallException(sprintf(
                 'Reference to "%s" for class "%s" already exists, use method setReference() in order to override it',
@@ -203,7 +202,7 @@ class ReferenceRepository
      *
      * @template T of object
      */
-    public function getReference(string $name, ?string $class = null)
+    public function getReference(string $name, string|null $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -232,7 +231,7 @@ class ReferenceRepository
             : ($this->identitiesByClass[$class][$name] ?? null);
 
         if ($class === null) { // For BC, to be removed in next major.
-            $class = $this->getRealClass(get_class($reference));
+            $class = $this->getRealClass($reference::class);
         }
 
         $meta = $this->manager->getClassMetadata($class);
@@ -254,7 +253,7 @@ class ReferenceRepository
      *
      * @return bool
      */
-    public function hasReference(string $name, ?string $class = null)
+    public function hasReference(string $name, string|null $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -278,7 +277,7 @@ class ReferenceRepository
      */
     public function getReferenceNames(object $reference)
     {
-        $class = $this->getRealClass(get_class($reference));
+        $class = $this->getRealClass($reference::class);
         if (! isset($this->referencesByClass[$class])) {
             return [];
         }
@@ -293,7 +292,7 @@ class ReferenceRepository
      *
      * @return bool
      */
-    public function hasIdentity(string $name, ?string $class = null)
+    public function hasIdentity(string $name, string|null $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(

@@ -86,7 +86,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @template T of object
      */
-    public function getReference(string $name, ?string $class = null)
+    public function getReference(string $name, string|null $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(
@@ -110,7 +110,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @return bool
      */
-    public function hasReference(string $name, ?string $class = null)
+    public function hasReference(string $name, string|null $class = null)
     {
         if ($class === null) {
             Deprecation::trigger(

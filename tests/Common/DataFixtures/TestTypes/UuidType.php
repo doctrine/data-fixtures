@@ -22,13 +22,13 @@ class UuidType extends Type
     }
 
     /** @param string|null $value */
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?Uuid
+    public function convertToPHPValue($value, AbstractPlatform $platform): Uuid|null
     {
         return $value === null ? null : new Uuid($value);
     }
 
     /** @param Uuid|null $value */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): string|null
     {
         return $value === null ? null : (string) $value;
     }

@@ -23,11 +23,11 @@ class Quoted
     #[ORM\Column]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private ?int $id = null;
+    private int|null $id = null;
 
     /** @ORM\Column(length=50, name="select") */
     #[ORM\Column(length: 50, name: '`SELECT`')]
-    private ?string $select = null;
+    private string|null $select = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=Quoted::class)
@@ -40,34 +40,34 @@ class Quoted
     #[ORM\JoinTable(name: '`INSERT`')]
     #[ORM\JoinColumn(name: '`SELECT`', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: '`UPDATE`', referencedColumnName: 'id')]
-    private ?Collection $selects = null;
+    private Collection|null $selects = null;
 
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(int|null $id): void
     {
         $this->id = $id;
     }
 
-    public function getSelect(): ?string
+    public function getSelect(): string|null
     {
         return $this->select;
     }
 
-    public function setSelect(?string $select): void
+    public function setSelect(string|null $select): void
     {
         $this->select = $select;
     }
 
-    public function getSelects(): ?Collection
+    public function getSelects(): Collection|null
     {
         return $this->selects;
     }
 
-    public function setSelects(?Collection $selects): void
+    public function setSelects(Collection|null $selects): void
     {
         $this->selects = $selects;
     }

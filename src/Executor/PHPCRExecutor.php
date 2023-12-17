@@ -16,17 +16,14 @@ use function method_exists;
  */
 class PHPCRExecutor extends AbstractExecutor
 {
-    private DocumentManagerInterface $dm;
-
     /**
      * @param DocumentManagerInterface $dm     manager instance used for persisting the fixtures
      * @param PHPCRPurger|null         $purger to remove the current data if append is false
      */
-    public function __construct(DocumentManagerInterface $dm, ?PHPCRPurger $purger = null)
+    public function __construct(private DocumentManagerInterface $dm, PHPCRPurger|null $purger = null)
     {
         parent::__construct($dm);
 
-        $this->dm = $dm;
         if ($purger === null) {
             return;
         }

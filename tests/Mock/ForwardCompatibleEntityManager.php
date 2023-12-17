@@ -11,8 +11,7 @@ use function method_exists;
 if (! method_exists(EntityManagerInterface::class, 'wrapInTransaction')) {
     interface ForwardCompatibleEntityManager extends EntityManagerInterface
     {
-        /** @return mixed */
-        public function wrapInTransaction(callable $func);
+        public function wrapInTransaction(callable $func): mixed;
     }
 } else {
     interface ForwardCompatibleEntityManager extends EntityManagerInterface
