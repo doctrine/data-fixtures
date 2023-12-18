@@ -199,6 +199,10 @@ class ReferenceRepositoryTest extends BaseTestCase
             ->with($role)
             ->willReturn($identitiesExpected);
 
+        $classMetadata->expects($this->once())
+            ->method('getName')
+            ->willReturn(Role::class);
+
         $em = $this->createMock(ForwardCompatibleEntityManager::class);
         $em->method('getUnitOfWork')
            ->willReturn($uow);
