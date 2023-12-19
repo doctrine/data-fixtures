@@ -25,18 +25,7 @@ class ProxyReferenceRepository extends ReferenceRepository
      */
     public function serialize()
     {
-        $unitOfWork       = $this->getManager()->getUnitOfWork();
-        $simpleReferences = [];
-
-        foreach ($this->getReferences() as $name => $reference) {
-            $className = $this->getRealClass($reference::class);
-
-            $simpleReferences[$name] = [$className, $this->getIdentifier($reference, $unitOfWork)];
-        }
-
         return serialize([
-            'references' => $simpleReferences, // For BC, remove in next major.
-            'identities' => $this->getIdentities(), // For BC, remove in next major.
             'identitiesByClass' => $this->getIdentitiesByClass(),
         ]);
     }
@@ -51,29 +40,6 @@ class ProxyReferenceRepository extends ReferenceRepository
     public function unserialize(string $serializedData)
     {
         $repositoryData = unserialize($serializedData);
-
-        // For BC, remove in next major.
-        if (! isset($repositoryData['identitiesByClass'])) {
-            $references = $repositoryData['references'];
-
-            foreach ($references as $name => $proxyReference) {
-                $this->setReference(
-                    $name,
-                    $this->getManager()->getReference(
-                        $proxyReference[0], // entity class name
-                        $proxyReference[1],  // identifiers
-                    ),
-                );
-            }
-
-            $identities = $repositoryData['identities'];
-
-            foreach ($identities as $name => $identity) {
-                $this->setReferenceIdentity($name, $identity);
-            }
-
-            return;
-        }
 
         foreach ($repositoryData['identitiesByClass'] as $className => $identities) {
             foreach ($identities as $name => $identity) {

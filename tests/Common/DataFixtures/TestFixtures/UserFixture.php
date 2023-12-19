@@ -6,6 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures\TestFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
 
 class UserFixture extends AbstractFixture
@@ -17,7 +18,7 @@ class UserFixture extends AbstractFixture
         $admin->setCode('007');
         $admin->setEmail('admin@example.com');
         $admin->setPassword('secret');
-        $role = $this->getReference('admin-role');
+        $role = $this->getReference('admin-role', Role::class);
         $admin->setRole($role);
 
         $manager->persist($admin);
