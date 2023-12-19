@@ -52,8 +52,7 @@ class ORMExecutorTest extends BaseTestCase
         $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
-            ->method('purge')
-            ->willReturn(null);
+            ->method('purge');
         $executor = new ORMExecutor($em, $purger);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
@@ -103,8 +102,7 @@ class ORMExecutorTest extends BaseTestCase
         $em     = $this->getMockSqliteEntityManager();
         $purger = $this->getMockPurger();
         $purger->expects($this->once())
-            ->method('purge')
-            ->willReturn(null);
+            ->method('purge');
         $executor = new MultipleTransactionORMExecutor($em, $purger);
         $fixture  = $this->getMockFixture();
         $fixture->expects($this->once())
