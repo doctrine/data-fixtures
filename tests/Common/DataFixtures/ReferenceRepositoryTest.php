@@ -15,9 +15,35 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Mock\ForwardCompatibleEntityManager;
 use OutOfBoundsException;
 
+use function sprintf;
+
 class ReferenceRepositoryTest extends BaseTestCase
 {
     public function testReferenceEntry(): void
+    {
+        $em = $this->getMockSqliteEntityManager();
+
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+
+        $meta = $em->getClassMetadata(Role::class);
+        $meta->getReflectionProperty('id')->setValue($role, 1);
+
+        $referenceRepo = new ReferenceRepository($em);
+        $this->assertSame($em, $referenceRepo->getManager());
+
+        $referenceRepo->addReference('test', $role);
+
+        $referencesByClass = $referenceRepo->getReferencesByClass();
+        $this->assertCount(1, $referencesByClass);
+        $this->assertArrayHasKey(Role::class, $referencesByClass);
+        $this->assertCount(1, $referencesByClass[Role::class]);
+        $this->assertArrayHasKey('test', $referencesByClass[Role::class]);
+        $this->assertInstanceOf(Role::class, $referencesByClass[Role::class]['test']);
+    }
+
+    /** @group legacy */
+    public function testLegacyReferenceEntry(): void
     {
         $em = $this->getMockSqliteEntityManager();
 
@@ -57,7 +83,7 @@ class ReferenceRepositoryTest extends BaseTestCase
 
         $referenceRepository->expects($this->once())
             ->method('getReferenceNames')
-            ->will($this->returnValue(['admin-role']));
+            ->willReturn(['admin-role']);
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
@@ -84,13 +110,13 @@ class ReferenceRepositoryTest extends BaseTestCase
 
         $roleFixture->load($em);
         // first test against managed state
-        $ref = $referenceRepository->getReference('admin-role');
+        $ref = $referenceRepository->getReference('admin-role', Role::class);
 
         $this->assertNotInstanceOf(Proxy::class, $ref);
 
         // now test reference reconstruction from identity
         $em->clear();
-        $ref = $referenceRepository->getReference('admin-role');
+        $ref = $referenceRepository->getReference('admin-role', Role::class);
 
         $this->assertInstanceOf(Proxy::class, $ref);
     }
@@ -112,11 +138,22 @@ class ReferenceRepositoryTest extends BaseTestCase
         $em->flush();
         $em->clear();
 
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin'));
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin', Role::class));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate', Role::class));
     }
 
     public function testUndefinedReference(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage(sprintf('Reference to "foo" for class "%s" does not exist', Role::class));
+
+        $referenceRepository->getReference('foo', Role::class);
+    }
+
+    /** @group legacy */
+    public function testLegacyUndefinedReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
@@ -146,12 +183,24 @@ class ReferenceRepositoryTest extends BaseTestCase
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage('Reference to "missing_reference" does not exist');
+        $this->expectExceptionMessage(sprintf('Reference to "missing_reference" for class "%s" does not exist', Role::class));
 
-        $referenceRepository->getReference('missing_reference');
+        $referenceRepository->getReference('missing_reference', Role::class);
     }
 
     public function testHasIdentityCheck(): void
+    {
+        $role                = new Role();
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+        $referenceRepository->setReferenceIdentity('entity', 1, Role::class);
+
+        $this->assertTrue($referenceRepository->hasIdentity('entity', Role::class));
+        $this->assertFalse($referenceRepository->hasIdentity('invalid_entity', Role::class));
+        $this->assertEquals(['entity' => 1], $referenceRepository->getIdentitiesByClass()[Role::class] ?? []);
+    }
+
+    /** @group legacy */
+    public function testLegacyHasIdentityCheck(): void
     {
         $role                = new Role();
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
@@ -177,7 +226,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $em->flush();
 
         $referenceRepository->setReference('entity', $role);
-        $identities = $referenceRepository->getIdentities();
+        $identities = $referenceRepository->getIdentitiesByClass()[Role::class] ?? [];
         $this->assertCount(1, $identities);
         $this->assertArrayHasKey('entity', $identities);
     }
@@ -198,6 +247,9 @@ class ReferenceRepositoryTest extends BaseTestCase
             ->method('getIdentifierValues')
             ->with($role)
             ->willReturn($identitiesExpected);
+        $classMetadata->expects($this->once())
+            ->method('getName')
+            ->willReturn(Role::class);
 
         $em = $this->createMock(ForwardCompatibleEntityManager::class);
         $em->method('getUnitOfWork')
@@ -208,7 +260,7 @@ class ReferenceRepositoryTest extends BaseTestCase
 
         $referenceRepository = new ReferenceRepository($em);
         $referenceRepository->setReference('entity', $role);
-        $identities = $referenceRepository->getIdentities();
+        $identities = $referenceRepository->getIdentitiesByClass()[Role::class] ?? [];
 
         $this->assertEquals($identitiesExpected, $identities['entity']);
     }

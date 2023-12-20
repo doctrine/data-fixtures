@@ -57,6 +57,37 @@ class ORMExecutorSharedFixtureTest extends BaseTestCase
         $executor->execute([$roleFixture, $userFixture], true);
 
         $referenceRepository = $executor->getReferenceRepository();
+        $references          = $referenceRepository->getReferencesByClass();
+
+        $this->assertCount(2, $references);
+        $roleReference = $referenceRepository->getReference('admin-role', Role::class);
+        $this->assertInstanceOf(Role::class, $roleReference);
+        $this->assertEquals('admin', $roleReference->getName());
+
+        $userReference = $referenceRepository->getReference('admin', User::class);
+        $this->assertInstanceOf(User::class, $userReference);
+        $this->assertEquals('admin@example.com', $userReference->getEmail());
+    }
+
+    /** @group legacy */
+    public function testLegacySharedFixtures(): void
+    {
+        $em         = $this->getMockSqliteEntityManager();
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema([]);
+        $schemaTool->createSchema([
+            $em->getClassMetadata(self::TEST_ENTITY_ROLE),
+            $em->getClassMetadata(self::TEST_ENTITY_USER),
+        ]);
+
+        $purger   = new ORMPurger();
+        $executor = new ORMExecutor($em, $purger);
+
+        $userFixture = new TestFixtures\UserFixture();
+        $roleFixture = new TestFixtures\RoleFixture();
+        $executor->execute([$roleFixture, $userFixture], true);
+
+        $referenceRepository = $executor->getReferenceRepository();
         $references          = $referenceRepository->getReferences();
 
         $this->assertCount(2, $references);

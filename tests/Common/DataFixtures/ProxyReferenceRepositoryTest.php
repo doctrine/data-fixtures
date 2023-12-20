@@ -44,6 +44,27 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $referenceRepo = new ProxyReferenceRepository($em);
         $referenceRepo->addReference('test', $role);
 
+        $referencesByClass = $referenceRepo->getReferencesByClass();
+
+        $this->assertCount(1, $referencesByClass);
+        $this->assertArrayHasKey(Role::class, $referencesByClass);
+        $this->assertCount(1, $referencesByClass[Role::class]);
+        $this->assertArrayHasKey('test', $referencesByClass[Role::class]);
+        $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $referencesByClass[Role::class]['test']);
+    }
+
+    /** @group legacy */
+    public function testLegacyReferenceEntry(): void
+    {
+        $em   = $this->getMockSqliteEntityManager();
+        $role = new TestEntity\Role();
+        $role->setName('admin');
+        $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
+        $meta->getReflectionProperty('id')->setValue($role, 1);
+
+        $referenceRepo = new ProxyReferenceRepository($em);
+        $referenceRepo->addReference('test', $role);
+
         $references = $referenceRepo->getReferences();
 
         $this->assertCount(1, $references);
@@ -96,7 +117,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
         $roleFixture->load($em);
         // first test against managed state
-        $ref = $referenceRepository->getReference('admin-role');
+        $ref = $referenceRepository->getReference('admin-role', Role::class);
 
         $this->assertNotInstanceOf(Proxy::class, $ref);
 
@@ -106,7 +127,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $proxyReferenceRepository = new ProxyReferenceRepository($em);
         $proxyReferenceRepository->unserialize($serializedData);
 
-        $ref = $proxyReferenceRepository->getReference('admin-role');
+        $ref = $proxyReferenceRepository->getReference('admin-role', Role::class);
 
         // before clearing, the reference is not yet a proxy
         $this->assertNotInstanceOf(Proxy::class, $ref);
@@ -114,7 +135,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
         // now test reference reconstruction from identity
         $em->clear();
-        $ref = $referenceRepository->getReference('admin-role');
+        $ref = $referenceRepository->getReference('admin-role', Role::class);
 
         $this->assertInstanceOf(Proxy::class, $ref);
 
@@ -124,7 +145,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $proxyReferenceRepository = new ProxyReferenceRepository($em);
         $proxyReferenceRepository->unserialize($serializedData);
 
-        $ref = $proxyReferenceRepository->getReference('admin-role');
+        $ref = $proxyReferenceRepository->getReference('admin-role', Role::class);
 
         $this->assertInstanceOf(Proxy::class, $ref);
     }
@@ -154,7 +175,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
         $this->assertInstanceOf(
             'Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid',
-            $proxyReferenceRepository->getReference('home-link')->getId(),
+            $proxyReferenceRepository->getReference('home-link', Link::class)->getId(),
         );
     }
 
@@ -175,7 +196,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $em->flush();
         $em->clear();
 
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin'));
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate'));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin', Role::class));
+        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate', Role::class));
     }
 }
