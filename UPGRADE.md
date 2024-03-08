@@ -10,6 +10,17 @@ awareness about deprecated code.
 
 You need PHP 8.1 or newer to use this library. 
 
+For the following method, the `class` param is now mandatory:
+- `AbstractFixture::getReference`
+- `AbstractFixture::hasReference`
+- `ReferenceRepository::setReferenceIdentity`
+- `ReferenceRepository::hasIdentity`
+- `ReferenceRepository::getReference`
+- `ReferenceRepository::setReference`
+
+The following method was removed:
+- `ReferenceRepository::getReferences`
+
 # Upgrade to 1.8
 
 Executor and Purger classes are final, they cannot be extended.
