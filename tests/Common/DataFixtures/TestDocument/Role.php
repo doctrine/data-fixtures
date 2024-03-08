@@ -6,16 +6,14 @@ namespace Doctrine\Tests\Common\DataFixtures\TestDocument;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-/** @ODM\Document */
+#[ODM\Document]
 class Role
 {
-    /** @ODM\Id */
+    #[ODM\Id]
     private string|null $id = null;
 
-    /**
-     * @ODM\Field(type="string")
-     * @ODM\Index
-     */
+    #[ODM\Field(type: 'string')]
+    #[ODM\Index]
     private string|null $name = null;
 
     public function getId(): string|null

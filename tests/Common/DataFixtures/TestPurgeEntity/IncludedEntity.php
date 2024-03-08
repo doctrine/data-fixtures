@@ -6,14 +6,9 @@ namespace Doctrine\Tests\Common\DataFixtures\TestPurgeEntity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity */
 #[ORM\Entity]
 class IncludedEntity
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     */
     #[ORM\Column]
     #[ORM\Id]
     private int|null $id = null;

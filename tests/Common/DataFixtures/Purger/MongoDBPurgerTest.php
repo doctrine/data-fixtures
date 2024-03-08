@@ -7,7 +7,7 @@ namespace Doctrine\Tests\Common\DataFixtures\Purger;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
+use Doctrine\ODM\MongoDB\Mapping\Driver\AttributeDriver;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Doctrine\Tests\Common\DataFixtures\TestDocument\Role;
 use MongoCollection;
@@ -24,18 +24,18 @@ class MongoDBPurgerTest extends BaseTestCase
 
     private function getDocumentManager(): DocumentManager
     {
-        if (! class_exists('Doctrine\ODM\MongoDB\DocumentManager')) {
+        if (! class_exists(DocumentManager::class)) {
             $this->markTestSkipped('Missing doctrine/mongodb-odm');
         }
 
-        $root = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+        $root = dirname(__DIR__, 5);
 
         $config = new Configuration();
         $config->setProxyDir($root . '/generate/proxies');
         $config->setProxyNamespace('Proxies');
         $config->setHydratorDir($root . '/generate/hydrators');
         $config->setHydratorNamespace('Hydrators');
-        $config->setMetadataDriverImpl(AnnotationDriver::create(dirname(__DIR__) . '/TestDocument'));
+        $config->setMetadataDriverImpl(AttributeDriver::create(dirname(__DIR__) . '/TestDocument'));
 
         $dm = DocumentManager::create(null, $config);
 
@@ -71,8 +71,7 @@ class MongoDBPurgerTest extends BaseTestCase
         $this->assertIndexCount(2, $collection);
     }
 
-    /** @param Collection|MongoCollection $collection */
-    private function assertIndexCount(int $expectedCount, object $collection): void
+    private function assertIndexCount(int $expectedCount, Collection|MongoCollection $collection): void
     {
         if ($collection instanceof Collection) {
             $indexes = $collection->listIndexes();
