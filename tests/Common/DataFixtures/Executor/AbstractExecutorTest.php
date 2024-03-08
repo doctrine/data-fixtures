@@ -48,44 +48,6 @@ final class AbstractExecutorTest extends TestCase
         self::assertTrue($logger->hasDebugThatContains('purging database'));
     }
 
-    public function testDeprecatedLoggerUsage(): void
-    {
-        $executor = $this->bootstrapExecutor();
-        $logs     = [];
-
-        $this->expectDeprecationWithIdentifier('https://github.com/doctrine/data-fixtures/pull/462');
-
-        $executor->setLogger(static function (string $message) use (&$logs): void {
-            $logs[] = $message;
-        });
-
-        $executor->log('Something happened.');
-        $executor->log('Something else happened.');
-        $executor->log('And we\'re done.');
-
-        self::assertSame([
-            'Something happened.',
-            'Something else happened.',
-            'And we\'re done.',
-        ], $logs);
-    }
-
-    public function testLogToLegacyClosure(): void
-    {
-        $executor = $this->bootstrapExecutor();
-        $logs     = [];
-
-        $this->expectDeprecationWithIdentifier('https://github.com/doctrine/data-fixtures/pull/462');
-
-        $executor->setLogger(static function (string $message) use (&$logs): void {
-            $logs[] = $message;
-        });
-
-        $executor->execute([]);
-
-        self::assertSame(['Executed!'], $logs);
-    }
-
     private function bootstrapExecutor(): AbstractExecutor
     {
         return new class ($this->createStub(ObjectManager::class)) extends AbstractExecutor {

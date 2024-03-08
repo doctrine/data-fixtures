@@ -10,6 +10,13 @@ awareness about deprecated code.
 
 You need PHP 8.1 or newer to use this library. 
 
+## Loggers have to implement the PSR-3 contracts
+
+* Passing a callable to `AbstractExecutor::setLogger()` is not possible anymore, pass a PSR-3 logger instead.
+* The method `AbstractExecutor::log()` has been removed without replacement.
+
+## Specifying the class is mandatory when loading references
+
 For the following method, the `class` param is now mandatory:
 - `AbstractFixture::getReference`
 - `AbstractFixture::hasReference`
