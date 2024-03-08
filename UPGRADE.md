@@ -23,6 +23,13 @@ The following method was removed:
 
 # Upgrade to 1.8
 
+## Deprecated closure loggers in favor of PSR-3
+
+* Passing a callable to `AbstractExecutor::setLogger()` is deprecated, pass a PSR-3 logger instead.
+* The method `AbstractExecutor::log()` is deprecated without replacement.
+
+## Finalized classes
+
 Executor and Purger classes are final, they cannot be extended.
 `AbstractExecutor` is internal. It cannot be extended or used as typehint.
 
