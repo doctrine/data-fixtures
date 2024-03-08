@@ -62,7 +62,7 @@ class ReferenceRepositoryTest extends BaseTestCase
 
         $referenceRepository->expects($this->once())
             ->method('getReferenceNames')
-            ->will($this->returnValue(['admin-role']));
+            ->willReturn(['admin-role']);
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
@@ -122,6 +122,17 @@ class ReferenceRepositoryTest extends BaseTestCase
     }
 
     public function testUndefinedReference(): void
+    {
+        $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
+
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage(sprintf('Reference to "foo" for class "%s" does not exist', Role::class));
+
+        $referenceRepository->getReference('foo', Role::class);
+    }
+
+    /** @group legacy */
+    public function testLegacyUndefinedReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 

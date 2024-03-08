@@ -4,10 +4,14 @@ parameters:
     paths:
         - src
         - tests
+    excludePaths:
+        - tests/Mock/ForwardCompatibleEntityManager.php
 
     ignoreErrors:
-        # ORM 3 forward compatibility
-        - '~^Parameter \$assoc of method Doctrine\\Common\\DataFixtures\\Purger\\ORMPurger\:\:getJoinTableName\(\) has invalid type Doctrine\\ORM\\Mapping\\ManyToManyOwningSideMapping\.$~'
+        # ORM 2 backwards compatibility
+        -
+            message: '#^Call to an undefined static method Doctrine\\ORM\\ORMSetup\:\:createAnnotationMetadataConfiguration\(\)\.$#'
+            path: tests/Common/DataFixtures/BaseTestCase.php
 
 includes:
     - phpstan-baseline.neon
