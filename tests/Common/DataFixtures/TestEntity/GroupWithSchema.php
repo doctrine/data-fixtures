@@ -6,26 +6,14 @@ namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="group",schema="test_schema")
- */
 #[ORM\Entity]
 #[ORM\Table(name: 'group', schema: 'test_schema')]
 class GroupWithSchema
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     */
     #[ORM\Column]
     #[ORM\Id]
     private int|null $id = null;
 
-    /**
-     * @ORM\Column(length=32)
-     * @ORM\Id
-     */
     #[ORM\Column(length: 32)]
     #[ORM\Id]
     private string|null $code = null;

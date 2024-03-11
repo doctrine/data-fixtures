@@ -10,62 +10,35 @@ use Doctrine\ORM\Mapping as ORM;
 
 use function md5;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="user",schema="test_schema")
- */
 #[ORM\Entity]
 #[ORM\Table(name: 'user', schema: 'test_schema')]
 class UserWithSchema
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     */
     #[ORM\Column]
     #[ORM\Id]
     private int|null $id = null;
 
-    /**
-     * @ORM\Column(length=32)
-     * @ORM\Id
-     */
     #[ORM\Column(length: 32)]
     #[ORM\Id]
     private string|null $code = null;
 
-    /** @ORM\Column(length=32) */
     #[ORM\Column(length: 32)]
     private string|null $password = null;
 
-    /** @ORM\Column(length=255) */
     #[ORM\Column(length: 255)]
     private string|null $email = null;
 
-    /** @ORM\ManyToOne(targetEntity=Role::class, cascade={"persist"}) */
     #[ORM\ManyToOne(cascade: ['persist'])]
     private Role|null $role = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=UserWithSchema::class, inversedBy="authors")
-     * @ORM\JoinTable(name="author_reader", schema="readers",
-     *      joinColumns={@ORM\JoinColumn(name="author_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="reader_id", referencedColumnName="id")}
-     * )
-     *
-     * @var Collection<int, self>
-     */
+    /** @var Collection<int, self> */
     #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'authors')]
     #[ORM\JoinTable(name: 'author_reader', schema: 'readers')]
     #[ORM\JoinColumn(name: 'author_id', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: 'reader_id', referencedColumnName: 'id')]
     private Collection $readers;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=UserWithSchema::class, mappedBy="readers")
-     *
-     * @var Collection<int, self>
-     */
+    /** @var Collection<int, self> */
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'readers')]
     private Collection $authors;
 

@@ -6,21 +6,14 @@ namespace Doctrine\Tests\Common\DataFixtures\TestEntity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\Entity */
 #[ORM\Entity]
 class Role
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
     #[ORM\Column]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int|null $id = null;
 
-    /** @ORM\Column(length=50) */
     #[ORM\Column(length: 50)]
     private string|null $name = null;
 

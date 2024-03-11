@@ -7,11 +7,5 @@ parameters:
     excludePaths:
         - tests/Mock/ForwardCompatibleEntityManager.php
 
-    ignoreErrors:
-        # ORM 2 backwards compatibility
-        -
-            message: '#^Call to an undefined static method Doctrine\\ORM\\ORMSetup\:\:createAnnotationMetadataConfiguration\(\)\.$#'
-            path: tests/Common/DataFixtures/BaseTestCase.php
-
 includes:
     - phpstan-baseline.neon
