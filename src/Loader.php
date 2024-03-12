@@ -130,7 +130,7 @@ class Loader
     /**
      * Add a fixture object instance to the loader.
      */
-    public function addFixture(FixtureInterface $fixture)
+    public function addFixture(FixtureInterface $fixture): void
     {
         $fixtureClass = $fixture::class;
 

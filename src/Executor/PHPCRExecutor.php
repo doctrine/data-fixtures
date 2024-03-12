@@ -42,7 +42,7 @@ class PHPCRExecutor extends AbstractExecutor
     {
         $that = $this;
 
-        $function = static function ($dm) use ($append, $that, $fixtures) {
+        $function = static function ($dm) use ($append, $that, $fixtures): void {
             if ($append === false) {
                 $that->purge();
             }

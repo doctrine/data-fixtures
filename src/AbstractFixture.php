@@ -22,10 +22,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      */
     protected $referenceRepository;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {
         $this->referenceRepository = $referenceRepository;
     }

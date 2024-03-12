@@ -56,11 +56,6 @@
         <exclude-pattern>src/*</exclude-pattern>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint">
-        <!-- Adding return types is a BC break in most cases. -->
-        <exclude-pattern>src/*</exclude-pattern>
-    </rule>
-
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">
         <exclude-pattern>tests/*</exclude-pattern>
     </rule>

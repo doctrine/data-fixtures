@@ -53,8 +53,6 @@ class ReferenceRepository
      *
      * @param object $reference Reference object
      * @param object $uow       Unit of work
-     *
-     * @return array
      */
     protected function getIdentifier(object $reference, object $uow): array
     {

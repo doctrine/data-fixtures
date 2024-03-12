@@ -19,7 +19,7 @@ class ORMExecutor extends AbstractExecutor
     public function execute(array $fixtures, bool $append = false): void
     {
         $executor = $this;
-        $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append) {
+        $this->em->wrapInTransaction(static function (EntityManagerInterface $em) use ($executor, $fixtures, $append): void {
             if ($append === false) {
                 $executor->purge();
             }
