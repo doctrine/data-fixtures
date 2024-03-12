@@ -20,7 +20,7 @@ use function in_array;
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
  */
-final class ORMPurger implements PurgerInterface, ORMPurgerInterface
+final class ORMPurger implements ORMPurgerInterface
 {
     public const PURGE_MODE_DELETE   = 1;
     public const PURGE_MODE_TRUNCATE = 2;
