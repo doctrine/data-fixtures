@@ -9,7 +9,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
  */
-final class MongoDBPurger implements PurgerInterface
+final class MongoDBPurger implements MongoDBPurgerInterface
 {
     /**
      * Construct new purger instance.

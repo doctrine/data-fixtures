@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Event\Listener\MongoDBReferenceListener;
-use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
+use Doctrine\Common\DataFixtures\Purger\MongoDBPurgerInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
@@ -21,7 +21,7 @@ final class MongoDBExecutor extends AbstractExecutor
      *
      * @param DocumentManager $dm DocumentManager instance used for persistence.
      */
-    public function __construct(private DocumentManager $dm, MongoDBPurger|null $purger = null)
+    public function __construct(private DocumentManager $dm, MongoDBPurgerInterface|null $purger = null)
     {
         if ($purger !== null) {
             $this->purger = $purger;
