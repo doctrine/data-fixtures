@@ -60,6 +60,7 @@ abstract class AbstractExecutor
         return $this->referenceRepository;
     }
 
+    /** @return void */
     public function setReferenceRepository(ReferenceRepository $referenceRepository)
     {
         $this->referenceRepository = $referenceRepository;
