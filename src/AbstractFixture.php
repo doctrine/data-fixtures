@@ -22,10 +22,7 @@ abstract class AbstractFixture implements SharedFixtureInterface
      */
     protected $referenceRepository;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {
         $this->referenceRepository = $referenceRepository;
     }
@@ -45,10 +42,8 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * @see ReferenceRepository::setReference()
      *
      * @param object $object - managed object
-     *
-     * @return void
      */
-    public function setReference(string $name, object $object)
+    public function setReference(string $name, object $object): void
     {
         $this->getReferenceRepository()->setReference($name, $object);
     }
@@ -63,11 +58,9 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @param object $object - managed object
      *
-     * @return void
-     *
      * @throws BadMethodCallException - if repository already has a reference by $name.
      */
-    public function addReference(string $name, object $object)
+    public function addReference(string $name, object $object): void
     {
         $this->getReferenceRepository()->addReference($name, $object);
     }
@@ -80,12 +73,11 @@ abstract class AbstractFixture implements SharedFixtureInterface
      *
      * @psalm-param class-string<T> $class
      *
-     * @return object
      * @psalm-return T
      *
      * @template T of object
      */
-    public function getReference(string $name, string $class)
+    public function getReference(string $name, string $class): object
     {
         return $this->getReferenceRepository()->getReference($name, $class);
     }
@@ -97,10 +89,8 @@ abstract class AbstractFixture implements SharedFixtureInterface
      * @see ReferenceRepository::hasReference()
      *
      * @psalm-param class-string $class
-     *
-     * @return bool
      */
-    public function hasReference(string $name, string $class)
+    public function hasReference(string $name, string $class): bool
     {
         return $this->getReferenceRepository()->hasReference($name, $class);
     }

@@ -11,8 +11,6 @@ interface PurgerInterface
 {
     /**
      * Purge the data from the database for the given EntityManager.
-     *
-     * @return void
      */
-    public function purge();
+    public function purge(): void;
 }

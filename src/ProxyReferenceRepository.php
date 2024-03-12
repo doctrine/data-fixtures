@@ -20,10 +20,8 @@ class ProxyReferenceRepository extends ReferenceRepository
 {
     /**
      * Serialize reference repository
-     *
-     * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         return serialize([
             'identitiesByClass' => $this->getIdentitiesByClass(),
@@ -34,10 +32,8 @@ class ProxyReferenceRepository extends ReferenceRepository
      * Unserialize reference repository
      *
      * @param string $serializedData Serialized data
-     *
-     * @return void
      */
-    public function unserialize(string $serializedData)
+    public function unserialize(string $serializedData): void
     {
         $repositoryData = unserialize($serializedData);
 
@@ -60,10 +56,8 @@ class ProxyReferenceRepository extends ReferenceRepository
      * Load data fixture reference repository
      *
      * @param string $baseCacheName Base cache name
-     *
-     * @return bool
      */
-    public function load(string $baseCacheName)
+    public function load(string $baseCacheName): bool
     {
         $filename = $baseCacheName . '.ser';
 
@@ -86,10 +80,8 @@ class ProxyReferenceRepository extends ReferenceRepository
      * Save data fixture reference repository
      *
      * @param string $baseCacheName Base cache name
-     *
-     * @return void
      */
-    public function save(string $baseCacheName)
+    public function save(string $baseCacheName): void
     {
         $serializedData = $this->serialize();
 

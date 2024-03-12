@@ -32,18 +32,17 @@ class PHPCRExecutor extends AbstractExecutor
         $this->setPurger($purger);
     }
 
-    /** @return DocumentManagerInterface */
-    public function getObjectManager()
+    public function getObjectManager(): DocumentManagerInterface
     {
         return $this->dm;
     }
 
     /** @inheritDoc */
-    public function execute(array $fixtures, bool $append = false)
+    public function execute(array $fixtures, bool $append = false): void
     {
         $that = $this;
 
-        $function = static function ($dm) use ($append, $that, $fixtures) {
+        $function = static function ($dm) use ($append, $that, $fixtures): void {
             if ($append === false) {
                 $that->purge();
             }

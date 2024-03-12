@@ -43,16 +43,13 @@ trait ORMExecutorCommon
 
     /**
      * Retrieve the EntityManagerInterface instance this executor instance is using.
-     *
-     * @return EntityManagerInterface
      */
-    public function getObjectManager()
+    public function getObjectManager(): EntityManagerInterface
     {
         return $this->originalManager;
     }
 
-    /** @inheritDoc */
-    public function setReferenceRepository(ReferenceRepository $referenceRepository)
+    public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {
         $this->em->getEventManager()->removeEventListener(
             $this->listener->getSubscribedEvents(),

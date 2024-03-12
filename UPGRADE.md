@@ -8,7 +8,12 @@ awareness about deprecated code.
 
 # Upgrade to 2.0
 
-You need PHP 8.1 or newer to use this library. 
+You need PHP 8.1 or newer to use this library.
+
+## BC BREAK: Add return types to all the methods
+
+All return types defined in phpdoc `@return` are now defined in the method signature,
+they must be added to your code if you extend the classes or implement the interfaces.
 
 ## Loggers have to implement the PSR-3 contracts
 

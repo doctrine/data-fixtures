@@ -53,10 +53,8 @@ class ReferenceRepository
      *
      * @param object $reference Reference object
      * @param object $uow       Unit of work
-     *
-     * @return array
      */
-    protected function getIdentifier(object $reference, object $uow)
+    protected function getIdentifier(object $reference, object $uow): array
     {
         // In case Reference is not yet managed in UnitOfWork
         if (! $this->hasIdentifier($reference)) {
@@ -83,10 +81,8 @@ class ReferenceRepository
      * Set the reference entry identified by $name
      * and referenced to $reference. If $name
      * already is set, it overrides it
-     *
-     * @return void
      */
-    public function setReference(string $name, object $reference)
+    public function setReference(string $name, object $reference): void
     {
         $class = $this->getRealClass($reference::class);
 
@@ -108,10 +104,8 @@ class ReferenceRepository
      *
      * @param mixed        $identity
      * @param class-string $class
-     *
-     * @return void
      */
-    public function setReferenceIdentity(string $name, $identity, string $class)
+    public function setReferenceIdentity(string $name, $identity, string $class): void
     {
         $this->identitiesByClass[$class][$name] = $identity;
     }
@@ -127,11 +121,9 @@ class ReferenceRepository
      *
      * @param object $object - managed object
      *
-     * @return void
-     *
      * @throws BadMethodCallException - if repository already has a reference by $name.
      */
-    public function addReference(string $name, object $object)
+    public function addReference(string $name, object $object): void
     {
         $class = $this->getRealClass($object::class);
         if (isset($this->referencesByClass[$class][$name])) {
@@ -151,14 +143,13 @@ class ReferenceRepository
      *
      * @psalm-param class-string<T> $class
      *
-     * @return object
      * @psalm-return T
      *
      * @throws OutOfBoundsException - if repository does not exist.
      *
      * @template T of object
      */
-    public function getReference(string $name, string $class)
+    public function getReference(string $name, string $class): object
     {
         if (! $this->hasReference($name, $class)) {
             throw new OutOfBoundsException(sprintf('Reference to "%s" for class "%s" does not exist', $name, $class));
@@ -183,10 +174,8 @@ class ReferenceRepository
      * named by $name
      *
      * @psalm-param class-string $class
-     *
-     * @return bool
      */
-    public function hasReference(string $name, string $class)
+    public function hasReference(string $name, string $class): bool
     {
         return isset($this->referencesByClass[$class][$name]);
     }
@@ -197,7 +186,7 @@ class ReferenceRepository
      *
      * @return array<string>
      */
-    public function getReferenceNames(object $reference)
+    public function getReferenceNames(object $reference): array
     {
         $class = $this->getRealClass($reference::class);
         if (! isset($this->referencesByClass[$class])) {
@@ -211,10 +200,8 @@ class ReferenceRepository
      * Checks if reference has identity stored
      *
      * @param class-string $class
-     *
-     * @return bool
      */
-    public function hasIdentity(string $name, string $class)
+    public function hasIdentity(string $name, string $class): bool
     {
         return array_key_exists($class, $this->identitiesByClass) && array_key_exists($name, $this->identitiesByClass[$class]);
     }
@@ -241,10 +228,8 @@ class ReferenceRepository
 
     /**
      * Get object manager
-     *
-     * @return ObjectManager
      */
-    public function getManager()
+    public function getManager(): ObjectManager
     {
         return $this->manager;
     }
@@ -253,20 +238,16 @@ class ReferenceRepository
      * Get real class name of a reference that could be a proxy
      *
      * @param string $className Class name of reference object
-     *
-     * @return string
      */
-    protected function getRealClass(string $className)
+    protected function getRealClass(string $className): string
     {
         return $this->manager->getClassMetadata($className)->getName();
     }
 
     /**
      * Checks if object has identifier already in unit of work.
-     *
-     * @return bool
      */
-    private function hasIdentifier(object $reference)
+    private function hasIdentifier(object $reference): bool
     {
         // in case if reference is set after flush, store its identity
         $uow = $this->manager->getUnitOfWork();

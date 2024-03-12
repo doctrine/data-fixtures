@@ -15,5 +15,5 @@ interface DependentFixtureInterface
      *
      * @psalm-return array<class-string<FixtureInterface>>
      */
-    public function getDependencies();
+    public function getDependencies(): array;
 }
