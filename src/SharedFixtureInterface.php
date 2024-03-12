@@ -12,5 +12,6 @@ namespace Doctrine\Common\DataFixtures;
  */
 interface SharedFixtureInterface extends FixtureInterface
 {
+    /** @return void */
     public function setReferenceRepository(ReferenceRepository $referenceRepository);
 }
