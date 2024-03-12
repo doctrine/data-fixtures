@@ -6,7 +6,7 @@ namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Executor\PHPCRExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
+use Doctrine\Common\DataFixtures\Purger\PHPCRPurgerInterface;
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Exception;
@@ -119,10 +119,10 @@ class PHPCRExecutorTest extends BaseTestCase
         }
     }
 
-    /** @return PHPCRPurger&MockObject */
-    private function getPurger(): PHPCRPurger
+    /** @return PHPCRPurgerInterface&MockObject */
+    private function getPurger(): PHPCRPurgerInterface
     {
-        return $this->createMock(PHPCRPurger::class);
+        return $this->createMock(PHPCRPurgerInterface::class);
     }
 
     /** @return DocumentManager&MockObject */

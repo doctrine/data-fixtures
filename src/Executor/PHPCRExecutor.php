@@ -11,10 +11,8 @@ use function method_exists;
 
 /**
  * Class responsible for executing data fixtures.
- *
- * @final since 1.8.0
  */
-class PHPCRExecutor extends AbstractExecutor
+final class PHPCRExecutor extends AbstractExecutor
 {
     /**
      * @param DocumentManagerInterface $dm     manager instance used for persisting the fixtures
