@@ -211,11 +211,6 @@ parameters:
 			path: src/ReferenceRepository.php
 
 		-
-			message: "#^Method Doctrine\\\\Common\\\\DataFixtures\\\\ReferenceRepository\\:\\:getIdentifier\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/ReferenceRepository.php
-
-		-
 			message: "#^Parameter \\#1 \\$className of method Doctrine\\\\Persistence\\\\ObjectManager\\:\\:getClassMetadata\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
 			count: 2
 			path: src/ReferenceRepository.php
