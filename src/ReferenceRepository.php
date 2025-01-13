@@ -192,7 +192,7 @@ class ReferenceRepository
             return [];
         }
 
-        return array_keys($this->referencesByClass[$class], $reference, true);
+        return array_map('strval', array_keys($this->referencesByClass[$class], $reference, true));
     }
 
     /**
