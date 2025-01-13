@@ -245,7 +245,7 @@ class ReferenceRepositoryTest extends BaseTestCase
 
     public function testGivenAReferenceWithNameWithIntegerValueWhenGetReferenceNamesOfEntitiesThenReturnNamesInStringType(): void
     {
-        $em = $this->getMockSqliteEntityManager();
+        $em                  = $this->getMockSqliteEntityManager();
         $referenceRepository = new ReferenceRepository($em);
 
         $schemaTool = new SchemaTool($em);
@@ -257,7 +257,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $em->persist($role);
         $em->flush();
 
-        $name = (string)$role->getId();
+        $name = (string) $role->getId();
         $referenceRepository->setReference($name, $role);
         $names = $referenceRepository->getReferenceNames($role);
         $this->assertCount(1, $names);
