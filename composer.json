@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "doctrine/persistence": "^3.1",
+        "doctrine/persistence": "^3.1 || ^4.0",
         "psr/log": "^1.1 || ^2 || ^3"
     },
     "conflict": {
