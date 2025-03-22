@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping\ManyToManyOwningSideMapping;
 
 use function array_map;
 use function array_reverse;
-use function assert;
 use function count;
 use function in_array;
 
@@ -187,8 +186,7 @@ final class ORMPurger implements ORMPurgerInterface
                     continue;
                 }
 
-                $targetClass = $em->getClassMetadata($assoc['targetEntity']);
-                assert($targetClass instanceof ClassMetadata);
+                $targetClass     = $em->getClassMetadata($assoc['targetEntity']);
                 $targetClassName = $targetClass->getName();
 
                 if (! $sorter->hasNode($targetClassName)) {
