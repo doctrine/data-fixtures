@@ -268,4 +268,25 @@ class ReferenceRepositoryTest extends BaseTestCase
 
         $this->assertEquals($identitiesExpected, $identities['entity']);
     }
+
+    public function testGivenAReferenceWithNameWithIntegerValueWhenGetReferenceNamesOfEntitiesThenReturnNamesInStringType(): void
+    {
+        $em                  = $this->getMockSqliteEntityManager();
+        $referenceRepository = new ReferenceRepository($em);
+
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema([]);
+        $schemaTool->createSchema([$em->getClassMetadata(Role::class)]);
+
+        $role = new Role();
+        $role->setName('role_name');
+        $em->persist($role);
+        $em->flush();
+
+        $name = (string) $role->getId();
+        $referenceRepository->setReference($name, $role);
+        $names = $referenceRepository->getReferenceNames($role);
+        $this->assertCount(1, $names);
+        $this->assertSame('1', $names[0]);
+    }
 }
