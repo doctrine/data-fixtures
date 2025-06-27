@@ -235,18 +235,6 @@ parameters:
 			path: src/ReferenceRepository.php
 
 		-
-			message: '#^Property Doctrine\\Common\\DataFixtures\\ReferenceRepository\:\:\$identitiesByClass \(array\<class\-string, array\<string, mixed\>\>\) does not accept array\<string, array\<string, mixed\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/ReferenceRepository.php
-
-		-
-			message: '#^Property Doctrine\\Common\\DataFixtures\\ReferenceRepository\:\:\$referencesByClass \(array\<class\-string, array\<string, object\>\>\) does not accept array\<string, array\<string, object\>\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/ReferenceRepository.php
-
-		-
 			message: '#^Unable to resolve the template type T in call to method Doctrine\\Persistence\\ObjectManager\:\:getClassMetadata\(\)$#'
 			identifier: argument.templateType
 			count: 1
