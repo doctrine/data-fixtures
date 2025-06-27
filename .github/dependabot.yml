@@ -1,5 +1,15 @@
 version: 2
 updates:
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "11:00"
+    open-pull-requests-limit: 10
+    labels:
+      - "Dependencies"
+    versioning-strategy: "increase-if-necessary"
+    target-branch: "1.8.x"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

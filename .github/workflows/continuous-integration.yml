@@ -28,6 +28,7 @@ jobs:
           - "8.1"
           - "8.2"
           - "8.3"
+          - "8.4"
         dependencies:
           - "highest"
         stability:
@@ -36,9 +37,6 @@ jobs:
           - php-version: "8.1"
             dependencies: "lowest"
             stability: "stable"
-          - php-version: "8.3"
-            dependencies: "highest"
-            stability: "dev"
 
     steps:
       - name: "Checkout"
