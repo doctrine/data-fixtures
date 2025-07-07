@@ -56,6 +56,8 @@ class MongoDBPurgerTest extends BaseTestCase
         $dm     = $purger->getObjectManager();
         $purger->setPurgeMode(MongoDBPurgeMode::Delete);
 
+        self::assertSame(MongoDBPurgeMode::Delete, $purger->getPurgeMode());
+
         $collection = $dm->getDocumentCollection(self::TEST_DOCUMENT_ROLE);
         $collection->drop();
 
