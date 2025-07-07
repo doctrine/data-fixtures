@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures\Purger;
 
+use Doctrine\Common\DataFixtures\Purger\MongoDBPurgeMode;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -53,7 +54,7 @@ class MongoDBPurgerTest extends BaseTestCase
     {
         $purger = $this->getPurger();
         $dm     = $purger->getObjectManager();
-        $purger->setPurgeMode(MongoDBPurger::PURGE_MODE_DELETE);
+        $purger->setPurgeMode(MongoDBPurgeMode::Delete);
 
         $collection = $dm->getDocumentCollection(self::TEST_DOCUMENT_ROLE);
         $collection->drop();

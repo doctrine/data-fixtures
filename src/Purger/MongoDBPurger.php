@@ -5,25 +5,15 @@ declare(strict_types=1);
 namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use LogicException;
+
+use function method_exists;
 
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
  */
 final class MongoDBPurger implements MongoDBPurgerInterface
 {
-    /**
-     * Purge the collections using deleteMany(). Don't create them.
-     */
-    public const PURGE_MODE_DELETE = 1;
-
-    /**
-     * Drop the collections when purging, then recreate them.
-     */
-    public const PURGE_MODE_DROP = 2;
-
-    /** @var self::PURGE_MODE_* $mode */
-    private int $purgeMode = self::PURGE_MODE_DELETE;
+    private MongoDBPurgeMode $purgeMode = MongoDBPurgeMode::Drop;
 
     /**
      * Construct new purger instance.
@@ -35,21 +25,14 @@ final class MongoDBPurger implements MongoDBPurgerInterface
     }
 
     /**
-     * If the purge should be done through collection drop() or deleteMany() statements
-     *
-     * @param self::PURGE_MODE_* $mode
+     * If the purge should be done through collection drop() or deleteMany()
      */
-    public function setPurgeMode(int $mode): void
+    public function setPurgeMode(MongoDBPurgeMode $mode): void
     {
         $this->purgeMode = $mode;
     }
 
-    /**
-     * Get the purge mode
-     *
-     * @return self::PURGE_MODE_*
-     */
-    public function getPurgeMode(): int
+    public function getPurgeMode(): MongoDBPurgeMode
     {
         return $this->purgeMode;
     }
@@ -73,9 +56,8 @@ final class MongoDBPurger implements MongoDBPurgerInterface
     public function purge(): void
     {
         match ($this->purgeMode) {
-            self::PURGE_MODE_DELETE => $this->purgeWithDelete(),
-            self::PURGE_MODE_DROP => $this->purgeWithDrop(),
-            default => throw new LogicException('Invalid purge mode specified.'),
+            MongoDBPurgeMode::Delete => $this->purgeWithDelete(),
+            MongoDBPurgeMode::Drop => $this->purgeWithDrop(),
         };
     }
 
@@ -105,8 +87,9 @@ final class MongoDBPurger implements MongoDBPurgerInterface
         $schemaManager = $this->dm->getSchemaManager();
         $schemaManager->createCollections();
         $schemaManager->ensureIndexes();
-        if (method_exists($schemaManager, 'createSearchIndexes')) {
-            $schemaManager->createSearchIndexes();
-        }
+
+        // Requires doctrine/mongodb-odm 2.8
+        // @phpstan-ignore function.alreadyNarrowedType
+        method_exists($schemaManager, 'createSearchIndexes') && $schemaManager->createSearchIndexes();
     }
 }
