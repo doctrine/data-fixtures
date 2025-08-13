@@ -124,3 +124,16 @@ To do so, you can use ``MultipleTransactionORMExecutor``.
 
     <?php
     $executor = new MultipleTransactionORMExecutor($entityManager, new ORMPurger());
+
+If you want to simulate the execution of fixtures without applying 
+any changes to the database, you can use ``DryRunORMExecutor``.
+This executor will execute your fixtures, but instead of persisting and
+committing changes, it wraps the entire process in a transaction and
+rolls it back at the end. 
+This allows you to inspect the behavior of your fixtures safely, without 
+modifying the database:
+
+.. code-block:: php
+
+    <?php
+    $executor = new DryRunORMExecutor($entityManager, new ORMPurger());
