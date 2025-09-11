@@ -6,6 +6,7 @@ namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\AbstractNamedObject;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -13,6 +14,7 @@ use Doctrine\ORM\Mapping\ManyToManyOwningSideMapping;
 
 use function array_map;
 use function array_reverse;
+use function class_exists;
 use function count;
 use function in_array;
 
@@ -253,6 +255,12 @@ final class ORMPurger implements ORMPurgerInterface
     {
         $tableIdentifier = new Identifier($tableName);
 
-        return 'DELETE FROM ' . $tableIdentifier->getQuotedName($platform);
+        if (class_exists(AbstractNamedObject::class)) {
+            $identifier = $tableIdentifier->getObjectName()->toSQL($platform);
+        } else {
+            $identifier = $tableIdentifier->getQuotedName($platform);
+        }
+
+        return 'DELETE FROM ' . $identifier;
     }
 }
