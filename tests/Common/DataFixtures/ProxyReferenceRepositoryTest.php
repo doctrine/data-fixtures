@@ -15,9 +15,6 @@ use Doctrine\Tests\Common\DataFixtures\TestTypes\UuidType;
 use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 
-/**
- * Test ProxyReferenceRepository.
- */
 class ProxyReferenceRepositoryTest extends BaseTestCase
 {
     public const TEST_ENTITY_ROLE = Role::class;

@@ -16,7 +16,7 @@
         <env name="DOCTRINE_DEPRECATIONS" value="trigger"/>
     </php>
 
-    <source ignoreSuppressionOfDeprecations="true" ignoreIndirectDeprecations="true">
+    <source ignoreSuppressionOfDeprecations="true">
         <include>
             <directory>./src</directory>
         </include>

@@ -11,9 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 use function method_exists;
 
-/**
- * Base test class
- */
 abstract class BaseTestCase extends TestCase
 {
     /**
