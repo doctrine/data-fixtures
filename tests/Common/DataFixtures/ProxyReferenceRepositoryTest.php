@@ -13,6 +13,7 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Link;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestTypes\UuidType;
 use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 
 /**
  * Test ProxyReferenceRepository.
@@ -33,12 +34,15 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         Type::addType('uuid', UuidType::class);
     }
 
+    #[IgnoreDeprecations]
     public function testReferenceEntry(): void
     {
         $em   = $this->getMockSqliteEntityManager();
         $role = new TestEntity\Role();
         $role->setName('admin');
         $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
+
+        // getPropertyAccessor() is not available with Doctrine < 3.4
         $meta->getReflectionProperty('id')->setValue($role, 1);
 
         $referenceRepo = new ProxyReferenceRepository($em);
@@ -72,7 +76,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
         $referenceRepository->expects($this->once())
             ->method('getReferenceNames')
-            ->will($this->returnValue(['admin-role']));
+            ->willReturn(['admin-role']);
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
@@ -131,6 +135,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $this->assertInstanceOf(Proxy::class, $ref);
     }
 
+    #[IgnoreDeprecations]
     public function testReconstructionOfCustomTypedId(): void
     {
         $em                  = $this->getMockSqliteEntityManager();

@@ -3,8 +3,8 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          colors="true"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutTodoAnnotatedTests="true"
-         bootstrap="vendor/autoload.php"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         failOnDeprecation="true"
 >
     <testsuites>
         <testsuite name="Doctrine Data Fixtures Test Suite">
@@ -12,9 +12,13 @@
         </testsuite>
     </testsuites>
 
-    <coverage>
+    <php>
+        <env name="DOCTRINE_DEPRECATIONS" value="trigger"/>
+    </php>
+
+    <source ignoreSuppressionOfDeprecations="true" ignoreIndirectDeprecations="true">
         <include>
             <directory>./src</directory>
         </include>
-    </coverage>
+    </source>
 </phpunit>

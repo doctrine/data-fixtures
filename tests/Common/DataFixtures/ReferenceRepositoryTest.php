@@ -15,6 +15,7 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
 use Doctrine\Tests\Mock\ForwardCompatibleEntityManager;
 use OutOfBoundsException;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 
 use function sprintf;
 
@@ -131,7 +132,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $referenceRepository->getReference('foo', Role::class);
     }
 
-    /** @group legacy */
+    #[IgnoreDeprecations]
     public function testLegacyUndefinedReference(): void
     {
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
