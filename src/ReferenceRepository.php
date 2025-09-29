@@ -116,7 +116,7 @@ class ReferenceRepository
      * not be set yet
      *
      * Notice: in case if identifier is generated after
-     * the record is inserted, be sure tu use this method
+     * the record is inserted, be sure to use this method
      * after $object is flushed
      *
      * @param object $object - managed object
