@@ -313,19 +313,7 @@ parameters:
 			path: tests/Common/DataFixtures/DependentFixtureTest.php
 
 		-
-			message: '#^Call to method expects\(\) on an unknown class Doctrine\\ODM\\PHPCR\\DocumentManager\.$#'
-			identifier: class.notFound
-			count: 5
-			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
-
-		-
-			message: '#^Method Doctrine\\Tests\\Common\\DataFixtures\\Executor\\PHPCRExecutorTest\:\:getDocumentManager\(\) has invalid return type Doctrine\\ODM\\PHPCR\\DocumentManager\.$#'
-			identifier: class.notFound
-			count: 2
-			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
-
-		-
-			message: '#^Parameter \#1 \$dm of class Doctrine\\Common\\DataFixtures\\Executor\\PHPCRExecutor constructor expects Doctrine\\ODM\\PHPCR\\DocumentManagerInterface, Doctrine\\ODM\\PHPCR\\DocumentManager&PHPUnit\\Framework\\MockObject\\MockObject given\.$#'
+			message: '#^Parameter \#1 \$dm of class Doctrine\\Common\\DataFixtures\\Executor\\PHPCRExecutor constructor expects Doctrine\\ODM\\PHPCR\\DocumentManagerInterface, Doctrine\\Tests\\Mock\\PHPCRDocumentManager&PHPUnit\\Framework\\MockObject\\MockObject given\.$#'
 			identifier: argument.type
 			count: 5
 			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php

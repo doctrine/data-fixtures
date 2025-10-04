@@ -6,6 +6,7 @@ parameters:
         - tests
     excludePaths:
         - tests/Mock/ForwardCompatibleEntityManager.php
+        - tests/Mock/PHPCRDocumentManager.php
 
     ignoreErrors:
         # ORM 2 backwards compatibility
