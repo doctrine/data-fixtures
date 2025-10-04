@@ -9,6 +9,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\PHPCRPurgerInterface;
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
+use Doctrine\Tests\Mock\PHPCRDocumentManager;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -121,19 +122,14 @@ class PHPCRExecutorTest extends BaseTestCase
         return $this->createMock(PHPCRPurgerInterface::class);
     }
 
-    private function getDocumentManager(): DocumentManager&MockObject
+    private function getDocumentManager(): PHPCRDocumentManager&MockObject
     {
         if (! class_exists(DocumentManager::class)) {
             $this->markTestSkipped('Missing doctrine/phpcr-odm');
         }
 
         return $this
-            ->getMockBuilder(DocumentManager::class)
-            ->addMethods([
-                'transactional',
-                'flush',
-                'clear',
-            ])
+            ->getMockBuilder(PHPCRDocumentManager::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
