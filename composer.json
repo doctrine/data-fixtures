@@ -31,7 +31,7 @@
         "doctrine/orm": "^2.14 || ^3",
         "fig/log-test": "^1",
         "phpstan/phpstan": "2.1.30",
-        "phpunit/phpunit": "10.5.45",
+        "phpunit/phpunit": "10.5.45 || 12.4.0",
         "symfony/cache": "^6.4 || ^7",
         "symfony/var-exporter": "^6.4 || ^7"
     },
