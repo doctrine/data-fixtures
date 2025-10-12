@@ -11,16 +11,13 @@ use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Doctrine\Tests\Mock\PHPCRDocumentManager;
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Throwable;
 
 use function class_exists;
 
-/**
- * Tests for {@see \Doctrine\Common\DataFixtures\Executor\PHPCRExecutor}
- *
- * @covers \Doctrine\Common\DataFixtures\Executor\PHPCRExecutor
- */
+#[CoversClass(PHPCRExecutor::class)]
 class PHPCRExecutorTest extends BaseTestCase
 {
     public function testExecuteSingleFixtureWithNoPurge(): void
@@ -34,9 +31,9 @@ class PHPCRExecutorTest extends BaseTestCase
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(static function ($callback) use ($dm) {
+            ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
-            }));
+            });
 
         $executor->execute([$fixture], true);
     }
@@ -54,9 +51,9 @@ class PHPCRExecutorTest extends BaseTestCase
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(static function ($callback) use ($dm) {
+            ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
-            }));
+            });
 
         $executor->execute([$fixture1, $fixture2], true);
     }
@@ -73,9 +70,9 @@ class PHPCRExecutorTest extends BaseTestCase
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(static function ($callback) use ($dm) {
+            ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
-            }));
+            });
         $purger->expects($this->once())->method('purge');
 
         $executor->execute([$fixture], false);
@@ -93,9 +90,9 @@ class PHPCRExecutorTest extends BaseTestCase
             ->expects($this->once())
             ->method('transactional')
             ->with($this->isType('callable'))
-            ->will($this->returnCallback(static function ($callback) use ($dm) {
+            ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
-            }));
+            });
         $purger->expects($this->never())->method('purge');
 
         $executor->execute([$fixture], true);

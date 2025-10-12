@@ -3,7 +3,6 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          colors="true"
          beStrictAboutOutputDuringTests="true"
-         bootstrap="vendor/autoload.php"
 >
     <testsuites>
         <testsuite name="Doctrine Data Fixtures Test Suite">
