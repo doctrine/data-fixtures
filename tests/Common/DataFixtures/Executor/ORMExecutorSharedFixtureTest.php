@@ -72,7 +72,7 @@ class ORMExecutorSharedFixtureTest extends BaseTestCase
         $this->assertEquals('admin@example.com', $userReference->getEmail());
     }
 
-    /** @group legacy */
+    #[IgnoreDeprecations]
     public function testLegacySharedFixtures(): void
     {
         $em         = $this->getMockSqliteEntityManager();

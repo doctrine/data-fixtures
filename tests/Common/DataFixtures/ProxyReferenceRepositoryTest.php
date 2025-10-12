@@ -57,7 +57,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $referencesByClass[Role::class]['test']);
     }
 
-    /** @group legacy */
+    #[IgnoreDeprecations]
     public function testLegacyReferenceEntry(): void
     {
         $em   = $this->getMockSqliteEntityManager();

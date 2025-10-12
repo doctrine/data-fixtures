@@ -43,7 +43,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $this->assertInstanceOf(Role::class, $referencesByClass[Role::class]['test']);
     }
 
-    /** @group legacy */
+    #[IgnoreDeprecations]
     public function testLegacyReferenceEntry(): void
     {
         $em = $this->getMockSqliteEntityManager();
@@ -200,7 +200,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $this->assertEquals(['entity' => 1], $referenceRepository->getIdentitiesByClass()[Role::class] ?? []);
     }
 
-    /** @group legacy */
+    #[IgnoreDeprecations]
     public function testLegacyHasIdentityCheck(): void
     {
         $role                = new Role();
