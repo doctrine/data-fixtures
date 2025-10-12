@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
 use Doctrine\Deprecations\PHPUnit\VerifyDeprecations;
 use Doctrine\Persistence\ObjectManager;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\Test\TestLogger;
 
@@ -48,6 +49,7 @@ final class AbstractExecutorTest extends TestCase
         self::assertTrue($logger->hasDebugThatContains('purging database'));
     }
 
+    #[IgnoreDeprecations]
     public function testDeprecatedLoggerUsage(): void
     {
         $executor = $this->bootstrapExecutor();
