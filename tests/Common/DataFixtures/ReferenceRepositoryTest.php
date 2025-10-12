@@ -8,6 +8,7 @@ use BadMethodCallException;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\Proxy;
@@ -15,11 +16,16 @@ use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Mock\ForwardCompatibleEntityManager;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use ReflectionClass;
 
+use function method_exists;
 use function sprintf;
+
+use const PHP_VERSION_ID;
 
 class ReferenceRepositoryTest extends BaseTestCase
 {
+    #[IgnoreDeprecations]
     public function testReferenceEntry(): void
     {
         $em = $this->getMockSqliteEntityManager();
@@ -113,13 +119,13 @@ class ReferenceRepositoryTest extends BaseTestCase
         // first test against managed state
         $ref = $referenceRepository->getReference('admin-role', Role::class);
 
-        $this->assertNotInstanceOf(Proxy::class, $ref);
+        $this->assertNotProxy($ref);
 
         // now test reference reconstruction from identity
         $em->clear();
         $ref = $referenceRepository->getReference('admin-role', Role::class);
 
-        $this->assertInstanceOf(Proxy::class, $ref);
+        $this->assertProxy($ref);
     }
 
     public function testReferenceMultipleEntries(): void
@@ -139,8 +145,8 @@ class ReferenceRepositoryTest extends BaseTestCase
         $em->flush();
         $em->clear();
 
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin', Role::class));
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate', Role::class));
+        $this->assertProxy($referenceRepository->getReference('admin', Role::class));
+        $this->assertProxy($referenceRepository->getReference('duplicate', Role::class));
     }
 
     public function testUndefinedReference(): void
@@ -289,5 +295,29 @@ class ReferenceRepositoryTest extends BaseTestCase
         $names = $referenceRepository->getReferenceNames($role);
         $this->assertCount(1, $names);
         $this->assertSame('1', $names[0]);
+    }
+
+    private function assertProxy(object $object): void
+    {
+        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
+            $this->assertInstanceOf(Proxy::class, $object);
+
+            return;
+        }
+
+        $reflector = new ReflectionClass($object);
+        $this->assertTrue($reflector->isUninitializedLazyObject($object));
+    }
+
+    private function assertNotProxy(object $object): void
+    {
+        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
+            $this->assertNotInstanceOf(Proxy::class, $object);
+
+            return;
+        }
+
+        $reflector = new ReflectionClass($object);
+        $this->assertFalse($reflector->isUninitializedLazyObject($object));
     }
 }

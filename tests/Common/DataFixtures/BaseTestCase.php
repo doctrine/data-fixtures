@@ -26,7 +26,10 @@ abstract class BaseTestCase extends TestCase
     protected function getMockSqliteEntityManager(string $fixtureSet = 'TestEntity'): EntityManager
     {
         $dbParams = ['driver' => 'sqlite3', 'memory' => true];
-        if (PHP_VERSION_ID >= 80100) {
+        if (PHP_VERSION_ID >= 80400 && method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
+            $config = ORMSetup::createAttributeMetadataConfig([__DIR__ . '/' . $fixtureSet], true);
+            $config->enableNativeLazyObjects(true);
+        } elseif (PHP_VERSION_ID >= 80100) {
             $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__ . '/' . $fixtureSet], true);
             $config->setLazyGhostObjectEnabled(true);
         } else {
