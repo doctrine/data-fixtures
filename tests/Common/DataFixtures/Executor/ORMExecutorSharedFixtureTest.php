@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -20,6 +21,7 @@ class ORMExecutorSharedFixtureTest extends BaseTestCase
     public const TEST_ENTITY_ROLE = Role::class;
     public const TEST_ENTITY_USER = User::class;
 
+    #[IgnoreDeprecations]
     public function testFixtureExecution(): void
     {
         $em       = $this->getMockSqliteEntityManager();
@@ -39,6 +41,7 @@ class ORMExecutorSharedFixtureTest extends BaseTestCase
         $executor->execute([$fixture], true);
     }
 
+    #[IgnoreDeprecations]
     public function testSharedFixtures(): void
     {
         $em         = $this->getMockSqliteEntityManager();
@@ -69,7 +72,7 @@ class ORMExecutorSharedFixtureTest extends BaseTestCase
         $this->assertEquals('admin@example.com', $userReference->getEmail());
     }
 
-    /** @group legacy */
+    #[IgnoreDeprecations]
     public function testLegacySharedFixtures(): void
     {
         $em         = $this->getMockSqliteEntityManager();

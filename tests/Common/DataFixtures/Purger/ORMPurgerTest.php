@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\DBAL\Schema\AbstractNamedObject;
 use ReflectionClass;
+
+use function class_exists;
 
 /**
  * Doctrine\Tests\Common\DataFixtures\ORMPurgerTest
@@ -86,6 +89,11 @@ class ORMPurgerTest extends BaseTestCase
         $method    = $class->getMethod('getDeleteFromTableSQL');
         $method->setAccessible(true);
         $sql = $method->invokeArgs($purger, [$tableName, $platform]);
-        $this->assertEquals('DELETE FROM test_schema."group"', $sql);
+
+        if (class_exists(AbstractNamedObject::class)) {
+            $this->assertEquals('DELETE FROM "test_schema"."group"', $sql);
+        } else {
+            $this->assertEquals('DELETE FROM test_schema."group"', $sql);
+        }
     }
 }

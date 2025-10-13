@@ -7,12 +7,19 @@ namespace Doctrine\Tests\Common\DataFixtures;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ProxyReferenceRepository;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Persistence\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Link;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestTypes\UuidType;
 use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use ReflectionClass;
+
+use function method_exists;
+
+use const PHP_VERSION_ID;
 
 /**
  * Test ProxyReferenceRepository.
@@ -33,12 +40,15 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         Type::addType('uuid', UuidType::class);
     }
 
+    #[IgnoreDeprecations]
     public function testReferenceEntry(): void
     {
         $em   = $this->getMockSqliteEntityManager();
         $role = new TestEntity\Role();
         $role->setName('admin');
         $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
+
+        // getPropertyAccessor() is not available with ORM < 3.4
         $meta->getReflectionProperty('id')->setValue($role, 1);
 
         $referenceRepo = new ProxyReferenceRepository($em);
@@ -53,7 +63,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $referencesByClass[Role::class]['test']);
     }
 
-    /** @group legacy */
+    #[IgnoreDeprecations]
     public function testLegacyReferenceEntry(): void
     {
         $em   = $this->getMockSqliteEntityManager();
@@ -91,7 +101,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
         $referenceRepository->expects($this->once())
             ->method('getReferenceNames')
-            ->will($this->returnValue(['admin-role']));
+            ->willReturn(['admin-role']);
 
         $referenceRepository->expects($this->once())
             ->method('setReferenceIdentity')
@@ -119,7 +129,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         // first test against managed state
         $ref = $referenceRepository->getReference('admin-role', Role::class);
 
-        $this->assertNotInstanceOf(Proxy::class, $ref);
+        $this->assertNotProxy($ref);
 
         // test reference reconstruction from serialized data (was managed)
         $serializedData = $referenceRepository->serialize();
@@ -130,14 +140,14 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $ref = $proxyReferenceRepository->getReference('admin-role', Role::class);
 
         // before clearing, the reference is not yet a proxy
-        $this->assertNotInstanceOf(Proxy::class, $ref);
+        $this->assertNotProxy($ref);
         $this->assertInstanceOf(self::TEST_ENTITY_ROLE, $ref);
 
         // now test reference reconstruction from identity
         $em->clear();
         $ref = $referenceRepository->getReference('admin-role', Role::class);
 
-        $this->assertInstanceOf(Proxy::class, $ref);
+        $this->assertProxy($ref);
 
         // test reference reconstruction from serialized data (was identity)
         $serializedData = $referenceRepository->serialize();
@@ -147,9 +157,10 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
         $ref = $proxyReferenceRepository->getReference('admin-role', Role::class);
 
-        $this->assertInstanceOf(Proxy::class, $ref);
+        $this->assertProxy($ref);
     }
 
+    #[IgnoreDeprecations]
     public function testReconstructionOfCustomTypedId(): void
     {
         $em                  = $this->getMockSqliteEntityManager();
@@ -196,7 +207,31 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $em->flush();
         $em->clear();
 
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('admin', Role::class));
-        $this->assertInstanceOf(Proxy::class, $referenceRepository->getReference('duplicate', Role::class));
+        $this->assertProxy($referenceRepository->getReference('admin', Role::class));
+        $this->assertProxy($referenceRepository->getReference('duplicate', Role::class));
+    }
+
+    private function assertProxy(object $object): void
+    {
+        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
+            $this->assertInstanceOf(Proxy::class, $object);
+
+            return;
+        }
+
+        $reflector = new ReflectionClass($object);
+        $this->assertTrue($reflector->isUninitializedLazyObject($object));
+    }
+
+    private function assertNotProxy(object $object): void
+    {
+        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
+            $this->assertNotInstanceOf(Proxy::class, $object);
+
+            return;
+        }
+
+        $reflector = new ReflectionClass($object);
+        $this->assertFalse($reflector->isUninitializedLazyObject($object));
     }
 }
