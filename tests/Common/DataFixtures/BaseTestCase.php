@@ -11,6 +11,8 @@ use PHPUnit\Framework\TestCase;
 
 use function method_exists;
 
+use const PHP_VERSION_ID;
+
 abstract class BaseTestCase extends TestCase
 {
     /**
@@ -21,8 +23,13 @@ abstract class BaseTestCase extends TestCase
     protected function getMockSqliteEntityManager(string $fixtureSet = 'TestEntity'): EntityManager
     {
         $dbParams = ['driver' => 'sqlite3', 'memory' => true];
-        $config   = ORMSetup::createAttributeMetadataConfiguration([__DIR__ . '/' . $fixtureSet], true);
-        $config->setLazyGhostObjectEnabled(true);
+        if (PHP_VERSION_ID >= 80400 && method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
+            $config = ORMSetup::createAttributeMetadataConfig([__DIR__ . '/' . $fixtureSet], true);
+            $config->enableNativeLazyObjects(true);
+        } else {
+            $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__ . '/' . $fixtureSet], true);
+            $config->setLazyGhostObjectEnabled(true);
+        }
 
         $connection = DriverManager::getConnection($dbParams, $config);
         $platform   = $connection->getDatabasePlatform();
