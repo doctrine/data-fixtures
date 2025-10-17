@@ -271,25 +271,19 @@ parameters:
 			path: src/Sorter/Vertex.php
 
 		-
+			message: '#^Call to function method_exists\(\) with ''Doctrine\\\\ORM\\\\ORMSetup'' and ''createAttributeMeta…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/Common/DataFixtures/BaseTestCase.php
+
+		-
 			message: '#^Method Doctrine\\Tests\\Common\\DataFixtures\\FixtureWithUnexistentDependency\:\:getDependencies\(\) should return array\<class\-string\<Doctrine\\Common\\DataFixtures\\FixtureInterface\>\> but returns array\<int, string\>\.$#'
 			identifier: return.type
 			count: 1
 			path: tests/Common/DataFixtures/DependentFixtureTest.php
 
 		-
-			message: '#^Call to method expects\(\) on an unknown class Doctrine\\ODM\\PHPCR\\DocumentManager\.$#'
-			identifier: class.notFound
-			count: 5
-			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
-
-		-
-			message: '#^Method Doctrine\\Tests\\Common\\DataFixtures\\Executor\\PHPCRExecutorTest\:\:getDocumentManager\(\) has invalid return type Doctrine\\ODM\\PHPCR\\DocumentManager\.$#'
-			identifier: class.notFound
-			count: 1
-			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
-
-		-
-			message: '#^Parameter \#1 \$dm of class Doctrine\\Common\\DataFixtures\\Executor\\PHPCRExecutor constructor expects Doctrine\\ODM\\PHPCR\\DocumentManagerInterface, Doctrine\\ODM\\PHPCR\\DocumentManager&PHPUnit\\Framework\\MockObject\\MockObject given\.$#'
+			message: '#^Parameter \#1 \$dm of class Doctrine\\Common\\DataFixtures\\Executor\\PHPCRExecutor constructor expects Doctrine\\ODM\\PHPCR\\DocumentManagerInterface, Doctrine\\Tests\\Mock\\PHPCRDocumentManager&PHPUnit\\Framework\\MockObject\\MockObject given\.$#'
 			identifier: argument.type
 			count: 5
 			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
@@ -299,6 +293,12 @@ parameters:
 			identifier: argument.type
 			count: 3
 			path: tests/Common/DataFixtures/Executor/PHPCRExecutorTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Doctrine\\\\ORM\\\\ORMSetup'' and ''createAttributeMeta…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: tests/Common/DataFixtures/ProxyReferenceRepositoryTest.php
 
 		-
 			message: '#^Call to an undefined method Doctrine\\ODM\\MongoDB\\DocumentManager\:\:getConnection\(\)\.$#'
@@ -311,6 +311,12 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: tests/Common/DataFixtures/Purger/MongoDBPurgerTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Doctrine\\\\ORM\\\\ORMSetup'' and ''createAttributeMeta…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: tests/Common/DataFixtures/ReferenceRepositoryTest.php
 
 		-
 			message: '#^Parameter \#1 \$name of class Doctrine\\ORM\\Mapping\\ClassMetadata constructor expects class\-string\<1\>, string given\.$#'
