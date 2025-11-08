@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\DataFixtures\Executor;
 
-use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
+use Doctrine\Common\DataFixtures\Purger\PHPCRPurgerInterface;
 use Doctrine\ODM\PHPCR\DocumentManagerInterface;
 
 use function method_exists;
@@ -15,10 +15,10 @@ use function method_exists;
 final class PHPCRExecutor extends AbstractExecutor
 {
     /**
-     * @param DocumentManagerInterface $dm     manager instance used for persisting the fixtures
-     * @param PHPCRPurger|null         $purger to remove the current data if append is false
+     * @param DocumentManagerInterface  $dm     manager instance used for persisting the fixtures
+     * @param PHPCRPurgerInterface|null $purger to remove the current data if append is false
      */
-    public function __construct(private DocumentManagerInterface $dm, PHPCRPurger|null $purger = null)
+    public function __construct(private DocumentManagerInterface $dm, PHPCRPurgerInterface|null $purger = null)
     {
         parent::__construct($dm);
 
