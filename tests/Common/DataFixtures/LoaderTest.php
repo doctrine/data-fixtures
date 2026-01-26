@@ -63,13 +63,12 @@ class LoaderTest extends BaseTestCase
         $this->assertInstanceOf(MyFixture1::class, $fixture);
     }
 
-
     /**
      * Test that an error is expected when adding a fixture which requires constructor arguments
      *
      * @return void
      */
-    public function testAddFixtureWithDependencyError()
+    public function testAddFixtureWithDependencyError(): void
     {
         $loader = new Loader();
         $this->expectException(ArgumentCountError::class);
@@ -81,7 +80,7 @@ class LoaderTest extends BaseTestCase
      *
      * @return void
      */
-    public function testAddFixtureWithDependencyPreLoaded()
+    public function testAddFixtureWithDependencyPreLoaded(): void
     {
         $fixtureWithConstructor = new FixtureWithConstructorArgs('test');
         $fixtureWithDependency = new FixtureWithDependency();
@@ -91,6 +90,7 @@ class LoaderTest extends BaseTestCase
         $loader->addFixture($fixtureWithDependency);
 
         $this->assertSame([$fixtureWithConstructor, $fixtureWithDependency], $loader->getFixtures());
+        $this->assertSame('test', $fixtureWithConstructor->getRequiredArgument());
     }
 }
 
@@ -121,7 +121,6 @@ final class SharedDummyFixture implements SharedFixtureInterface
 
 final class FixtureWithDependency implements DependentFixtureInterface, FixtureInterface
 {
-
     public function load(ObjectManager $manager): void
     {
     }
@@ -134,10 +133,8 @@ final class FixtureWithDependency implements DependentFixtureInterface, FixtureI
 
 final class FixtureWithConstructorArgs implements FixtureInterface
 {
-
     /**
      * @param string $requiredArgument
-     * @noinspection PhpPropertyOnlyWrittenInspection
      */
     public function __construct(private readonly string $requiredArgument)
     {
@@ -145,5 +142,10 @@ final class FixtureWithConstructorArgs implements FixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+    }
+
+    public function getRequiredArgument(): string
+    {
+        return $this->requiredArgument;
     }
 }
