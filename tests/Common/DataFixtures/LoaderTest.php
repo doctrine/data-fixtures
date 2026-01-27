@@ -65,8 +65,6 @@ class LoaderTest extends BaseTestCase
 
     /**
      * Test that an error is expected when adding a fixture which requires constructor arguments
-     *
-     * @return void
      */
     public function testAddFixtureWithDependencyError(): void
     {
@@ -77,13 +75,11 @@ class LoaderTest extends BaseTestCase
 
     /**
      * Test that a fixture dependency is not instantiated if it has already been added
-     *
-     * @return void
      */
     public function testAddFixtureWithDependencyPreLoaded(): void
     {
         $fixtureWithConstructor = new FixtureWithConstructorArgs('test');
-        $fixtureWithDependency = new FixtureWithDependency();
+        $fixtureWithDependency  = new FixtureWithDependency();
 
         $loader = new Loader();
         $loader->addFixture($fixtureWithConstructor);
@@ -133,9 +129,6 @@ final class FixtureWithDependency implements DependentFixtureInterface, FixtureI
 
 final class FixtureWithConstructorArgs implements FixtureInterface
 {
-    /**
-     * @param string $requiredArgument
-     */
     public function __construct(private readonly string $requiredArgument)
     {
     }
