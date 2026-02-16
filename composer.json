@@ -33,7 +33,7 @@
         "jackalope/jackalope-fs": "*",
         "fig/log-test": "^1",
         "phpstan/phpstan": "2.1.31",
-        "phpunit/phpunit": "10.5.45 || 12.4.0",
+        "phpunit/phpunit": "10.5.63 || 12.5.12",
         "symfony/cache": "^6.4 || ^7",
         "symfony/var-exporter": "^6.4 || ^7"
     },
