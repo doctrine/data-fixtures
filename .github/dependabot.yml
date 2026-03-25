@@ -9,11 +9,9 @@ updates:
     labels:
       - "Dependencies"
     versioning-strategy: "increase-if-necessary"
-    target-branch: "1.8.x"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     labels:
       - "CI"
-    target-branch: "1.8.x"
