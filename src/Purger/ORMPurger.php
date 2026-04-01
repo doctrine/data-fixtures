@@ -100,6 +100,7 @@ final class ORMPurger implements ORMPurgerInterface
         $classes    = [];
 
         foreach ($this->em->getMetadataFactory()->getAllMetadata() as $metadata) {
+            // @phpstan-ignore isset.property (ORM 2 support)
             if ($metadata->isMappedSuperclass || (isset($metadata->isEmbeddedClass) && $metadata->isEmbeddedClass)) {
                 continue;
             }
@@ -120,9 +121,10 @@ final class ORMPurger implements ORMPurgerInterface
             $class = $commitOrder[$i];
 
             if (
-                (isset($class->isEmbeddedClass) && $class->isEmbeddedClass) ||
-                $class->isMappedSuperclass ||
-                ($class->isInheritanceTypeSingleTable() && $class->name !== $class->rootEntityName)
+                // @phpstan-ignore isset.property (ORM 2 support)
+                (isset($class->isEmbeddedClass) && $class->isEmbeddedClass)
+                || $class->isMappedSuperclass
+                || ($class->isInheritanceTypeSingleTable() && $class->name !== $class->rootEntityName)
             ) {
                 continue;
             }
