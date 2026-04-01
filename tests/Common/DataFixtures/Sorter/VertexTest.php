@@ -7,8 +7,9 @@ namespace Doctrine\Test\DataFixtures\Sorter;
 use Doctrine\Common\DataFixtures\Sorter\Vertex;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/** @covers \Doctrine\Common\DataFixtures\Sorter\Vertex */
+#[CoversClass(Vertex::class)]
 class VertexTest extends BaseTestCase
 {
     public function testNode(): void

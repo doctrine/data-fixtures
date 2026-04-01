@@ -8,6 +8,7 @@ use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use RuntimeException;
 
 /**
@@ -16,9 +17,8 @@ use RuntimeException;
  * Note: When writing tests here consider that a lot of graph
  *       constellations can have many valid orderings, so you may want to
  *       build a graph that has only 1 valid order to simplify your tests
- *
- * @covers \Doctrine\Common\DataFixtures\Sorter\TopologicalSorter
  */
+#[CoversClass(TopologicalSorter::class)]
 class TopologicalSorterTest extends BaseTestCase
 {
     public function testSuccessSortLinearDependency(): void

@@ -1,11 +1,12 @@
 parameters:
-    phpVersion: 80200
+    phpVersion: 80400
     level: 7
     paths:
         - src
         - tests
     excludePaths:
         - tests/Mock/ForwardCompatibleEntityManager.php
+        - tests/Mock/PHPCRDocumentManager.php
 
 includes:
     - phpstan-baseline.neon

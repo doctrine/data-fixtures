@@ -19,6 +19,8 @@ use function class_exists;
 use function dirname;
 use function method_exists;
 
+use const PHP_VERSION_ID;
+
 class MongoDBPurgerTest extends BaseTestCase
 {
     public const TEST_DOCUMENT_ROLE = Role::class;
@@ -37,6 +39,11 @@ class MongoDBPurgerTest extends BaseTestCase
         $config->setHydratorDir($root . '/generate/hydrators');
         $config->setHydratorNamespace('Hydrators');
         $config->setMetadataDriverImpl(AttributeDriver::create(dirname(__DIR__) . '/TestDocument'));
+
+        /** @phpstan-ignore function.alreadyNarrowedType (that method exists only since ODM 2.14.0) */
+        if (PHP_VERSION_ID >= 80400 && method_exists($config, 'setUseNativeLazyObject')) {
+            $config->setUseNativeLazyObject(true);
+        }
 
         $dm = DocumentManager::create(null, $config);
 

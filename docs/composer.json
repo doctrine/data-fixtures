@@ -1,0 +1,6 @@
+{
+    "type": "project",
+    "require": {
+        "doctrine/docs-builder": "^1.0.3"
+    }
+}
