@@ -32,7 +32,7 @@
         "doctrine/phpcr-odm": "^1.8 || ^2.0",
         "jackalope/jackalope-fs": "*",
         "fig/log-test": "^1",
-        "phpstan/phpstan": "2.2.4",
+        "phpstan/phpstan": "2.2.5",
         "phpunit/phpunit": "10.5.63 || 12.5.12",
         "symfony/cache": "^6.4 || ^7 || ^8",
         "symfony/var-exporter": "^6.4 || ^7 || ^8"
