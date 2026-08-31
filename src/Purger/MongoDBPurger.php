@@ -69,6 +69,13 @@ final class MongoDBPurger implements MongoDBPurgerInterface
                 continue;
             }
 
+            if ($metadata->isFile) {
+                $bucket = $this->dm->getDocumentBucket($metadata->name);
+                $bucket->getFilesCollection()->deleteMany([]);
+                $bucket->getChunksCollection()->deleteMany([]);
+                continue;
+            }
+
             $this->dm->getDocumentCollection($metadata->name)->deleteMany([]);
         }
     }
@@ -78,6 +85,13 @@ final class MongoDBPurger implements MongoDBPurgerInterface
         $allMetadata = $this->dm->getMetadataFactory()->getAllMetadata();
         foreach ($allMetadata as $metadata) {
             if ($metadata->isMappedSuperclass) {
+                continue;
+            }
+
+            if ($metadata->isFile) {
+                $bucket = $this->dm->getDocumentBucket($metadata->name);
+                $bucket->getFilesCollection()->drop();
+                $bucket->getChunksCollection()->drop();
                 continue;
             }
 
