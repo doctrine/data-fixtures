@@ -199,18 +199,6 @@ parameters:
 			path: tests/Common/DataFixtures/ProxyReferenceRepositoryTest.php
 
 		-
-			message: '#^Call to an undefined method Doctrine\\ODM\\MongoDB\\DocumentManager\:\:getConnection\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: tests/Common/DataFixtures/Purger/MongoDBPurgerTest.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Doctrine\\ODM\\MongoDB\\DocumentManager and ''getClient'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: tests/Common/DataFixtures/Purger/MongoDBPurgerTest.php
-
-		-
 			message: '#^Call to function method_exists\(\) with ''Doctrine\\\\ORM\\\\ORMSetup'' and ''createAttributeMeta…'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
