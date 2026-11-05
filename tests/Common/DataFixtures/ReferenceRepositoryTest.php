@@ -239,7 +239,8 @@ class ReferenceRepositoryTest extends BaseTestCase
         $em = $this->createMock(ForwardCompatibleEntityManager::class);
         $em->method('getUnitOfWork')
            ->willReturn($uow);
-        $em->method('getClassMetadata')
+        $em->expects($this->atLeastOnce())
+            ->method('getClassMetadata')
             ->with(Role::class)
             ->willReturn($classMetadata);
 

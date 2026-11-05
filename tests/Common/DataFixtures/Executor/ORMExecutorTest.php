@@ -38,12 +38,12 @@ class ORMExecutorTest extends BaseTestCase
     public function testExecuteSingleTransactionsCountTransactionalCalls(): void
     {
         $em = $this->getMockEntityManager();
-        $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
+        $em->method('getEventManager')->willReturn($this->createStub(EventManager::class));
         // We call wrapInTransaction once for purge and for the fixtures (load)
         $em->expects($this->once())->method('wrapInTransaction')->with(self::isInstanceOf(Closure::class));
 
         $executor = new ORMExecutor($em);
-        $fixture  = $this->getMockFixture();
+        $fixture  = $this->createStub(FixtureInterface::class);
         @$executor->execute([$fixture, $fixture]);
     }
 
@@ -75,7 +75,7 @@ class ORMExecutorTest extends BaseTestCase
     public function testCustomLegacyEntityManager(): void
     {
         $em = $this->getMockEntityManager();
-        $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
+        $em->method('getEventManager')->willReturn($this->createStub(EventManager::class));
         $em->expects($this->once())->method('wrapInTransaction')->with(self::isInstanceOf(Closure::class));
 
         $executor = new ORMExecutor($em);
@@ -114,12 +114,12 @@ class ORMExecutorTest extends BaseTestCase
     public function testExecuteMultipleTransactionsCountTransactionalCalls(): void
     {
         $em = $this->getMockEntityManager();
-        $em->method('getEventManager')->willReturn($this->createMock(EventManager::class));
+        $em->method('getEventManager')->willReturn($this->createStub(EventManager::class));
         // We call wrapInTransaction once for purge and twice for the fixtures (load)
         $em->expects($this->exactly(3))->method('wrapInTransaction')->with(self::isInstanceOf(Closure::class));
 
         $executor = new MultipleTransactionORMExecutor($em);
-        $fixture  = $this->getMockFixture();
+        $fixture  = $this->createStub(FixtureInterface::class);
         @$executor->execute([$fixture, $fixture]);
     }
 
