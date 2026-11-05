@@ -16,8 +16,8 @@ use function preg_match;
 
 class ORMPurgerExcludeTest extends BaseTestCase
 {
-    public const TEST_ENTITY_INCLUDED = IncludedEntity::class;
-    public const TEST_ENTITY_EXCLUDED = ExcludedEntity::class;
+    public const string TEST_ENTITY_INCLUDED = IncludedEntity::class;
+    public const string TEST_ENTITY_EXCLUDED = ExcludedEntity::class;
 
     /**
      * Loads test data

@@ -6,7 +6,6 @@ namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Schema\AbstractNamedObject;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -14,7 +13,6 @@ use Doctrine\ORM\Mapping\ManyToManyOwningSideMapping;
 
 use function array_map;
 use function array_reverse;
-use function class_exists;
 use function count;
 use function in_array;
 
@@ -23,20 +21,13 @@ use function in_array;
  */
 final class ORMPurger implements ORMPurgerInterface
 {
-    public const PURGE_MODE_DELETE   = 1;
-    public const PURGE_MODE_TRUNCATE = 2;
+    public const int PURGE_MODE_DELETE   = 1;
+    public const int PURGE_MODE_TRUNCATE = 2;
 
     /**
      * If the purge should be done through DELETE or TRUNCATE statements
      */
     private int $purgeMode = self::PURGE_MODE_DELETE;
-
-    /**
-     * Table/view names to be excluded from purge
-     *
-     * @var string[]
-     */
-    private array $excluded;
 
     /** @var list<string>|null */
     private array|null $cachedSqlStatements = null;
@@ -47,9 +38,10 @@ final class ORMPurger implements ORMPurgerInterface
      * @param EntityManagerInterface|null $em       EntityManagerInterface instance used for persistence.
      * @param string[]                    $excluded array of table/view names to be excluded from purge
      */
-    public function __construct(private EntityManagerInterface|null $em = null, array $excluded = [])
-    {
-        $this->excluded = $excluded;
+    public function __construct(
+        private EntityManagerInterface|null $em = null,
+        private array $excluded = [],
+    ) {
     }
 
     /**
@@ -86,7 +78,7 @@ final class ORMPurger implements ORMPurgerInterface
     public function purge(): void
     {
         $connection = $this->em->getConnection();
-        array_map([$connection, 'executeStatement'], $this->getPurgeStatements());
+        array_map($connection->executeStatement(...), $this->getPurgeStatements());
     }
 
     /** @return list<string> */
@@ -100,8 +92,7 @@ final class ORMPurger implements ORMPurgerInterface
         $classes    = [];
 
         foreach ($this->em->getMetadataFactory()->getAllMetadata() as $metadata) {
-            // @phpstan-ignore isset.property (ORM 2 support)
-            if ($metadata->isMappedSuperclass || (isset($metadata->isEmbeddedClass) && $metadata->isEmbeddedClass)) {
+            if ($metadata->isMappedSuperclass || $metadata->isEmbeddedClass) {
                 continue;
             }
 
@@ -121,8 +112,7 @@ final class ORMPurger implements ORMPurgerInterface
             $class = $commitOrder[$i];
 
             if (
-                // @phpstan-ignore isset.property (ORM 2 support)
-                (isset($class->isEmbeddedClass) && $class->isEmbeddedClass)
+                $class->isEmbeddedClass
                 || $class->isMappedSuperclass
                 || ($class->isInheritanceTypeSingleTable() && $class->name !== $class->rootEntityName)
             ) {
@@ -134,8 +124,7 @@ final class ORMPurger implements ORMPurgerInterface
 
         $connectionConfiguration = $connection->getConfiguration();
 
-        $schemaAssetsFilter = $connectionConfiguration->getSchemaAssetsFilter()
-            ?? static fn (): bool => true;
+        $schemaAssetsFilter = $connectionConfiguration->getSchemaAssetsFilter();
 
         $this->cachedSqlStatements = [];
         foreach ($orderedTables as $tbl) {
@@ -186,11 +175,11 @@ final class ORMPurger implements ORMPurgerInterface
             }
 
             foreach ($class->associationMappings as $assoc) {
-                if (! $assoc['isOwningSide']) {
+                if (! $assoc->isOwningSide()) {
                     continue;
                 }
 
-                $targetClass     = $em->getClassMetadata($assoc['targetEntity']);
+                $targetClass     = $em->getClassMetadata($assoc->targetEntity);
                 $targetClassName = $targetClass->getName();
 
                 if (! $sorter->hasNode($targetClassName)) {
@@ -228,7 +217,7 @@ final class ORMPurger implements ORMPurgerInterface
 
         foreach ($classes as $class) {
             foreach ($class->associationMappings as $assoc) {
-                if (! $assoc['isOwningSide'] || $assoc['type'] !== ClassMetadata::MANY_TO_MANY) {
+                if (! $assoc->isManyToManyOwningSide()) {
                     continue;
                 }
 
@@ -244,9 +233,8 @@ final class ORMPurger implements ORMPurgerInterface
         return $this->em->getConfiguration()->getQuoteStrategy()->getTableName($class, $platform);
     }
 
-    /** @param ManyToManyOwningSideMapping|mixed[] $assoc */
     private function getJoinTableName(
-        $assoc,
+        ManyToManyOwningSideMapping $assoc,
         ClassMetadata $class,
         AbstractPlatform $platform,
     ): string {
@@ -256,12 +244,7 @@ final class ORMPurger implements ORMPurgerInterface
     private function getDeleteFromTableSQL(string $tableName, AbstractPlatform $platform): string
     {
         $tableIdentifier = new Identifier($tableName);
-
-        if (class_exists(AbstractNamedObject::class)) {
-            $identifier = $tableIdentifier->getObjectName()->toSQL($platform);
-        } else {
-            $identifier = $tableIdentifier->getQuotedName($platform);
-        }
+        $identifier      = $tableIdentifier->getObjectName()->toSQL($platform);
 
         return 'DELETE FROM ' . $identifier;
     }

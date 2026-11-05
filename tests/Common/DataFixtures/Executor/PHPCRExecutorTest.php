@@ -11,11 +11,8 @@ use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Doctrine\Tests\Mock\PHPCRDocumentManager;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\MockObject\MockObject;
 use Throwable;
-
-use function method_exists;
 
 #[CoversClass(PHPCRExecutor::class)]
 class PHPCRExecutorTest extends BaseTestCase
@@ -30,7 +27,7 @@ class PHPCRExecutorTest extends BaseTestCase
         $dm
             ->expects($this->once())
             ->method('transactional')
-            ->with($this->isCallableCompat())
+            ->with($this->isCallable())
             ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             });
@@ -50,7 +47,7 @@ class PHPCRExecutorTest extends BaseTestCase
         $dm
             ->expects($this->once())
             ->method('transactional')
-            ->with($this->isCallableCompat())
+            ->with($this->isCallable())
             ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             });
@@ -69,7 +66,7 @@ class PHPCRExecutorTest extends BaseTestCase
         $dm
             ->expects($this->once())
             ->method('transactional')
-            ->with($this->isCallableCompat())
+            ->with($this->isCallable())
             ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             });
@@ -89,7 +86,7 @@ class PHPCRExecutorTest extends BaseTestCase
         $dm
             ->expects($this->once())
             ->method('transactional')
-            ->with($this->isCallableCompat())
+            ->with($this->isCallable())
             ->willReturnCallback(static function ($callback) use ($dm) {
                 return $callback($dm);
             });
@@ -133,16 +130,5 @@ class PHPCRExecutorTest extends BaseTestCase
     private function getMockFixture(): FixtureInterface&MockObject
     {
         return $this->createMock(FixtureInterface::class);
-    }
-
-    public function isCallableCompat(): IsType
-    {
-        // @phpstan-ignore function.alreadyNarrowedType (PHPUnit 10 compatibility)
-        if (! method_exists($this, 'isCallable')) {
-            // @phpstan-ignore method.notFound (PHPUnit 10 compatibility)
-            return $this->isType('callable');
-        }
-
-        return $this->isCallable();
     }
 }

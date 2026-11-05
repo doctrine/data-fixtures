@@ -12,7 +12,6 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurgerInterface;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
-use Doctrine\Tests\Mock\ForwardCompatibleEntityManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -125,7 +124,7 @@ class ORMExecutorTest extends BaseTestCase
 
     private function getMockEntityManager(): EntityManagerInterface&MockObject
     {
-        return $this->createMock(ForwardCompatibleEntityManager::class);
+        return $this->createMock(EntityManagerInterface::class);
     }
 
     private function getMockFixture(): FixtureInterface&MockObject

@@ -7,22 +7,17 @@ namespace Doctrine\Tests\Common\DataFixtures;
 use BadMethodCallException;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\UnitOfWork;
-use Doctrine\Persistence\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
-use Doctrine\Tests\Mock\ForwardCompatibleEntityManager;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use ReflectionClass;
 
-use function method_exists;
 use function sprintf;
-
-use const PHP_VERSION_ID;
 
 class ReferenceRepositoryTest extends BaseTestCase
 {
@@ -35,7 +30,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $role->setName('admin');
 
         $meta = $em->getClassMetadata(Role::class);
-        $meta->getReflectionProperty('id')->setValue($role, 1);
+        $meta->getPropertyAccessor('id')->setValue($role, 1);
 
         $referenceRepo = new ReferenceRepository($em);
         $this->assertSame($em, $referenceRepo->getManager());
@@ -133,7 +128,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage(sprintf('Reference to "foo" for class "%s" does not exist', Role::class));
+        $this->expectExceptionMessageIs(sprintf('Reference to "foo" for class "%s" does not exist', Role::class));
 
         $referenceRepository->getReference('foo', Role::class);
     }
@@ -144,7 +139,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage(sprintf('Reference to "foo" for class "%s" does not exist', Role::class));
+        $this->expectExceptionMessageIs(sprintf('Reference to "foo" for class "%s" does not exist', Role::class));
 
         $referenceRepository->getReference('foo', Role::class);
     }
@@ -157,7 +152,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $referenceRepository->addReference('duplicated_reference', new Role());
 
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage(sprintf(
+        $this->expectExceptionMessageIs(sprintf(
             'Reference to "duplicated_reference" for class "%s" already exists, use method setReference() in order to override it',
             Role::class,
         ));
@@ -181,7 +176,7 @@ class ReferenceRepositoryTest extends BaseTestCase
         $referenceRepository = new ReferenceRepository($this->getMockSqliteEntityManager());
 
         $this->expectException(OutOfBoundsException::class);
-        $this->expectExceptionMessage(sprintf('Reference to "missing_reference" for class "%s" does not exist', Role::class));
+        $this->expectExceptionMessageIs(sprintf('Reference to "missing_reference" for class "%s" does not exist', Role::class));
 
         $referenceRepository->getReference('missing_reference', Role::class);
     }
@@ -236,7 +231,7 @@ class ReferenceRepositoryTest extends BaseTestCase
             ->method('getName')
             ->willReturn(Role::class);
 
-        $em = $this->createMock(ForwardCompatibleEntityManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->method('getUnitOfWork')
            ->willReturn($uow);
         $em->expects($this->atLeastOnce())
@@ -274,24 +269,12 @@ class ReferenceRepositoryTest extends BaseTestCase
 
     private function assertProxy(object $object): void
     {
-        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
-            $this->assertInstanceOf(Proxy::class, $object);
-
-            return;
-        }
-
         $reflector = new ReflectionClass($object);
         $this->assertTrue($reflector->isUninitializedLazyObject($object));
     }
 
     private function assertNotProxy(object $object): void
     {
-        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
-            $this->assertNotInstanceOf(Proxy::class, $object);
-
-            return;
-        }
-
         $reflector = new ReflectionClass($object);
         $this->assertFalse($reflector->isUninitializedLazyObject($object));
     }
