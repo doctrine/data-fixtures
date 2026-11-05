@@ -14,7 +14,7 @@ class FixtureTest extends BaseTestCase
 {
     public function testFixtureInterface(): void
     {
-        $em      = $this->createMock(ObjectManager::class);
+        $em      = $this->createStub(ObjectManager::class);
         $fixture = new MyFixture2();
         $fixture->load($em);
 
