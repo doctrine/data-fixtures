@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\Tests\Common\DataFixtures;
+namespace Doctrine\Tests\Common\DataFixtures\Purger;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\DBAL\Schema\AbstractNamedObject;
+use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
+use Doctrine\Tests\Common\DataFixtures\TestEntity;
 use ReflectionClass;
 
 use function class_exists;
 
-/**
- * Doctrine\Tests\Common\DataFixtures\ORMPurgerTest
- */
 class ORMPurgerTest extends BaseTestCase
 {
     public const TEST_ENTITY_USER              = TestEntity\User::class;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TestFixtures;
+namespace Doctrine\Tests\Common\DataFixtures\TestFixtures;
 
 class NotAFixture
 {

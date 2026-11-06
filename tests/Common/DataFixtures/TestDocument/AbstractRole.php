@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Common\DataFixtures\TestDocument;
+namespace Doctrine\Tests\Common\DataFixtures\TestDocument;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 

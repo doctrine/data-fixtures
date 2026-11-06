@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\Tests\Common\DataFixtures;
+namespace Doctrine\Tests\Common\DataFixtures\Executor;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\User;
+use Doctrine\Tests\Common\DataFixtures\TestFixtures;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\MockObject\MockObject;
 

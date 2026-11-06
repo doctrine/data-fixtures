@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TestFixtures;
+namespace Doctrine\Tests\Common\DataFixtures\TestFixtures;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
