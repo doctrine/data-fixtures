@@ -9,8 +9,8 @@ use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\DataFixtures\SharedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use TestFixtures\MyFixture1;
-use TestFixtures\NotAFixture;
+use Doctrine\Tests\Common\DataFixtures\TestFixtures\MyFixture1;
+use Doctrine\Tests\Common\DataFixtures\TestFixtures\NotAFixture;
 
 /**
  * Test fixtures loader.

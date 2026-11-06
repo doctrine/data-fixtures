@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\Tests\Common\DataFixtures;
+namespace Doctrine\Tests\Common\DataFixtures\Purger;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\ExcludedEntity;
 use Doctrine\Tests\Common\DataFixtures\TestPurgeEntity\IncludedEntity;
 
