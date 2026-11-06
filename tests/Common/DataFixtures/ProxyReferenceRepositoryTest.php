@@ -7,9 +7,7 @@ namespace Doctrine\Tests\Common\DataFixtures;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\ProxyReferenceRepository;
 use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\Persistence\Proxy;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Link;
 use Doctrine\Tests\Common\DataFixtures\TestEntity\Role;
 use Doctrine\Tests\Common\DataFixtures\TestTypes\UuidType;
@@ -17,14 +15,10 @@ use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use ReflectionClass;
 
-use function method_exists;
-
-use const PHP_VERSION_ID;
-
 class ProxyReferenceRepositoryTest extends BaseTestCase
 {
-    public const TEST_ENTITY_ROLE = Role::class;
-    public const TEST_ENTITY_LINK = Link::class;
+    public const string TEST_ENTITY_ROLE = Role::class;
+    public const string TEST_ENTITY_LINK = Link::class;
 
     public static function setUpBeforeClass(): void
     {
@@ -45,8 +39,7 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
         $role->setName('admin');
         $meta = $em->getClassMetadata(self::TEST_ENTITY_ROLE);
 
-        // getPropertyAccessor() is not available with ORM < 3.4
-        $meta->getReflectionProperty('id')->setValue($role, 1);
+        $meta->getPropertyAccessor('id')->setValue($role, 1);
 
         $referenceRepo = new ProxyReferenceRepository($em);
         $referenceRepo->addReference('test', $role);
@@ -191,24 +184,12 @@ class ProxyReferenceRepositoryTest extends BaseTestCase
 
     private function assertProxy(object $object): void
     {
-        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
-            $this->assertInstanceOf(Proxy::class, $object);
-
-            return;
-        }
-
         $reflector = new ReflectionClass($object);
         $this->assertTrue($reflector->isUninitializedLazyObject($object));
     }
 
     private function assertNotProxy(object $object): void
     {
-        if (PHP_VERSION_ID < 80400 || ! method_exists(ORMSetup::class, 'createAttributeMetadataConfig')) {
-            $this->assertNotInstanceOf(Proxy::class, $object);
-
-            return;
-        }
-
         $reflector = new ReflectionClass($object);
         $this->assertFalse($reflector->isUninitializedLazyObject($object));
     }

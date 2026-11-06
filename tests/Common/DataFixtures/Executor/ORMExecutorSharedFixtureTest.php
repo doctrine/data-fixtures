@@ -20,8 +20,8 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class ORMExecutorSharedFixtureTest extends BaseTestCase
 {
-    public const TEST_ENTITY_ROLE = Role::class;
-    public const TEST_ENTITY_USER = User::class;
+    public const string TEST_ENTITY_ROLE = Role::class;
+    public const string TEST_ENTITY_USER = User::class;
 
     #[IgnoreDeprecations]
     public function testFixtureExecution(): void

@@ -6,8 +6,6 @@ namespace Doctrine\Common\DataFixtures\Purger;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-use function method_exists;
-
 /**
  * Class responsible for purging databases of data before reloading data fixtures.
  */
@@ -87,9 +85,6 @@ final class MongoDBPurger implements MongoDBPurgerInterface
         $schemaManager = $this->dm->getSchemaManager();
         $schemaManager->createCollections();
         $schemaManager->ensureIndexes();
-
-        // Requires doctrine/mongodb-odm 2.8
-        // @phpstan-ignore function.alreadyNarrowedType
-        method_exists($schemaManager, 'createSearchIndexes') && $schemaManager->createSearchIndexes();
+        $schemaManager->createSearchIndexes();
     }
 }

@@ -390,6 +390,7 @@ class FixtureWithUnexistentDependency implements FixtureInterface, DependentFixt
      */
     public function getDependencies(): array
     {
+        // @phpstan-ignore return.type
         return ['UnexistentDependency'];
     }
 }

@@ -6,7 +6,7 @@
     <arg name="cache" value=".phpcs-cache"/>
     <arg name="colors" />
 
-    <config name="php_version" value="80100"/>
+    <config name="php_version" value="80400"/>
 
     <!-- Ignore warnings and show progress of the run -->
     <arg value="nps"/>
@@ -43,13 +43,6 @@
         <exclude-pattern>src/Purger/PurgerInterface.php</exclude-pattern>
         <exclude-pattern>src/OrderedFixtureInterface.php</exclude-pattern>
         <exclude-pattern>src/SharedFixtureInterface.php</exclude-pattern>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint">
-        <!-- ORM 3 compatibility -->
-        <exclude-pattern>src/Purger/ORMPurger.php</exclude-pattern>
-        <!-- Don't add parameter types to overridden methods -->
-        <exclude-pattern>tests/Common/DataFixtures/TestTypes/UuidType.php</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">

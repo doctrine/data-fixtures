@@ -35,9 +35,6 @@ final class ORMReferenceListener implements EventSubscriber
         $object = $args->getObject();
 
         $names = $this->referenceRepository->getReferenceNames($object);
-        if ($names === false) {
-            return;
-        }
 
         foreach ($names as $name) {
             $identity = $args->getObjectManager()

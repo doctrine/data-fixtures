@@ -14,15 +14,12 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  */
 class Vertex
 {
-    public const NOT_VISITED = 0;
-    public const IN_PROGRESS = 1;
-    public const VISITED     = 2;
+    public const int NOT_VISITED = 0;
+    public const int IN_PROGRESS = 1;
+    public const int VISITED     = 2;
 
     /** @phpstan-var self::* */
     public int $state = self::NOT_VISITED;
-
-    /** Actual node value. */
-    public ClassMetadata $value;
 
     /**
      * Map of node dependencies defined as hashes.
@@ -31,8 +28,8 @@ class Vertex
      */
     public array $dependencyList = [];
 
-    public function __construct(ClassMetadata $value)
-    {
-        $this->value = $value;
+    public function __construct(
+        public ClassMetadata $value,
+    ) {
     }
 }

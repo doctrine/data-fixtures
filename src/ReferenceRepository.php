@@ -39,14 +39,9 @@ class ReferenceRepository
      */
     private array $identitiesByClass = [];
 
-    /**
-     * Currently used object manager
-     */
-    private ObjectManager $manager;
-
-    public function __construct(ObjectManager $manager)
-    {
-        $this->manager = $manager;
+    public function __construct(
+        private ObjectManager $manager,
+    ) {
     }
 
     /**
