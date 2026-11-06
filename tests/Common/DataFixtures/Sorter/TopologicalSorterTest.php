@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\Test\DataFixtures\Sorter;
+namespace Doctrine\Tests\Common\DataFixtures\Sorter;
 
 use Doctrine\Common\DataFixtures\Exception\CircularReferenceException;
 use Doctrine\Common\DataFixtures\Sorter\TopologicalSorter;
