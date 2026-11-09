@@ -10,7 +10,7 @@ use Doctrine\Tests\Common\DataFixtures\TestValueObjects\Uuid;
 
 class UuidType extends Type
 {
-    public const NAME = 'uuid';
+    public const string NAME = 'uuid';
 
     /** @param mixed[] $fieldDeclaration */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
@@ -22,13 +22,13 @@ class UuidType extends Type
     }
 
     /** @param string|null $value */
-    public function convertToPHPValue($value, AbstractPlatform $platform): Uuid|null
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): Uuid|null
     {
         return $value === null ? null : new Uuid($value);
     }
 
     /** @param Uuid|null $value */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): string|null
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): string|null
     {
         return $value === null ? null : (string) $value;
     }

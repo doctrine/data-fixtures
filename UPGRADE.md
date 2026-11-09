@@ -6,6 +6,17 @@ awareness about deprecated code.
 - Use of our low-overhead runtime deprecation API, details:
   https://github.com/doctrine/deprecations/
 
+# Upgrade to 2.3
+
+This release raises the minimum requirements and removes the compatibility shims
+for the dropped versions. You now need at least PHP 8.4 and doctrine/persistence 4.0.
+
+Depending on which object manager you load fixtures for, you also need at least:
+
+* DBAL 4.5 and ORM 3.7 — support for DBAL 3 and ORM 2 has been dropped.
+* MongoDB ODM 2.17 — support for MongoDB ODM 1 has been dropped.
+* PHPCR ODM 3.0 — support for PHPCR ODM 1 and 2 has been dropped.
+
 # Upgrade to 2.0
 
 You need PHP 8.1 or newer to use this library.
