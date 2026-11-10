@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Doctrine\Tests\Common\DataFixtures\Purger;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\DBAL\Schema\AbstractNamedObject;
 use Doctrine\Tests\Common\DataFixtures\BaseTestCase;
 use Doctrine\Tests\Common\DataFixtures\TestEntity;
 use ReflectionClass;
 
-use function class_exists;
-
 class ORMPurgerTest extends BaseTestCase
 {
-    public const TEST_ENTITY_USER              = TestEntity\User::class;
-    public const TEST_ENTITY_USER_WITH_SCHEMA  = TestEntity\UserWithSchema::class;
-    public const TEST_ENTITY_QUOTED            = TestEntity\Quoted::class;
-    public const TEST_ENTITY_GROUP             = TestEntity\Group::class;
-    public const TEST_ENTITY_GROUP_WITH_SCHEMA = TestEntity\GroupWithSchema::class;
+    public const string TEST_ENTITY_USER              = TestEntity\User::class;
+    public const string TEST_ENTITY_USER_WITH_SCHEMA  = TestEntity\UserWithSchema::class;
+    public const string TEST_ENTITY_QUOTED            = TestEntity\Quoted::class;
+    public const string TEST_ENTITY_GROUP             = TestEntity\Group::class;
+    public const string TEST_ENTITY_GROUP_WITH_SCHEMA = TestEntity\GroupWithSchema::class;
 
     public function testGetAssociationTables(): void
     {
@@ -82,10 +79,6 @@ class ORMPurgerTest extends BaseTestCase
         $method    = $class->getMethod('getDeleteFromTableSQL');
         $sql       = $method->invokeArgs($purger, [$tableName, $platform]);
 
-        if (class_exists(AbstractNamedObject::class)) {
-            $this->assertEquals('DELETE FROM "test_schema"."group"', $sql);
-        } else {
-            $this->assertEquals('DELETE FROM test_schema."group"', $sql);
-        }
+        $this->assertEquals('DELETE FROM "test_schema"."group"', $sql);
     }
 }

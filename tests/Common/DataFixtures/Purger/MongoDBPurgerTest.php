@@ -15,35 +15,22 @@ use MongoCollection;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\ConnectionTimeoutException;
 
-use function class_exists;
 use function dirname;
-use function method_exists;
-
-use const PHP_VERSION_ID;
 
 class MongoDBPurgerTest extends BaseTestCase
 {
-    public const TEST_DOCUMENT_ROLE = Role::class;
+    public const string TEST_DOCUMENT_ROLE = Role::class;
 
     private function getDocumentManager(): DocumentManager
     {
-        if (! class_exists(DocumentManager::class)) {
-            $this->markTestSkipped('Missing doctrine/mongodb-odm');
-        }
-
         $root = dirname(__DIR__, 5);
 
         $config = new Configuration();
-        $config->setProxyDir($root . '/generate/proxies');
         $config->setProxyNamespace('Proxies');
         $config->setHydratorDir($root . '/generate/hydrators');
         $config->setHydratorNamespace('Hydrators');
         $config->setMetadataDriverImpl(AttributeDriver::create(dirname(__DIR__) . '/TestDocument'));
-
-        /** @phpstan-ignore function.alreadyNarrowedType (that method exists only since ODM 2.14.0) */
-        if (PHP_VERSION_ID >= 80400 && method_exists($config, 'setUseNativeLazyObject')) {
-            $config->setUseNativeLazyObject(true);
-        }
+        $config->setUseNativeLazyObject(true);
 
         $dm = DocumentManager::create(null, $config);
 
@@ -125,20 +112,10 @@ class MongoDBPurgerTest extends BaseTestCase
 
     private function skipIfMongoDBUnavailable(DocumentManager $documentManager): void
     {
-        if (method_exists($documentManager, 'getClient')) {
-            try {
-                $documentManager->getClient()->selectDatabase('admin')->command(['ping' => 1]);
-            } catch (ConnectionTimeoutException) {
-                $this->markTestSkipped('Unable to connect to MongoDB');
-            }
-
-            return;
+        try {
+            $documentManager->getClient()->selectDatabase('admin')->command(['ping' => 1]);
+        } catch (ConnectionTimeoutException) {
+            $this->markTestSkipped('Unable to connect to MongoDB');
         }
-
-        if ($documentManager->getConnection()->connect()) {
-            return;
-        }
-
-        $this->markTestSkipped('Unable to connect to MongoDB');
     }
 }

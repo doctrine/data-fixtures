@@ -23,7 +23,6 @@ use function count;
 use function get_declared_classes;
 use function implode;
 use function in_array;
-use function is_array;
 use function is_dir;
 use function is_readable;
 use function realpath;
@@ -70,7 +69,7 @@ class Loader
      *
      * @param string $dir Directory to find fixture classes in.
      *
-     * @return array $fixtures Array of loaded fixture object instances.
+     * @return list<FixtureInterface> Array of loaded fixture object instances.
      */
     public function loadFromDirectory(string $dir): array
     {
@@ -91,7 +90,7 @@ class Loader
      *
      * @param string $fileName File to find fixture classes in.
      *
-     * @return array $fixtures Array of loaded fixture object instances.
+     * @return list<FixtureInterface> Array of loaded fixture object instances.
      */
     public function loadFromFile(string $fileName): array
     {
@@ -281,7 +280,7 @@ class Loader
 
                 $this->validateDependencies($dependenciesClasses);
 
-                if (! is_array($dependenciesClasses) || empty($dependenciesClasses)) {
+                if ($dependenciesClasses === []) {
                     throw new InvalidArgumentException(sprintf(
                         'Method "%s" in class "%s" must return an array of classes which are dependencies for the fixture, and it must be NOT empty.',
                         'getDependencies',

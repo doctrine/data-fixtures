@@ -4,9 +4,6 @@ parameters:
     paths:
         - src
         - tests
-    excludePaths:
-        - tests/Mock/ForwardCompatibleEntityManager.php
-        - tests/Mock/PHPCRDocumentManager.php
 
 includes:
     - phpstan-baseline.neon

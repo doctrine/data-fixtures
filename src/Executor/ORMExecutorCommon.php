@@ -7,29 +7,17 @@ namespace Doctrine\Common\DataFixtures\Executor;
 use Doctrine\Common\DataFixtures\Event\Listener\ORMReferenceListener;
 use Doctrine\Common\DataFixtures\Purger\ORMPurgerInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
-use Doctrine\ORM\Decorator\EntityManagerDecorator;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 /** @internal */
 trait ORMExecutorCommon
 {
-    /** @var EntityManager|EntityManagerDecorator */
-    private EntityManagerInterface $em;
-
-    private EntityManagerInterface $originalManager;
     private ORMReferenceListener $listener;
 
-    public function __construct(EntityManagerInterface $em, ORMPurgerInterface|null $purger = null)
-    {
-        $this->originalManager = $em;
-        // Make sure, wrapInTransaction() exists on the EM.
-        // To be removed when dropping support for ORM 2
-        $this->em = $em instanceof EntityManager || $em instanceof EntityManagerDecorator
-            ? $em
-            : new class ($em) extends EntityManagerDecorator {
-            };
-
+    public function __construct(
+        private EntityManagerInterface $em,
+        ORMPurgerInterface|null $purger = null,
+    ) {
         if ($purger !== null) {
             $this->purger = $purger;
             $this->purger->setEntityManager($em);
@@ -46,7 +34,7 @@ trait ORMExecutorCommon
      */
     public function getObjectManager(): EntityManagerInterface
     {
-        return $this->originalManager;
+        return $this->em;
     }
 
     public function setReferenceRepository(ReferenceRepository $referenceRepository): void

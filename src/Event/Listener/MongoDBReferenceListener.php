@@ -34,9 +34,6 @@ final class MongoDBReferenceListener implements EventSubscriber
         $object = $args->getDocument();
 
         $names = $this->referenceRepository->getReferenceNames($object);
-        if ($names === false) {
-            return;
-        }
 
         foreach ($names as $name) {
             $identity = $args->getDocumentManager()

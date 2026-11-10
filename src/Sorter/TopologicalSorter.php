@@ -38,14 +38,9 @@ class TopologicalSorter
      */
     private array $sortedNodeList = [];
 
-    /**
-     * Allow or not cyclic dependencies
-     */
-    private bool $allowCyclicDependencies;
-
-    public function __construct(bool $allowCyclicDependencies = true)
-    {
-        $this->allowCyclicDependencies = (bool) $allowCyclicDependencies;
+    public function __construct(
+        private bool $allowCyclicDependencies = true,
+    ) {
     }
 
     /**
