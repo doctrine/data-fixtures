@@ -157,6 +157,11 @@ class Loader
                     continue;
                 }
 
+                // Skip adding dependency if already added, avoids issues instantiating fixtures which may have dependencies
+                if (isset($this->fixtures[$class])) {
+                    continue;
+                }
+
                 $this->addFixture($this->createFixture($class));
             }
         }

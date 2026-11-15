@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\DataFixtures;
 
+use ArgumentCountError;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
@@ -60,6 +62,32 @@ class LoaderTest extends BaseTestCase
 
         $this->assertInstanceOf(MyFixture1::class, $fixture);
     }
+
+    /**
+     * Test that an error is expected when adding a fixture which requires constructor arguments
+     */
+    public function testAddFixtureWithDependencyError(): void
+    {
+        $loader = new Loader();
+        $this->expectException(ArgumentCountError::class);
+        $loader->addFixture(new FixtureWithDependency());
+    }
+
+    /**
+     * Test that a fixture dependency is not instantiated if it has already been added
+     */
+    public function testAddFixtureWithDependencyPreLoaded(): void
+    {
+        $fixtureWithConstructor = new FixtureWithConstructorArgs('test');
+        $fixtureWithDependency  = new FixtureWithDependency();
+
+        $loader = new Loader();
+        $loader->addFixture($fixtureWithConstructor);
+        $loader->addFixture($fixtureWithDependency);
+
+        $this->assertSame([$fixtureWithConstructor, $fixtureWithDependency], $loader->getFixtures());
+        $this->assertSame('test', $fixtureWithConstructor->getRequiredArgument());
+    }
 }
 
 final class DummyFixtureOne implements FixtureInterface
@@ -84,5 +112,33 @@ final class SharedDummyFixture implements SharedFixtureInterface
 
     public function setReferenceRepository(ReferenceRepository $referenceRepository): void
     {
+    }
+}
+
+final class FixtureWithDependency implements DependentFixtureInterface, FixtureInterface
+{
+    public function load(ObjectManager $manager): void
+    {
+    }
+
+    public function getDependencies(): array
+    {
+        return [FixtureWithConstructorArgs::class];
+    }
+}
+
+final class FixtureWithConstructorArgs implements FixtureInterface
+{
+    public function __construct(private readonly string $requiredArgument)
+    {
+    }
+
+    public function load(ObjectManager $manager): void
+    {
+    }
+
+    public function getRequiredArgument(): string
+    {
+        return $this->requiredArgument;
     }
 }
