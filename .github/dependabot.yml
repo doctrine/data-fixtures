@@ -5,6 +5,7 @@ updates:
     schedule:
       interval: "daily"
       time: "11:00"
+    target-branch: "2.2.x"
     open-pull-requests-limit: 10
     labels:
       - "Dependencies"
@@ -13,6 +14,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    target-branch: "2.2.x"
     labels:
       - "CI"
     groups:
